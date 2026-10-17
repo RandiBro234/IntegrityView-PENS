@@ -7,6 +7,7 @@ import {
   SURVEI_INFO, getStatistikInstrumen, getRekomendasi,
   getDuplikatTerdeteksi, formatAngka
 } from '../data/mock';
+import { useSurveiData } from '../data/api';
 import './InstrumentDetailPage.css';
 
 const ROW_MIN = 32;
@@ -17,8 +18,8 @@ const ROW_MAX = 48;
 const BLOK_TINGGI = 18 + 8 + 28 + 6 + 28 + 22;
 
 export default function InstrumentDetailPage({ slug, onBack }) {
-  const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState(null);
+  const { dataset, loading } = useSurveiData();
 
   const distRef = useRef(null);
   const [distAvail, setDistAvail] = useState(0);
@@ -27,14 +28,18 @@ export default function InstrumentDetailPage({ slug, onBack }) {
   const [kelompokAvail, setKelompokAvail] = useState(0);
 
   const info = useMemo(() => SURVEI_INFO.find((s) => s.key === slug), [slug]);
-  const st = useMemo(() => getStatistikInstrumen(slug), [slug]);
-  const rekomendasi = useMemo(() => getRekomendasi(slug), [slug]);
-  const duplikat = useMemo(() => getDuplikatTerdeteksi(slug), [slug]);
-
-  useEffect(() => {
-    const t = window.setTimeout(() => setLoading(false), 350);
-    return () => window.clearTimeout(t);
-  }, [slug]);
+  const st = useMemo(
+    () => (dataset ? getStatistikInstrumen(slug, dataset) : null),
+    [slug, dataset]
+  );
+  const rekomendasi = useMemo(
+    () => (dataset ? getRekomendasi(slug, dataset) : []),
+    [slug, dataset]
+  );
+  const duplikat = useMemo(
+    () => (dataset ? getDuplikatTerdeteksi(slug, dataset) : 0),
+    [slug, dataset]
+  );
 
   /* Ukur tinggi area daftar distribusi. */
   useEffect(() => {

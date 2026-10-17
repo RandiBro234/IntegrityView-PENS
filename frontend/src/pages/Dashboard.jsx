@@ -1,27 +1,28 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import Sidebar from '../components/layout/Sidebar';
 import Topbar from '../components/layout/Topbar';
 import RingkasanCards from '../components/dashboard/RingkasanCards';
 import SebaranJawabanChart from '../components/dashboard/SebaranJawabanChart';
 import StatistikPanel from '../components/dashboard/StatistikPanel';
 import { getRingkasanDashboard, getSebaranPerInstrumen, getUser } from '../data/mock';
+import { useSurveiData } from '../data/api';
 import './Dashboard.css';
 
 export default function Dashboard({ onBackToLanding, onNavigate, onOpenInstrument }) {
   const user = getUser();
-  const [loading, setLoading] = useState(true);
+  const { dataset, loading, error, fallback } = useSurveiData();
   const [selectedKey, setSelectedKey] = useState(null);
 
-  const ringkasan = useMemo(() => getRingkasanDashboard(), []);
-  const sebaran = useMemo(() => getSebaranPerInstrumen(), []);
+  const ringkasan = useMemo(
+    () => (dataset ? getRingkasanDashboard(dataset) : null),
+    [dataset]
+  );
+  const sebaran = useMemo(
+    () => (dataset ? getSebaranPerInstrumen(dataset) : []),
+    [dataset]
+  );
 
-  useEffect(() => {
-    const t = window.setTimeout(() => {
-      setLoading(false);
-      if (sebaran.length) setSelectedKey(sebaran[0].key);
-    }, 500);
-    return () => window.clearTimeout(t);
-  }, [sebaran]);
+  const activeKey = selectedKey ?? (sebaran.length ? sebaran[0].key : null);
 
   const handleMenu = (key) => {
     if (key === 'beranda') {
@@ -50,6 +51,13 @@ export default function Dashboard({ onBackToLanding, onNavigate, onOpenInstrumen
             </div>
           ) : (
             <>
+              {fallback && (
+                <p className="dashboard__notice" role="status">
+                  Backend belum terhubung — menampilkan data simulasi.
+                  {error ? ` (${error.message})` : ''}
+                </p>
+              )}
+
               <RingkasanCards ringkasan={ringkasan} />
 
               <div className="dashboard__duo">
@@ -62,7 +70,7 @@ export default function Dashboard({ onBackToLanding, onNavigate, onOpenInstrumen
                   </div>
                   <SebaranJawabanChart
                     data={sebaran}
-                    selectedKey={selectedKey}
+                    selectedKey={activeKey}
                     onSelect={setSelectedKey}
                     onOpenDetail={onOpenInstrument}
                   />
@@ -75,7 +83,7 @@ export default function Dashboard({ onBackToLanding, onNavigate, onOpenInstrumen
                       <h2 className="dashboard__box-title" id="statistik-title">Ringkasan Statistik & Rekomendasi</h2>
                     </div>
                   </div>
-                  <StatistikPanel selectedKey={selectedKey} onOpenDetail={onOpenInstrument} />
+                  <StatistikPanel selectedKey={activeKey} dataset={dataset} onOpenDetail={onOpenInstrument} />
                 </section>
               </div>
             </>

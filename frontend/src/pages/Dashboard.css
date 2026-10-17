@@ -31,6 +31,15 @@
   margin-top: 6px;
 }
 
+.dashboard__notice {
+  padding: 10px 16px;
+  border-radius: var(--radius-card);
+  border: 1px solid var(--border-soft);
+  background: var(--bg-card);
+  font-size: 0.85rem;
+  color: var(--text-muted, #5b6474);
+}
+
 /* === Loading skeleton === */
 .dashboard__loading {
   display: flex;

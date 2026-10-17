@@ -2,7 +2,7 @@ import './StatistikPanel.css';
 import RecommendationList from '../instrumen/RecommendationList';
 import { formatAngka, getStatistikInstrumen, getRekomendasi, SURVEI_INFO } from '../../data/mock';
 
-export default function StatistikPanel({ selectedKey, onOpenDetail }) {
+export default function StatistikPanel({ selectedKey, dataset, onOpenDetail }) {
   if (!selectedKey) {
     return (
       <div className="spanel spanel--empty">
@@ -12,7 +12,7 @@ export default function StatistikPanel({ selectedKey, onOpenDetail }) {
   }
 
   const info = SURVEI_INFO.find((s) => s.key === selectedKey);
-  const st = getStatistikInstrumen(selectedKey);
+  const st = getStatistikInstrumen(selectedKey, dataset);
 
   if (!st) {
     return (
@@ -22,7 +22,7 @@ export default function StatistikPanel({ selectedKey, onOpenDetail }) {
     );
   }
 
-  const rekomendasi = getRekomendasi(selectedKey);
+  const rekomendasi = getRekomendasi(selectedKey, dataset);
   const tampilKelompok = st.responden.dosen >= 5 && st.responden.tendik >= 5;
 
   return (

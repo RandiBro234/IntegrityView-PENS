@@ -5,14 +5,19 @@ import {
   getUser, isAdmin, getSemuaSurveiUntukLaporan, getRingkasanPengaduan,
   getPengaduan, formatAngka
 } from '../data/mock';
+import { useSurveiData } from '../data/api';
 import './LaporanPage.css';
 
 export default function LaporanPage({ onNavigate }) {
   const user = getUser();
   const admin = isAdmin();
+  const { dataset } = useSurveiData();
   const [periode, setPeriode] = useState('Agu 2026');
 
-  const rekap = useMemo(() => (admin ? getSemuaSurveiUntukLaporan() : []), [admin]);
+  const rekap = useMemo(
+    () => (admin && dataset ? getSemuaSurveiUntukLaporan(dataset) : []),
+    [admin, dataset]
+  );
   const ringkasAduan = useMemo(() => getRingkasanPengaduan(), []);
   const pengaduan = useMemo(() => getPengaduan(), []);
 

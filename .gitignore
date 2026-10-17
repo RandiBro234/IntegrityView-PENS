@@ -12,6 +12,15 @@ dist
 dist-ssr
 *.local
 
+# Python backend
+backend/venv/
+__pycache__/
+*.pyc
+.env
+
+# Dokumen catatan lokal (jangan di-push)
+rencana_backend.md
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

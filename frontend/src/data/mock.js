@@ -205,16 +205,17 @@ export function ujiTButir(butir, nDosen, nTendik) {
 }
 
 /* Estimasi duplikat terdeteksi: jawaban persis sama antar responden (simulasi deterministik). */
-export function getDuplikatTerdeteksi(key) {
-  const ds = INSTRUMEN_DATASET[key];
+export function getDuplikatTerdeteksi(key, dataset = INSTRUMEN_DATASET) {
+  const ds = dataset[key];
   if (!ds) return 0;
+  if (typeof ds.duplikat === 'number') return ds.duplikat;
   const seed = key.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
   return seed % 4;
 }
 
 /* Ringkasan statistik satu instrumen. */
-export function getStatistikInstrumen(key) {
-  const ds = INSTRUMEN_DATASET[key];
+export function getStatistikInstrumen(key, dataset = INSTRUMEN_DATASET) {
+  const ds = dataset[key];
   if (!ds) return null;
   const distribusi = ds.butir.map((b) => b.distribusi);
   const skorButir = ds.butir.map((b) => indeksDariDistribusi(b.distribusi));
@@ -249,8 +250,8 @@ export function getStatistikInstrumen(key) {
 }
 
 /* Rekomendasi otomatis, dibangkitkan dari aturan. */
-export function getRekomendasi(key) {
-  const st = getStatistikInstrumen(key);
+export function getRekomendasi(key, dataset = INSTRUMEN_DATASET) {
+  const st = getStatistikInstrumen(key, dataset);
   if (!st) return [];
   const rec = [];
   const butir = st.butir;
@@ -323,9 +324,9 @@ export function getRekomendasi(key) {
 }
 
 /* Distribusi agregat per instrumen (persen 0-100 per skala 1-4) untuk stacked bar. */
-export function getSebaranPerInstrumen() {
+export function getSebaranPerInstrumen(dataset = INSTRUMEN_DATASET) {
   return SURVEI_INFO.map((info) => {
-    const st = getStatistikInstrumen(info.key);
+    const st = getStatistikInstrumen(info.key, dataset);
     if (!st) return null;
     const d = st.distribusiTotal;
     const n = d[0] + d[1] + d[2] + d[3];
@@ -345,23 +346,23 @@ export function getSebaranPerInstrumen() {
 }
 
 /* Ringkasan tiga card. */
-export function getRingkasanDashboard() {
+export function getRingkasanDashboard(dataset = INSTRUMEN_DATASET) {
   const semua = SURVEI_INFO.map((s) => s.key);
-  const berdata = semua.filter((k) => !!INSTRUMEN_DATASET[k]);
+  const berdata = semua.filter((k) => !!dataset[k]);
 
   const layanan = SURVEI_INFO.filter((s) => s.kelompok === 'Layanan').map((s) => s.nama);
   const internal = SURVEI_INFO.filter((s) => s.kelompok === 'Internal').map((s) => s.nama);
 
-  const riil = berdata.filter((k) => INSTRUMEN_DATASET[k].sumber === 'riil').length;
+  const riil = berdata.filter((k) => dataset[k].sumber === 'riil').length;
   const simulasi = berdata.length - riil;
 
   let nDosen = 0, nTendik = 0;
   berdata.forEach((k) => {
-    nDosen += INSTRUMEN_DATASET[k].responden.dosen;
-    nTendik += INSTRUMEN_DATASET[k].responden.tendik;
+    nDosen += dataset[k].responden.dosen;
+    nTendik += dataset[k].responden.tendik;
   });
 
-  const skorArr = berdata.map((k) => getStatistikInstrumen(k).skor);
+  const skorArr = berdata.map((k) => getStatistikInstrumen(k, dataset).skor);
   const rata = skorArr.length ? skorArr.reduce((a, b) => a + b, 0) / skorArr.length : 0;
   const ci = interval95(skorArr, skorArr.length);
 
@@ -859,10 +860,10 @@ export function formatTanggalWaktu(iso) {
 }
 
 /* Rekap instrumen berdata untuk halaman laporan admin. */
-export function getSemuaSurveiUntukLaporan() {
+export function getSemuaSurveiUntukLaporan(dataset = INSTRUMEN_DATASET) {
   return SURVEI_INFO
     .map((info) => {
-      const st = getStatistikInstrumen(info.key);
+      const st = getStatistikInstrumen(info.key, dataset);
       if (!st) return null;
       const benchmark = info.sumber === 'riil' ? 80 : 80;
       return {
