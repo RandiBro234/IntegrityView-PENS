@@ -20,6 +20,7 @@ __pycache__/
 
 # Dokumen catatan lokal (jangan di-push)
 rencana_backend.md
+PROGRESS.md
 
 # Editor directories and files
 .vscode/*
