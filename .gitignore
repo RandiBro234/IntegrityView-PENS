@@ -7,21 +7,45 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Node / build
 node_modules
 dist
 dist-ssr
+.vite/
+coverage/
+.nyc_output/
+*.tsbuildinfo
 *.local
 
-# Python backend
+# Environment / secrets (contoh tetap boleh masuk)
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Data mentah survei (mengandung PII: email/komentar) - jangan di-push
+backend/data/*.csv
+
+# Python
 backend/venv/
+backend/.venv/
+venv/
+.venv/
 __pycache__/
 *.pyc
-.env
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
 
 # Supabase CLI state
 supabase/.temp/
 supabase/.branches/
 .supabase/
+
+# Deployment metadata
+.vercel/
+.netlify/
 
 # Dokumen catatan lokal (jangan di-push)
 rencana_backend.md
@@ -33,6 +57,8 @@ LANGKAH_SETUP_SUPABASE.md
 !.vscode/extensions.json
 .idea
 .DS_Store
+Thumbs.db
+desktop.ini
 *.suo
 *.ntvs*
 *.njsproj
