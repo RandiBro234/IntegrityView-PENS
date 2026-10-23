@@ -18,6 +18,11 @@ __pycache__/
 *.pyc
 .env
 
+# Supabase CLI state
+supabase/.temp/
+supabase/.branches/
+.supabase/
+
 # Dokumen catatan lokal (jangan di-push)
 rencana_backend.md
 PROGRESS.md

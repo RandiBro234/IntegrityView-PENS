@@ -262,13 +262,13 @@ export async function fetchSurvei() {
 
   const base = SUPABASE_URL.replace(/\/$/, '');
   const kolom = 'select=nama_instrumen,email_responden,data_jawaban,created_at&order=created_at.desc';
-  const res = await fetch(`${base}/rest/v1/survey_responses?${kolom}`, {
-    headers: {
-      apikey: SUPABASE_ANON_KEY,
-      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-      Accept: 'application/json'
-    }
-  });
+  const headers = { apikey: SUPABASE_ANON_KEY, Accept: 'application/json' };
+  /* Key baru (sb_publishable_...) bukan JWT, jadi TIDAK boleh dikirim sebagai
+     Authorization: Bearer. Legacy anon key (eyJ...) tetap butuh Bearer. */
+  if (SUPABASE_ANON_KEY.startsWith('eyJ')) {
+    headers.Authorization = `Bearer ${SUPABASE_ANON_KEY}`;
+  }
+  const res = await fetch(`${base}/rest/v1/survey_responses?${kolom}`, { headers });
 
   if (!res.ok) {
     throw new Error(`Gagal memuat data survei (HTTP ${res.status})`);
