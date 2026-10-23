@@ -1,0 +1,4 @@
+project_id = ""
+
+[functions.webhook-survei]
+verify_jwt = false

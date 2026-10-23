@@ -10,25 +10,22 @@
 .reclist__item {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  margin-bottom: 16px;
+  gap: 3px;
+  margin-bottom: 12px;
   min-height: 0;
   min-width: 0;
 }
-/* Varian modal: daftar penuh, jarak antar item lebih lega. */
-.reclist--full .reclist__item { margin-bottom: 20px; }
 .reclist__item:last-child { margin-bottom: 0; }
 
 .reclist__row1 {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 10px;
   min-width: 0;
 }
 
 .reclist__prio {
   flex-shrink: 0;
-  margin-top: 1px;
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.06em;
@@ -45,10 +42,13 @@
   flex: 1;
   min-width: 0;
   margin: 0;
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 700;
   color: var(--text-primary);
-  line-height: 1.45;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .reclist__detail {
@@ -65,9 +65,11 @@
 .reclist__dasar {
   margin: 0;
   padding-left: 0;
-  font-size: 12px;
+  font-size: 11.5px;
   color: var(--text-secondary);
-  line-height: 1.5;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .reclist__empty {

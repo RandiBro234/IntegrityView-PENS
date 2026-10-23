@@ -6,10 +6,9 @@ const PRIORITAS_CLASS = {
   'Pantau': 'prioritas--pantau'
 };
 
-/* Daftar rekomendasi. Baris 1 = label prioritas + judul, baris 2 = dasar data.
-   Judul dan dasar data selalu tampil sebagai kalimat utuh (tanpa pemotongan).
-   Varian `full` dipakai di modal "Lihat semua rekomendasi": tanpa tombol Detail. */
-export default function RecommendationList({ items, max = 3, onDetail, compact = false, full = false }) {
+/* Daftar rekomendasi: baris 1 = prioritas + judul (line-clamp 1) + Detail kanan,
+   baris 2 = dasar data (line-clamp 1). Jarak antar item 12px. */
+export default function RecommendationList({ items, max = 3, onDetail, compact = false }) {
   if (!items || !items.length) {
     return (
       <p className="reclist__empty">Tidak ada rekomendasi — seluruh indikator dalam batas wajar.</p>
@@ -19,15 +18,15 @@ export default function RecommendationList({ items, max = 3, onDetail, compact =
   const shown = items.slice(0, max);
 
   return (
-    <ul className={`reclist ${compact ? 'reclist--compact' : ''} ${full ? 'reclist--full' : ''}`}>
+    <ul className={`reclist ${compact ? 'reclist--compact' : ''}`}>
       {shown.map((r, i) => (
         <li key={i} className="reclist__item">
           <div className="reclist__row1">
             <span className={`reclist__prio ${PRIORITAS_CLASS[r.prioritas] || ''}`}>
               {r.prioritas}
             </span>
-            <p className="reclist__teks">{r.teks}</p>
-            {onDetail && !full && (
+            <p className="reclist__teks" title={r.teks}>{r.teks}</p>
+            {onDetail && (
               <button
                 type="button"
                 className="reclist__detail"
@@ -38,7 +37,7 @@ export default function RecommendationList({ items, max = 3, onDetail, compact =
               </button>
             )}
           </div>
-          <p className="reclist__dasar">Dasar data: {r.dasar}</p>
+          <p className="reclist__dasar" title={r.dasar}>{r.dasar}</p>
         </li>
       ))}
     </ul>

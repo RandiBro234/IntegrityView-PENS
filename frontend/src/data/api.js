@@ -1,8 +1,13 @@
 import { useEffect, useState } from 'react';
 import { INSTRUMEN_DATASET, SURVEI_INFO } from './mock';
 
-export const API_BASE =
-  (import.meta && import.meta.env && import.meta.env.VITE_API_BASE) || 'http://localhost:8000';
+/* Konfigurasi Supabase (isi di frontend/.env).
+   Frontend hanya memakai anon key untuk membaca data; penulisan dilakukan
+   oleh Edge Function dengan service_role. */
+const SUPABASE_URL =
+  (import.meta && import.meta.env && import.meta.env.VITE_SUPABASE_URL) || '';
+const SUPABASE_ANON_KEY =
+  (import.meta && import.meta.env && import.meta.env.VITE_SUPABASE_ANON_KEY) || '';
 
 /* Skala Likert yang dipakai instrumen: 1 = Sangat Tidak Setuju ... 4 = Sangat Setuju. */
 const SKALA_MAKS = 4;
@@ -80,7 +85,7 @@ export function parseJawaban(dataJawaban) {
   let kelompok = null;
 
   Object.entries(sumber).forEach(([pertanyaan, raw]) => {
-    const kunci = String(pertanyaan).trim().toLowerCase();
+    const kunci = String(pertanyaan).replace(/^\uFEFF/, '').trim().toLowerCase();
     const nilai = ambilNilai(raw);
 
     if (kunci === 'kelompok') {
@@ -251,11 +256,27 @@ export function buildDataset(rows) {
 /* ================= API call & hook ================= */
 
 export async function fetchSurvei() {
-  const res = await fetch(`${API_BASE}/api/survei`);
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+    throw new Error('VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY belum diisi');
+  }
+
+  const base = SUPABASE_URL.replace(/\/$/, '');
+  const kolom = 'select=nama_instrumen,email_responden,data_jawaban,created_at&order=created_at.desc';
+  const res = await fetch(`${base}/rest/v1/survey_responses?${kolom}`, {
+    headers: {
+      apikey: SUPABASE_ANON_KEY,
+      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+      Accept: 'application/json'
+    }
+  });
+
   if (!res.ok) {
     throw new Error(`Gagal memuat data survei (HTTP ${res.status})`);
   }
-  return res.json();
+
+  const rows = await res.json();
+  /* Samakan bentuk dengan yang dipakai buildDataset (timestamp). */
+  return (rows || []).map((row) => ({ ...row, timestamp: row.created_at }));
 }
 
 /* Hook: ambil data dari API, parsing, lalu kembalikan dataset siap pakai.
