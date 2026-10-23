@@ -1,23 +1,12 @@
 /* Layout satu layar: header auto, kartu auto, panel 1fr. */
 .idp {
   display: grid;
-  grid-template-rows: auto 44px auto minmax(0, 1fr);
+  grid-template-rows: auto auto minmax(0, 1fr);
   gap: 12px;
-  height: calc(100dvh - 160px);
+  height: calc(100dvh - 132px);
   min-height: 0;
 }
 .idp > * { min-height: 0; }
-.idp > .report-filters { margin-bottom: 0; }
-.idp__tabs { display: flex; border: 1px solid var(--border-soft); border-radius: 8px; padding: 2px; }
-.idp__tabs button { font-size: 10px; font-weight: 700; padding: 5px 7px; border-radius: 6px; }
-.idp__tabs button.is-active { background: var(--navy-900); color: var(--white); }
-.idp__tabs button:focus-visible { outline: 2px solid var(--orange-500); }
-.idp__change-list { flex: 1; min-height: 0; overflow-y: auto; }
-.idp__change-row { display: grid; grid-template-columns: minmax(120px, 2fr) minmax(60px, 1fr) 58px; gap: 8px; align-items: center; min-height: 27px; border-bottom: 1px solid var(--border-soft); font-size: 11px; }
-.idp__change-row > span:first-child { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-.idp__change-track { height: 10px; position: relative; background: var(--gray-50); }
-.idp__change-track::after { content: ''; position: absolute; top: 0; bottom: 0; left: 50%; border-left: 1px solid var(--navy-900); }
-.idp__change-track i { position: absolute; height: 100%; }
 
 /* === Header === */
 .idp__header {
@@ -79,22 +68,20 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: var(--gap-grid);
-  min-height: 88px;
+  max-height: 84px;
 }
 .idp__minicard {
   background: var(--white);
   border: 1px solid var(--border-soft);
   border-radius: 16px;
   box-shadow: var(--shadow-soft);
-  padding: 8px 18px;
+  padding: 12px 18px;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
   gap: 2px;
   min-height: 0;
   overflow: hidden;
-  text-align: center;
 }
 .idp__minicard-label {
   font-size: 10px;
@@ -105,7 +92,6 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  text-align: center;
 }
 .idp__minicard-value {
   font-family: var(--font-display);
@@ -116,11 +102,8 @@
   font-variant-numeric: tabular-nums;
   display: flex;
   align-items: baseline;
-  justify-content: center;
   gap: 8px;
-  text-align: center;
 }
-.idp__minicard .delta { line-height: 1; }
 .idp__minicard-note {
   font-family: var(--font-family);
   font-size: 10.5px;
@@ -213,30 +196,24 @@
   border-bottom: 1px solid var(--border-soft);
 }
 .idp__dist-row:last-child { border-bottom: 0; }
-/* Baris tidak melebar mengikuti tinggi panel; sisa ruang jadi jarak antar baris
-   sehingga daftar butir tetap lega. */
-.idp__dist-list:not(.idp__dist-list--scroll) .idp__dist-row { flex: 0 0 auto; }
 .idp__dist-row .idb { flex: 1; min-width: 0; }
 
-/* === Panel kanan 2 bagian: Rekomendasi (atas) + Kualitas Data (bawah),
-   tinggi proporsional, mengisi seluruh kolom tanpa ruang kosong besar. === */
+/* === Panel kanan 2 bagian: proporsi tetap 45/55, pemisah tak bergerak === */
 .idp__panel--right {
   display: grid;
-  grid-template-rows: minmax(0, 52fr) minmax(0, 48fr);
+  grid-template-rows: minmax(0, 45fr) minmax(0, 55fr);
   gap: 0;
   padding: 0;
 }
 .idp__half {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 12px 18px;
+  gap: 10px;
+  padding: 16px 20px;
   min-height: 0;
   min-width: 0;
   overflow: hidden;
 }
-/* Isi bagian (daftar rekomendasi / baris kualitas data) membagi sisa tinggi. */
-.idp__half--rek .reclist { flex: 1; justify-content: space-between; }
 .idp__half--bottom { border-top: 1px solid var(--border-soft); }
 
 .idp__half-head {
@@ -248,7 +225,6 @@
   position: relative;
   z-index: 2;
 }
-.idp__quality-extra { font-size: 12px; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
 .idp__more {
   font-size: 11.5px;
   font-weight: 700;
@@ -259,6 +235,16 @@
   flex-shrink: 0;
 }
 .idp__more:hover { background: rgba(245, 132, 60, 0.1); }
+
+.idp__kelompok-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 22px;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
 
 /* === Modal === */
 .idp__modal-overlay {
@@ -330,46 +316,6 @@
   to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
-/* === Modal pratinjau ekspor === */
-.idp__modal--report {
-  max-width: 900px;
-  max-height: 92dvh;
-  display: flex;
-  flex-direction: column;
-}
-.idp__modal-preview {
-  flex: 1;
-  min-height: 0;
-  overflow: auto;
-  background: #E9EDF4;
-  padding: 20px;
-}
-/* Skala pratinjau agar halaman A4 (794px) muat di lebar modal. */
-.idp__preview-scale {
-  width: 794px;
-  margin: 0 auto;
-  transform-origin: top center;
-}
-.idp__modal-foot {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  padding: 16px 24px;
-  border-top: 1px solid var(--border-soft);
-  background: var(--white);
-  flex-shrink: 0;
-}
-.idp__spinner {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.4);
-  border-top-color: #fff;
-  animation: idp-spin 0.7s linear infinite;
-}
-@keyframes idp-spin { to { transform: rotate(360deg); } }
-.btn:disabled { opacity: 0.6; cursor: not-allowed; }
-
 /* === Loading / empty === */
 .idp--loading .idp__cards { max-height: none; }
 .idp--loading .idp__cards .skeleton { height: 84px; }
@@ -384,18 +330,6 @@
 }
 
 /* === Responsif === */
-
-/* Viewport pendek (mis. 1280x650): layout satu layar dilepas. Kolom kanan
-   mengikuti tinggi isinya sehingga tidak terpotong; halaman mengalir dan
-   digulir, sedangkan daftar butir tetap punya batas tinggi sendiri. */
-@media (max-height: 700px) and (min-width: 901px) {
-  .idp { gap: 7px; }
-  .idp__minicard { padding: 5px 12px; }
-  .idp__panel { padding: 9px 12px; gap: 5px; }
-  .idp__panel--right { padding: 0; }
-  .idp__half { padding: 8px 12px; gap: 5px; }
-}
-
 @media (max-width: 900px) {
   .idp { height: auto; grid-template-rows: none; }
   .idp__header { flex-wrap: wrap; max-height: none; }
@@ -405,7 +339,4 @@
   .idp__half { overflow: visible; }
   .idp__dist-list { max-height: 420px; }
   .idp__dist-list--scroll { max-height: 420px; }
-  /* Pratinjau tetap 794px asli (agar hasil PDF identik), discroll horizontal. */
-  .idp__modal--report { max-width: 100%; }
-  .idp__modal-preview { overflow: auto; }
 }

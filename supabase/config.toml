@@ -1,0 +1,4 @@
+project_id = "integrityview"
+
+[functions.webhook-survei]
+verify_jwt = false

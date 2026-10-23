@@ -1,49 +1,45 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import ItemDistributionBar, { SkalaLegend } from '../components/instrumen/ItemDistributionBar';
+import GroupComparisonBar, { urutkanPerSelisih } from '../components/instrumen/GroupComparisonBar';
 import RecommendationList from '../components/instrumen/RecommendationList';
 import DataQualityBadges from '../components/instrumen/DataQualityBadges';
-import ReportTemplate from '../components/instrumen/ReportTemplate';
-import PeriodTrend from '../components/instrumen/PeriodTrend';
-import ReportFilters from '../components/dashboard/ReportFilters';
-import Delta from '../components/dashboard/Delta';
-import { useReportFilters } from '../data/useReportFilters';
-import { getReportData } from '../data/reportData';
-import { unduhLaporanPdf, namaFileLaporan } from '../lib/reportPdf';
 import {
-  SURVEI_INFO, formatAngka
+  SURVEI_INFO, getStatistikInstrumen, getRekomendasi,
+  getDuplikatTerdeteksi, formatAngka
 } from '../data/mock';
+import { useSurveiData } from '../data/api';
 import './InstrumentDetailPage.css';
 
-/* Tinggi baris daftar butir: nyaman dibaca, jarak antar baris cukup.
-   Scroll internal hanya muncul bila jumlah butir melebihi tinggi panel. */
-const ROW_MIN = 38;
-const ROW_MAX = 56;
+const ROW_MIN = 32;
+const ROW_MAX = 48;
 
-/* Panel kanan: Rekomendasi (atas) + Kualitas Data (bawah), tinggi penuh. */
+/* Tinggi satu blok Perbandingan Kelompok (px):
+   judul ~18 + gap 8 + 2 baris × 28 + gap baris 6 + jarak bawah blok 22. */
+const BLOK_TINGGI = 18 + 8 + 28 + 6 + 28 + 22;
 
 export default function InstrumentDetailPage({ slug, onBack }) {
-  const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState(null);
-  const [ekspor, setEkspor] = useState(false);
-  const [mengunduh, setMengunduh] = useState(false);
-  const [tab, setTab] = useState('distribusi');
-  const { filter, setFilter } = useReportFilters();
-  const reportRef = useRef(null);
+  const { dataset, loading } = useSurveiData();
 
   const distRef = useRef(null);
   const [distAvail, setDistAvail] = useState(0);
 
-  const info = useMemo(() => SURVEI_INFO.find((s) => s.key === slug), [slug]);
-  const laporan = useMemo(() => getReportData(filter), [filter]);
-  const hasil = laporan.instrumen.find((s) => s.info.key === slug);
-  const st = hasil?.aktif;
-  const rekomendasi = hasil?.rekomendasi;
-  const duplikat = st?.duplikat;
+  const kelompokRef = useRef(null);
+  const [kelompokAvail, setKelompokAvail] = useState(0);
 
-  useEffect(() => {
-    const t = window.setTimeout(() => setLoading(false), 350);
-    return () => window.clearTimeout(t);
-  }, [slug]);
+  const info = useMemo(() => SURVEI_INFO.find((s) => s.key === slug), [slug]);
+  const st = useMemo(
+    () => (dataset ? getStatistikInstrumen(slug, dataset) : null),
+    [slug, dataset]
+  );
+  const rekomendasi = useMemo(
+    () => (dataset ? getRekomendasi(slug, dataset) : []),
+    [slug, dataset]
+  );
+  const duplikat = useMemo(
+    () => (dataset ? getDuplikatTerdeteksi(slug, dataset) : 0),
+    [slug, dataset]
+  );
 
   /* Ukur tinggi area daftar distribusi. */
   useEffect(() => {
@@ -54,42 +50,81 @@ export default function InstrumentDetailPage({ slug, onBack }) {
     });
     ro.observe(el);
     return () => ro.disconnect();
-  }, [loading, tab]);
+  }, [loading]);
 
-  const sebaranButir = hasil?.sebaranButir || [];
+  /* Ukur tinggi area daftar kelompok, hitung ulang otomatis saat resize. */
+  useEffect(() => {
+    if (!kelompokRef.current) return;
+    const el = kelompokRef.current;
+    const ro = new ResizeObserver((entries) => {
+      setKelompokAvail(entries[0].contentRect.height);
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [loading]);
+
+  const sebaranButir = useMemo(() => {
+    if (!st) return [];
+    return st.butir
+      .map((b) => {
+        const n = b.distribusi[0] + b.distribusi[1] + b.distribusi[2] + b.distribusi[3];
+        const persen = n ? b.distribusi.map((v) => (v / n) * 100) : [0, 0, 0, 0];
+        return {
+          nama: b.nama,
+          sumber: st.sumber,
+          n,
+          distribusiAbsolut: b.distribusi,
+          distribusiPersen: persen.map((v) => Number(v.toFixed(1))),
+          persenSetuju: Number((persen[2] + persen[3]).toFixed(1))
+        };
+      })
+      .sort((a, b) => a.persenSetuju - b.persenSetuju);
+  }, [st]);
 
   const jumlahButir = sebaranButir.length;
 
-  const rowHeight = (() => {
+  const rowHeight = useMemo(() => {
     if (!jumlahButir || !distAvail) return ROW_MAX;
     const ideal = Math.floor(distAvail / jumlahButir);
     return Math.max(ROW_MIN, Math.min(ROW_MAX, ideal));
-  })();
+  }, [jumlahButir, distAvail]);
 
   const perluScroll = jumlahButir * rowHeight > distAvail + 1 && jumlahButir > 0;
 
-  /* Maks 3 rekomendasi langsung; tombol "Lihat semua" bila ada lebih. */
-  const rekomendasiTampil = rekomendasi?.slice(0, 3) || [];
+  const kelompokUrut = useMemo(() => (st ? urutkanPerSelisih(st.butir) : []), [st]);
 
-  const handleEkspor = () => setEkspor(true);
+  /* Jumlah blok kelompok yang muat utuh = floor(tinggi tersedia / tinggi blok).
+     Minimal 1 agar panel tidak pernah kosong, maksimal 3. */
+  const jumlahKelompokMuat = useMemo(() => {
+    if (!kelompokAvail) return 2;
+    const muat = Math.floor((kelompokAvail + 22) / BLOK_TINGGI);
+    return Math.max(1, Math.min(3, muat));
+  }, [kelompokAvail]);
 
-  const handleUnduh = async () => {
-    if (!reportRef.current || mengunduh) return;
-    setMengunduh(true);
-    try {
-      const nama = namaFileLaporan(info?.nama || slug, laporan.periode.label);
-      await unduhLaporanPdf(reportRef.current, nama);
-      setEkspor(false);
-    } finally {
-      setMengunduh(false);
-    }
+  const maxRekomendasi = rekomendasi.length > 3 ? 2 : 3;
+  const rekomendasiTampil = rekomendasi.slice(0, maxRekomendasi);
+
+  const handleEkspor = () => {
+    if (!st) return;
+    const baris = [
+      ['Butir', 'STS', 'TS', 'S', 'SS', 'Rata-rata', 'Dosen', 'Tendik'],
+      ...st.butir.map((b) => [
+        b.nama,
+        ...b.distribusi,
+        b.rata.toFixed(2),
+        b.kelompok.dosen.toFixed(2),
+        b.kelompok.tendik.toFixed(2)
+      ])
+    ];
+    const csv = baris.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `integrityview-${slug}-distribusi.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
   };
-
-  const [tanggalCetak] = useState(() => {
-    const d = new Date();
-    const bulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-    return `${d.getDate()} ${bulan[d.getMonth()]} ${d.getFullYear()}`;
-  });
 
   if (loading) {
     return (
@@ -106,8 +141,7 @@ export default function InstrumentDetailPage({ slug, onBack }) {
   if (!info || !st) {
     return (
       <div className="idp idp--empty">
-        <ReportFilters filter={filter} onChange={setFilter} />
-        <p>Belum ada data untuk kombinasi filter ini (n kurang dari 5).</p>
+        <p>Butir tidak tersedia untuk instrumen ini.</p>
         <button type="button" className="btn btn-outline-navy" onClick={onBack}>Kembali ke Ringkasan</button>
       </div>
     );
@@ -124,25 +158,25 @@ export default function InstrumentDetailPage({ slug, onBack }) {
         </nav>
 
         <div className="idp__header-right">
+          <span className={`idp__badge ${st.sumber === 'riil' ? 'idp__badge--riil' : ''}`}>
+            {st.sumber === 'riil' ? 'Data riil' : 'Data simulasi'}
+          </span>
+          <span className="chip">Periode Mar–Agu 2026</span>
           <button type="button" className="btn btn-primary idp__ekspor" onClick={handleEkspor}>
             Ekspor
           </button>
         </div>
       </header>
-      <ReportFilters filter={filter} onChange={setFilter} />
 
       {/* === 4 kartu === */}
       <div className="idp__cards">
-        <MiniCard label="Jumlah Responden (n)" value={st.jumlahResponden.toLocaleString('id-ID')} delta={hasil.pembanding && st.jumlahResponden - hasil.pembanding.jumlahResponden} unit="responden" />
-        <MiniCard label="Rata-rata Skor" value={formatAngka(st.skor) + '%'} delta={hasil.delta} />
-        <MiniCard label="Setuju + Sangat Setuju" value={formatAngka(st.persenSetuju) + '%'} delta={hasil.pembanding && st.persenSetuju - hasil.pembanding.persenSetuju} />
+        <MiniCard label="Jumlah Responden (n)" value={st.jumlahResponden.toLocaleString('id-ID')} />
+        <MiniCard label="Rata-rata Skor" value={formatAngka(st.skor) + '%'} />
+        <MiniCard label="Setuju + Sangat Setuju" value={formatAngka(st.persenSetuju) + '%'} />
         <MiniCard
           label="Cronbach's Alpha"
           value={formatAngka(st.alpha, 2)}
           note={st.alpha >= 0.7 ? 'Reliabel' : null}
-          delta={hasil.pembanding && st.alpha - hasil.pembanding.alpha}
-          unit="nilai"
-          desimal={2}
         />
       </div>
 
@@ -150,76 +184,81 @@ export default function InstrumentDetailPage({ slug, onBack }) {
       <div className="idp__panels">
         <section className="idp__panel idp__panel--left" aria-labelledby="dist-butir-title">
           <div className="idp__panel-head">
-             <h2 className="idp__panel-title" id="dist-butir-title">{tab === 'distribusi' ? 'Distribusi Jawaban per Butir' : 'Perbandingan antar tahun'}</h2>
-            <div className="idp__tabs" role="group" aria-label="Tampilan instrumen">
-              <button type="button" aria-pressed={tab === 'distribusi'} className={tab === 'distribusi' ? 'is-active' : ''} onClick={() => setTab('distribusi')}>Distribusi</button>
-               <button type="button" aria-pressed={tab === 'perubahan'} className={tab === 'perubahan' ? 'is-active' : ''} onClick={() => setTab('perubahan')}>Perbandingan antar tahun</button>
-            </div>
+            <h2 className="idp__panel-title" id="dist-butir-title">
+              Distribusi Jawaban per Butir
+              <span className="idp__panel-count">{jumlahButir} butir</span>
+            </h2>
+            <SkalaLegend />
           </div>
-          {tab === 'distribusi' ? <>
-          <SkalaLegend />
+
           <div
             ref={distRef}
             className={`idp__dist-list ${perluScroll ? 'idp__dist-list--scroll' : ''}`}
           >
             {sebaranButir.map((item) => (
               <div key={item.nama} className="idp__dist-row" style={{ height: rowHeight, minHeight: rowHeight }}>
-                <ItemDistributionBar item={item} height={rowHeight} compact={rowHeight < 44} />
+                <ItemDistributionBar item={item} height={rowHeight} compact={rowHeight < 40} />
               </div>
             ))}
           </div>
 
           <p className="idp__panel-note">
+            {perluScroll
+              ? 'Butir banyak — gulir untuk melihat seluruhnya. '
+              : ''}
             Diurutkan dari persentase Setuju + Sangat Setuju terendah.
           </p>
-          </> : <>
-            <PeriodTrend tren={hasil.tren} selected={filter.periode} />
-            {laporan.periodePembanding ? <>
-            <p className="idp__panel-note">Selisih indeks butir vs {laporan.periodePembanding.label} (poin).</p>
-            <div className="idp__change-list">
-              {hasil.perubahanButir.map((b) => <div key={b.nama} className="idp__change-row">
-                <span title={b.nama}>{b.nama}</span>
-                <span className="idp__change-track"><i style={{ left: b.delta == null ? '50%' : b.delta < 0 ? `${50 - Math.min(48, -b.delta * 2)}%` : '50%', width: b.delta == null ? 0 : `${Math.min(48, Math.abs(b.delta) * 2)}%`, background: b.delta < 0 ? 'var(--orange-500)' : 'var(--navy-500)' }} /></span>
-                <Delta value={b.delta} compact />
-              </div>)}
-            </div>
-            </> : <p className="idp__panel-note">{laporan.periode.label} belum memiliki tahun pembanding.</p>}
-          </>}
         </section>
 
         <section className="idp__panel idp__panel--right">
-          <div className="idp__half idp__half--top idp__half--rek">
+          <div className="idp__half">
             <div className="idp__half-head">
-              <h2 className="idp__panel-title">Rekomendasi</h2>
-              {rekomendasi.length > 3 && (
+              <h2 className="idp__panel-title">Perbandingan Kelompok</h2>
+              {kelompokUrut.length > jumlahKelompokMuat && (
+                <button type="button" className="idp__more" onClick={() => setModal('kelompok')}>
+                  Lihat semua butir
+                </button>
+              )}
+            </div>
+            <div ref={kelompokRef} className="idp__kelompok-list">
+              {kelompokUrut.slice(0, jumlahKelompokMuat).map((b) => (
+                <GroupComparisonBar
+                  key={b.nama}
+                  butir={b}
+                  nDosen={st.responden.dosen}
+                  nTendik={st.responden.tendik}
+                />
+              ))}
+            </div>
+          </div>
+
+          <div className="idp__half idp__half--bottom">
+            <div className="idp__half-head">
+              <h2 className="idp__panel-title">Rekomendasi & Kualitas Data</h2>
+              {rekomendasi.length > maxRekomendasi && (
                 <button type="button" className="idp__more" onClick={() => setModal('rekomendasi-all')}>
                   Lihat semua rekomendasi
                 </button>
               )}
             </div>
+
             <RecommendationList
               items={rekomendasiTampil}
-              max={3}
+              max={maxRekomendasi}
+              compact
               onDetail={(r) => setModal({ rekomendasi: r })}
             />
-          </div>
 
-          <div className="idp__half idp__half--bottom">
-            <div className="idp__half-head">
-              <h2 className="idp__panel-title">Kualitas Data</h2>
-              <span className="idp__quality-extra">Median {formatAngka(st.median)}% · Simpangan baku {formatAngka(st.simpanganBaku, 2)}</span>
-            </div>
             <DataQualityBadges
               persenSeragam={st.persenSeragam}
               duplikat={duplikat}
               n={st.jumlahResponden}
-              pembanding={hasil.pembanding?.jumlahResponden ?? null}
             />
           </div>
         </section>
       </div>
 
-      {/* === Modal rekomendasi === */}
+      {/* === Modal === */}
       {modal && (
         <div className="idp__modal-overlay" onClick={() => setModal(null)} role="presentation">
           <div
@@ -230,6 +269,7 @@ export default function InstrumentDetailPage({ slug, onBack }) {
           >
             <div className="idp__modal-head">
               <h3>
+                {modal === 'kelompok' && 'Perbandingan Kelompok — Semua Butir'}
                 {modal === 'rekomendasi-all' && 'Semua Rekomendasi'}
                 {modal.rekomendasi && 'Detail Rekomendasi'}
               </h3>
@@ -237,11 +277,20 @@ export default function InstrumentDetailPage({ slug, onBack }) {
             </div>
 
             <div className="idp__modal-body">
+              {modal === 'kelompok' && kelompokUrut.map((b) => (
+                <GroupComparisonBar
+                  key={b.nama}
+                  butir={b}
+                  nDosen={st.responden.dosen}
+                  nTendik={st.responden.tendik}
+                />
+              ))}
+
               {modal === 'rekomendasi-all' && (
                 <RecommendationList
                   items={rekomendasi}
                   max={rekomendasi.length}
-                  full
+                  onDetail={(r) => setModal({ rekomendasi: r })}
                 />
               )}
 
@@ -258,57 +307,11 @@ export default function InstrumentDetailPage({ slug, onBack }) {
           </div>
         </div>
       )}
-
-      {/* === Modal pratinjau ekspor PDF === */}
-      {ekspor && (
-        <div className="idp__modal-overlay" onClick={() => !mengunduh && setEkspor(false)} role="presentation">
-          <div
-            className="idp__modal idp__modal--report"
-            role="dialog"
-            aria-modal="true"
-            aria-label={`Pratinjau Laporan ${info?.namaPanjang}`}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="idp__modal-head">
-              <h3>Pratinjau Laporan — {info?.namaPanjang}</h3>
-              <button type="button" className="idp__modal-close" onClick={() => setEkspor(false)} aria-label="Tutup" disabled={mengunduh}>×</button>
-            </div>
-
-            <div className="idp__modal-preview">
-              <div className="idp__preview-scale" ref={reportRef}>
-                <ReportTemplate
-                  info={info}
-                  st={st}
-                  rekomendasi={rekomendasi}
-                  periode={laporan.periode.keterangan}
-                  tanggalCetak={tanggalCetak}
-                  laporan={laporan}
-                  hasil={hasil}
-                />
-              </div>
-            </div>
-
-            <div className="idp__modal-foot">
-              <button type="button" className="btn btn-outline-navy" onClick={() => setEkspor(false)} disabled={mengunduh}>
-                Batal
-              </button>
-              <button type="button" className="btn btn-primary" onClick={handleUnduh} disabled={mengunduh}>
-                {mengunduh ? (
-                  <>
-                    <span className="idp__spinner" aria-hidden="true" />
-                    Menyiapkan…
-                  </>
-                ) : 'Unduh PDF'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
 
-function MiniCard({ label, value, note, delta, unit, desimal }) {
+function MiniCard({ label, value, note }) {
   return (
     <article className="idp__minicard">
       <span className="idp__minicard-label">{label}</span>
@@ -316,7 +319,6 @@ function MiniCard({ label, value, note, delta, unit, desimal }) {
         {value}
         {note && <span className="idp__minicard-note">{note}</span>}
       </span>
-      <Delta value={delta} unit={unit} desimal={desimal} compact />
     </article>
   );
 }

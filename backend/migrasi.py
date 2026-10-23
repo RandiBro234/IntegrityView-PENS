@@ -40,7 +40,7 @@ def parse_timestamp(nilai):
 
 
 def migrasi(file_csv, instrumen, email_col, timestamp_col, hapus_dulu, dry_run):
-    df = pd.read_csv(file_csv)
+    df = pd.read_csv(file_csv, encoding="utf-8-sig")
     df.columns = [str(c).strip() for c in df.columns]
 
     if timestamp_col in df.columns:
@@ -59,6 +59,10 @@ def migrasi(file_csv, instrumen, email_col, timestamp_col, hapus_dulu, dry_run):
         return
 
     conn = get_db_connection()
+    dsn = conn.get_dsn_parameters()
+    print(
+        f"Target DB: {dsn.get('user')}@{dsn.get('host')}:{dsn.get('port')}/{dsn.get('dbname')}"
+    )
     try:
         cursor = conn.cursor()
 
@@ -102,6 +106,7 @@ def main():
         )
     except Exception as e:
         print(f"Error saat migrasi: {e}")
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":

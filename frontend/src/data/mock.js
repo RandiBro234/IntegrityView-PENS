@@ -1,7 +1,7 @@
 export const SURVEI_INFO = [
   { key: 'spak', nama: 'SPAK', namaPanjang: 'Survei Persepsi Anti Korupsi', kategori: 'Integritas & Korupsi', kelompok: 'Layanan', sumber: 'simulasi' },
   { key: 'spkp', nama: 'SPKP', namaPanjang: 'Survei Persepsi Kualitas Pelayanan', kategori: 'Pelayanan Publik', kelompok: 'Layanan', sumber: 'simulasi' },
-  { key: 'pengaduan', nama: 'Pengaduan', namaPanjang: 'Survei Pengaduan Masyarakat', kategori: 'Pelayanan Publik', kelompok: 'Layanan', sumber: 'simulasi' },
+  { key: 'pengaduan', nama: 'Pengaduan', namaPanjang: 'Pengaduan Masyarakat', kategori: 'Pelayanan Publik', kelompok: 'Layanan', sumber: 'simulasi' },
   { key: 'spip', nama: 'SPIP', namaPanjang: 'Survei Penilaian Internal SPIP', kategori: 'Integritas & Korupsi', kelompok: 'Internal', sumber: 'simulasi' },
   { key: 'gratifikasi', nama: 'Gratifikasi', namaPanjang: 'Survei Pemahaman Gratifikasi', kategori: 'Integritas & Korupsi', kelompok: 'Internal', sumber: 'simulasi' },
   { key: 'benturan', nama: 'Benturan', namaPanjang: 'Survei Benturan Kepentingan', kategori: 'Integritas & Korupsi', kelompok: 'Internal', sumber: 'simulasi' },
@@ -100,7 +100,14 @@ SURVEI_INFO.forEach((info) => {
   if (!def) { INSTRUMEN_DATASET[info.key] = null; return; }
   const butir = def.butir.map((b) => {
     const nama = b[0], rata = b[1];
-    return { nama, rata, distribusi: sebarDistribusi(def.n, rata) };
+    const distribusi = sebarDistribusi(def.n, rata);
+    const offset = ((nama.length % 5) - 2) / 20;
+    const rataDosen = Math.max(1, Math.min(4, rata + offset));
+    const rataTendik = Math.max(1, Math.min(4, rata - offset));
+    return {
+      nama, rata, distribusi,
+      kelompok: { dosen: Number(rataDosen.toFixed(2)), tendik: Number(rataTendik.toFixed(2)) }
+    };
   });
   INSTRUMEN_DATASET[info.key] = {
     key: info.key,
@@ -183,17 +190,32 @@ function persenSeragam(distribusiButir) {
   return total * 100;
 }
 
+function ujiT(dosen, tendik, nDosen, nTendik) {
+  if (nDosen < 5 || nTendik < 5) return 1;
+  const sdD = 0.6, sdT = 0.6;
+  const se = Math.sqrt(sdD * sdD / nDosen + sdT * sdT / nTendik);
+  if (se === 0) return 1;
+  const t = Math.abs(dosen - tendik) / se;
+  const p = Math.exp(-0.717 * t - 0.416 * t * t);
+  return Math.max(0, Math.min(1, p));
+}
+
+export function ujiTButir(butir, nDosen, nTendik) {
+  return ujiT(butir.kelompok.dosen, butir.kelompok.tendik, nDosen, nTendik);
+}
+
 /* Estimasi duplikat terdeteksi: jawaban persis sama antar responden (simulasi deterministik). */
-export function getDuplikatTerdeteksi(key) {
-  const ds = INSTRUMEN_DATASET[key];
+export function getDuplikatTerdeteksi(key, dataset = INSTRUMEN_DATASET) {
+  const ds = dataset[key];
   if (!ds) return 0;
+  if (typeof ds.duplikat === 'number') return ds.duplikat;
   const seed = key.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
   return seed % 4;
 }
 
 /* Ringkasan statistik satu instrumen. */
-export function getStatistikInstrumen(key) {
-  const ds = INSTRUMEN_DATASET[key];
+export function getStatistikInstrumen(key, dataset = INSTRUMEN_DATASET) {
+  const ds = dataset[key];
   if (!ds) return null;
   const distribusi = ds.butir.map((b) => b.distribusi);
   const skorButir = ds.butir.map((b) => indeksDariDistribusi(b.distribusi));
@@ -228,8 +250,8 @@ export function getStatistikInstrumen(key) {
 }
 
 /* Rekomendasi otomatis, dibangkitkan dari aturan. */
-export function getRekomendasi(key) {
-  const st = getStatistikInstrumen(key);
+export function getRekomendasi(key, dataset = INSTRUMEN_DATASET) {
+  const st = getStatistikInstrumen(key, dataset);
   if (!st) return [];
   const rec = [];
   const butir = st.butir;
@@ -255,6 +277,21 @@ export function getRekomendasi(key) {
       dasar: formatAngka(negatifNilai, 1) + '% menjawab 1-2'
     });
   }
+
+  butir.forEach((b) => {
+    const selisih = Math.abs(b.kelompok.dosen - b.kelompok.tendik);
+    const nD = st.responden.dosen, nT = st.responden.tendik;
+    if (nD >= 5 && nT >= 5 && selisih >= 0.2) {
+      const p = ujiT(b.kelompok.dosen, b.kelompok.tendik, nD, nT);
+      if (p < 0.05) {
+        rec.push({
+          prioritas: 'Sedang',
+          teks: 'Tinjau perbedaan persepsi antar kelompok pada ' + b.nama,
+          dasar: 'selisih ' + formatAngka(selisih, 2) + ' poin, p < 0,05'
+        });
+      }
+    }
+  });
 
   if (st.persenSeragam > 50) {
     rec.push({
@@ -283,57 +320,56 @@ export function getRekomendasi(key) {
 
   const urutan = { 'Tinggi': 0, 'Sedang': 1, 'Pantau': 2 };
   rec.sort((a, b) => urutan[a.prioritas] - urutan[b.prioritas]);
-  return rec;
+  return rec.slice(0, 4);
 }
 
-/* Distribusi agregat instrumen survei (persen 0-100 per skala 1-4) untuk stacked bar. */
-export function getSebaranPerInstrumen() {
-  return getInstrumenBerdata()
-    .map((info) => {
-      const st = getStatistikInstrumen(info.key);
-      if (!st) return null;
-      const d = st.distribusiTotal;
-      const n = d[0] + d[1] + d[2] + d[3];
-      const persen = n ? d.map((v) => (v / n) * 100) : [0, 0, 0, 0];
-      return {
-        key: info.key,
-        nama: info.nama,
-        namaPanjang: info.namaPanjang,
-        sumber: info.sumber,
-        n,
-        distribusiAbsolut: d,
-        distribusiPersen: persen.map((v) => Number(v.toFixed(1))),
-        persenSetuju: Number((persen[2] + persen[3]).toFixed(1))
-      };
-    }).filter(Boolean)
+/* Distribusi agregat per instrumen (persen 0-100 per skala 1-4) untuk stacked bar. */
+export function getSebaranPerInstrumen(dataset = INSTRUMEN_DATASET) {
+  return SURVEI_INFO.map((info) => {
+    const st = getStatistikInstrumen(info.key, dataset);
+    if (!st) return null;
+    const d = st.distribusiTotal;
+    const n = d[0] + d[1] + d[2] + d[3];
+    const persen = n ? d.map((v) => (v / n) * 100) : [0, 0, 0, 0];
+    return {
+      key: info.key,
+      nama: info.nama,
+      namaPanjang: info.namaPanjang,
+      sumber: st.sumber,
+      n,
+      distribusiAbsolut: d,
+      distribusiPersen: persen.map((v) => Number(v.toFixed(1))),
+      persenSetuju: Number((persen[2] + persen[3]).toFixed(1))
+    };
+  }).filter(Boolean)
     .sort((a, b) => a.persenSetuju - b.persenSetuju);
 }
 
-/* Ringkasan tiga card dari seluruh instrumen survei berdata. */
-export function getRingkasanDashboard() {
-  const berdataInfo = getInstrumenBerdata();
-  const berdata = berdataInfo.map((s) => s.key);
+/* Ringkasan tiga card. */
+export function getRingkasanDashboard(dataset = INSTRUMEN_DATASET) {
+  const semua = SURVEI_INFO.map((s) => s.key);
+  const berdata = semua.filter((k) => !!dataset[k]);
 
-  const layanan = berdataInfo.filter((s) => s.kelompok === 'Layanan').map((s) => s.nama);
-  const internal = berdataInfo.filter((s) => s.kelompok === 'Internal').map((s) => s.nama);
+  const layanan = SURVEI_INFO.filter((s) => s.kelompok === 'Layanan').map((s) => s.nama);
+  const internal = SURVEI_INFO.filter((s) => s.kelompok === 'Internal').map((s) => s.nama);
 
-  const riil = berdata.filter((k) => INSTRUMEN_DATASET[k].sumber === 'riil').length;
+  const riil = berdata.filter((k) => dataset[k].sumber === 'riil').length;
   const simulasi = berdata.length - riil;
 
   let nDosen = 0, nTendik = 0;
   berdata.forEach((k) => {
-    nDosen += INSTRUMEN_DATASET[k].responden.dosen;
-    nTendik += INSTRUMEN_DATASET[k].responden.tendik;
+    nDosen += dataset[k].responden.dosen;
+    nTendik += dataset[k].responden.tendik;
   });
 
-  const skorArr = berdata.map((k) => getStatistikInstrumen(k).skor);
+  const skorArr = berdata.map((k) => getStatistikInstrumen(k, dataset).skor);
   const rata = skorArr.length ? skorArr.reduce((a, b) => a + b, 0) / skorArr.length : 0;
   const ci = interval95(skorArr, skorArr.length);
 
-  const delta = 0.3; /* nilai contoh helper lama; laporan tahunan memakai selector terpisah */
+  const delta = 0.3; /* perubahan vs periode sebelumnya, data simulasi */
 
   return {
-    totalInstrumen: berdata.length,
+    totalInstrumen: SURVEI_INFO.length,
     kelompok: { layanan, internal },
     riil, simulasi,
     responden: { total: nDosen + nTendik, dosen: nDosen, tendik: nTendik },
@@ -345,10 +381,36 @@ export function getRingkasanDashboard() {
 
 /* ================= Data lain (landing, dll.) ================= */
 
-/* Satu sumber instrumen Likert berdata; tiket pengaduan disimpan terpisah. */
-export function getInstrumenBerdata() {
-  return SURVEI_INFO.filter((s) => !!INSTRUMEN_DATASET[s.key]);
-}
+export const RINGKASAN = {
+  rataSkor: 81.2,
+  benchmark: 80,
+  totalResponden: 640,
+  instrumenAktif: 10,
+  laporanMasuk: 411,
+  partisipasiBulanIni: 128
+};
+
+export const TREN_MINGGUAN = {
+  label: ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'],
+  tanggal: ['23 Sep', '24 Sep', '25 Sep', '26 Sep', '27 Sep', '28 Sep', '29 Sep'],
+  skor: [79.8, 80.2, 80.5, 80.4, 80.9, 81.1, 81.2],
+  benchmark: 80
+};
+
+export const CAPAIAN_BULANAN = [
+  { bulan: 'Mar', skor: 78.9 },
+  { bulan: 'Apr', skor: 79.4 },
+  { bulan: 'Mei', skor: 80.1 },
+  { bulan: 'Jun', skor: 80.5 },
+  { bulan: 'Jul', skor: 80.9 },
+  { bulan: 'Agu', skor: 81.2 }
+];
+
+export const KATEGORI_SKOR = [
+  { kategori: 'Pelayanan Publik', skor: 88.1, tren: 'naik' },
+  { kategori: 'Integritas & Korupsi', skor: 79.2, tren: 'naik' },
+  { kategori: 'Budaya & 5R', skor: 76.8, tren: 'datar' }
+];
 
 export const KONTAK = {
   unit: 'Satuan Pengawasan Internal (SPI) PENS',
@@ -365,8 +427,37 @@ export function isPelaporan(key) {
 }
 
 export function labelPartisipan(s) {
-  return `${s.responden} responden`;
+  return isPelaporan(s.key)
+    ? `${s.responden} laporan`
+    : `${s.responden} responden`;
 }
+
+/* Versi ringkas SURVEI_INFO untuk landing (dengan skor + responden tampilan). */
+export const SURVEI_LANDING = SURVEI_INFO.map((info) => {
+  const st = getStatistikInstrumen(info.key);
+  return {
+    key: info.key,
+    nama: info.nama,
+    namaPanjang: info.namaPanjang,
+    kategori: info.kategori,
+    sumber: info.sumber,
+    skor: st ? st.skor : null,
+    responden: st ? st.jumlahResponden : 0
+  };
+});
+
+/* Rentang skor: instrumen tertinggi & terendah, dihitung otomatis dari 10 instrumen. */
+export const RENTANG_SKOR = (() => {
+  const berdata = SURVEI_LANDING.filter((s) => s.skor !== null);
+  if (!berdata.length) return null;
+  const tertinggi = berdata.reduce((a, b) => (b.skor > a.skor ? b : a));
+  const terendah  = berdata.reduce((a, b) => (b.skor < a.skor ? b : a));
+  return {
+    tertinggi,
+    terendah,
+    selisih: Number((tertinggi.skor - terendah.skor).toFixed(1))
+  };
+})();
 
 export function getUser() {
   const s = getSession();
@@ -408,7 +499,7 @@ export function getProfilDetail() {
     bergabung: s?.sejak || null,
     statistik: {
       surveiDiisi: jumlahSurveiDiisi,
-      totalSurvei: getInstrumenBerdata().length,
+      totalSurvei: SURVEI_INFO.length,
       laporanDibuat: laporanUser.length,
       akunAktif: role ? 1 : 0
     },
@@ -422,7 +513,7 @@ export function getProfilDetail() {
 export const SURVEI_DESKRIPSI = {
   spak: 'Mengukur persepsi sivitas terhadap upaya pencegahan korupsi di lingkungan kampus.',
   spkp: 'Menilai mutu layanan administrasi dan akademik yang diterima sivitas dan masyarakat.',
-  pengaduan: 'Menilai kemudahan kanal, respons, penyelesaian, dan transparansi tindak lanjut pengaduan.',
+  pengaduan: 'Menilai kanal pengaduan masalah fasilitas, administrasi, dan kualitas layanan.',
   spip: 'Menilai kematangan sistem pengendalian internal pemerintah di lima unsur SPIP.',
   gratifikasi: 'Menguji pemahaman sivitas tentang batasan dan pelaporan gratifikasi.',
   benturan: 'Mengukur kesadaran sivitas terhadap potensi benturan kepentingan dalam tugas.',
@@ -445,9 +536,9 @@ export const SURVEI_LANGKAH = {
   '5r': ['Ringkas & Rapi', 'Resik & Rawat', 'Rajin & Konsistensi']
 };
 
-/* Daftar instrumen Likert untuk pusat survei. */
+/* Daftar lengkap untuk pusat survei. */
 export function getDaftarSurvei() {
-  return getInstrumenBerdata().map((info) => {
+  return SURVEI_INFO.map((info) => {
     const st = getStatistikInstrumen(info.key);
     return {
       key: info.key,
@@ -473,7 +564,7 @@ export function getButirSurvei(key) {
     nama: info?.nama || key,
     namaPanjang: info?.namaPanjang || key,
     langkah: SURVEI_LANGKAH[key] || ['Bagian 1', 'Bagian 2', 'Bagian 3'],
-    butir: ds.butir.slice(0, key === 'spak' ? 6 : undefined).map((b) => b.nama)
+    butir: ds.butir.map((b) => b.nama)
   };
 }
 
@@ -769,10 +860,10 @@ export function formatTanggalWaktu(iso) {
 }
 
 /* Rekap instrumen berdata untuk halaman laporan admin. */
-export function getSemuaSurveiUntukLaporan() {
-  return getInstrumenBerdata()
+export function getSemuaSurveiUntukLaporan(dataset = INSTRUMEN_DATASET) {
+  return SURVEI_INFO
     .map((info) => {
-      const st = getStatistikInstrumen(info.key);
+      const st = getStatistikInstrumen(info.key, dataset);
       if (!st) return null;
       const benchmark = info.sumber === 'riil' ? 80 : 80;
       return {
@@ -780,7 +871,7 @@ export function getSemuaSurveiUntukLaporan() {
         nama: info.nama,
         namaPanjang: info.namaPanjang,
         kategori: info.kategori,
-        sumber: info.sumber,
+        sumber: st.sumber,
         skor: st.skor,
         benchmark,
         status: st.skor >= benchmark ? 'Di atas Target' : 'Di bawah Target',

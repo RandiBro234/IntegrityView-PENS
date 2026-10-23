@@ -1,36 +1,26 @@
-/* Baris label + nilai, dibagi merata setinggi panel. Tanpa garis pemisah
-   dan tanpa catatan kecil; satu-satunya penanda status adalah warna nilai. */
 .dqb {
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 3px;
-  flex: 1;
-  min-height: 0;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-soft);
+  flex-shrink: 0;
 }
 
-.dqb__row {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 6px 12px;
-  min-height: 0;
-}
-
-.dqb__label {
+.dqb__item {
   font-size: 11px;
-  color: var(--text-secondary);
-  flex: 1 1 0;
-  min-width: 0;
-}
-
-.dqb__value {
-  font-family: var(--font-display);
-  font-size: 13px;
-  font-weight: 800;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.01em;
+  font-weight: 700;
+  padding: 5px 10px;
+  border-radius: var(--radius-pill);
+  line-height: 1.2;
   white-space: nowrap;
 }
-.dqb__row--ok .dqb__value { color: var(--text-primary); }
-.dqb__row--warn .dqb__value { color: #c25e1e; }
+.dqb__item--ok {
+  background: rgba(47, 184, 166, 0.1);
+  color: var(--teal-500);
+}
+.dqb__item--warn {
+  background: rgba(245, 132, 60, 0.14);
+  color: #c25e1e;
+}

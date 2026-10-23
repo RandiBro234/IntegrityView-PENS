@@ -1,9 +1,11 @@
 """Konfigurasi koneksi database terpusat.
 
-Nilai diambil dari environment variable agar kredensial tidak ditulis di kode.
-Contoh (PowerShell):
-    $env:DB_PASSWORD = "arekpens"
-    $env:DB_USER = "postgres"
+Dipakai oleh script manual (mis. migrasi.py) untuk mengisi Supabase.
+Nilai diambil dari environment variable / file .env agar kredensial tidak
+ditulis di kode.
+
+Cara termudah untuk Supabase: isi DATABASE_URL dengan connection string
+dari dashboard (Project Settings > Database > Connection string).
 """
 
 import os
@@ -25,16 +27,21 @@ def _muat_env():
 
 _muat_env()
 
+DATABASE_URL = os.getenv("DATABASE_URL", "").strip()
+
 DB_CONFIG = {
     "dbname": os.getenv("DB_NAME", "integrity_view_db"),
     "user": os.getenv("DB_USER", "postgres"),
     "password": os.getenv("DB_PASSWORD", "postgres"),
     "host": os.getenv("DB_HOST", "localhost"),
     "port": os.getenv("DB_PORT", "5432"),
+    "sslmode": os.getenv("DB_SSLMODE", "prefer"),
 }
 
 
 def get_db_connection():
     import psycopg2
 
+    if DATABASE_URL:
+        return psycopg2.connect(DATABASE_URL)
     return psycopg2.connect(**DB_CONFIG)
