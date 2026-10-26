@@ -1,25 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
 import './SebaranJawabanChart.css';
 import { formatAngka } from '../../data/mock';
+import { SKALA } from '../../data/surveyData';
 import Delta from './Delta';
 
-const SKALA = [
-  { label: 'Sangat Tidak Setuju', short: 'STS', color: '#C25E1E' },
-  { label: 'Tidak Setuju', short: 'TS', color: '#F5843C' },
-  { label: 'Setuju', short: 'S', color: '#7FA8D9' },
-  { label: 'Sangat Setuju', short: 'SS', color: '#0B1B33' }
-];
-
-/* Legenda satu baris: tepi kiri sejajar kolom nama, tepi kanan sejajar
-   kolom aksi. Label lengkap; di layar sempit berganti singkatan bertooltip. */
+/* Legenda satu baris, sejajar tepi kolom nama dan tepi kolom aksi. */
 export function SebaranLegend() {
   return (
     <div className="sebaran__legend" aria-label="Skala jawaban Likert">
       {SKALA.map((s) => (
-        <span key={s.short} className="sebaran__legend-item" title={`${s.short} · ${s.label}`}>
-          <span className="sebaran__legend-swatch" style={{ backgroundColor: s.color }} />
+        <span key={s.singkat} className="sebaran__legend-item" title={`${s.singkat} · ${s.label}`}>
+          <span className="sebaran__legend-swatch" style={{ backgroundColor: s.warna }} />
           <span className="sebaran__legend-full">{s.label}</span>
-          <span className="sebaran__legend-short">{s.short}</span>
+          <span className="sebaran__legend-short">{s.singkat}</span>
         </span>
       ))}
     </div>
@@ -42,7 +35,7 @@ export default function SebaranJawabanChart({ data, selectedKey, onSelect, onOpe
   if (!data || !data.length) {
     return (
       <div className="sebaran sebaran--empty">
-        <p>Belum ada data sebaran jawaban.</p>
+        <p>Belum ada responden untuk kombinasi filter ini.</p>
       </div>
     );
   }
@@ -65,7 +58,7 @@ export default function SebaranJawabanChart({ data, selectedKey, onSelect, onOpe
               className={`sebaran__row ${isSelected ? 'is-selected' : ''}`}
               onClick={() => onSelect(item.key)}
               aria-pressed={isSelected}
-              aria-label={`Pilih ${item.namaPanjang}, ${formatAngka(item.persenSetuju)} persen setuju`}
+              aria-label={`Pilih ${item.namaPanjang}, indeks ${formatAngka(item.indeks)} persen`}
             >
               <span className="sebaran__name" title={item.namaPanjang}>{item.nama}</span>
 
@@ -74,7 +67,7 @@ export default function SebaranJawabanChart({ data, selectedKey, onSelect, onOpe
                   <span
                     key={i}
                     className="sebaran__seg"
-                    style={{ width: pct + '%', backgroundColor: SKALA[i].color }}
+                    style={{ width: pct + '%', backgroundColor: SKALA[i].warna }}
                     onMouseMove={(e) => showTip(e, item, i)}
                   >
                     {barWidth * pct / 100 >= 40 && (
@@ -84,13 +77,12 @@ export default function SebaranJawabanChart({ data, selectedKey, onSelect, onOpe
                 ))}
               </span>
 
-              <span className="sebaran__pct">{formatAngka(item.persenSetuju)}%</span>
+              <span className="sebaran__pct">{formatAngka(item.indeks)}%</span>
 
               <span className="sebaran__delta-slot">
                 <Delta value={item.delta} compact />
               </span>
 
-              {/* Kolom aksi selalu dicadangkan agar lebar baris tidak berubah. */}
               <span className="sebaran__open-slot">
                 {onOpenDetail && (
                   <span
@@ -123,9 +115,9 @@ export default function SebaranJawabanChart({ data, selectedKey, onSelect, onOpe
             <strong>{tooltip.item.namaPanjang}</strong>
             <span>
               {SKALA[tooltip.segIdx].label} ({tooltip.segIdx + 1}):{' '}
-              {formatAngka(tooltip.item.distribusiPersen[tooltip.segIdx])}% · n = {tooltip.item.distribusiAbsolut[tooltip.segIdx]}
+              {formatAngka(tooltip.item.distribusiPersen[tooltip.segIdx])}%
             </span>
-            <span className="sebaran__tooltip-note">Total jawaban: {tooltip.item.n}</span>
+            <span className="sebaran__tooltip-note">n = {tooltip.item.n} responden</span>
           </div>
         )}
       </div>

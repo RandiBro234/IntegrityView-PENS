@@ -25,13 +25,13 @@ export default function RecommendationList({ items, max = 3, onDetail, compact =
             <span className={`reclist__prio ${PRIORITAS_CLASS[r.prioritas] || ''}`}>
               {r.prioritas}
             </span>
-            <p className="reclist__teks" title={r.teks}>{r.teks}</p>
+            <p className="reclist__teks" title={r.judul}>{r.judul}</p>
             {onDetail && (
               <button
                 type="button"
                 className="reclist__detail"
                 onClick={() => onDetail(r)}
-                aria-label={`Detail rekomendasi: ${r.teks}`}
+                aria-label={`Detail rekomendasi: ${r.judul}`}
               >
                 Detail
               </button>
@@ -43,3 +43,4 @@ export default function RecommendationList({ items, max = 3, onDetail, compact =
     </ul>
   );
 }
+

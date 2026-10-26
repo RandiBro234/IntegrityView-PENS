@@ -1,27 +1,27 @@
 import { useEffect, useRef, useState } from 'react';
 import {
-  PERIODE, PERIODE_AWAL, PILIHAN_PEMBANDING, PILIHAN_KELOMPOK, PILIHAN_KATEGORI
-} from '../../data/reportData';
+  PERIODE, PERIODE_AWAL, PILIHAN_PEMBANDING, PILIHAN_KATEGORI
+} from '../../data/surveyData';
 import InfoTip from './InfoTip';
 import './ReportFilters.css';
 
-const CATATAN_FILTER = 'Responden tiap semester berbeda, sehingga selisih skor membandingkan kelompok responden yang berbeda, bukan perubahan pada orang yang sama. Sebagian data berupa simulasi untuk mendemonstrasikan fitur.';
+const CATATAN_DASAR = 'Responden tiap semester berbeda, sehingga selisih skor membandingkan kelompok responden yang berbeda, bukan perubahan pada orang yang sama.';
 
-export default function ReportFilters({ filter, onChange }) {
+export default function ReportFilters({ filter, onChange, memakaiSimulasi = false }) {
   const [terbuka, setTerbuka] = useState(false);
   const menuRef = useRef(null);
-  const jumlahAktif = Number(filter.kelompok !== 'Semua') + Number(filter.kategori !== 'Semua');
   const periodeAwal = filter.periode === PERIODE_AWAL;
   const periodeTerpilih = PERIODE.find((p) => p.key === filter.periode);
+  const kategoriAktif = filter.kategori !== 'Semua';
+
+  const catatan = memakaiSimulasi
+    ? `${CATATAN_DASAR} Sebagian periode berupa simulasi untuk mendemonstrasikan fitur.`
+    : CATATAN_DASAR;
 
   const pilih = (key) => (event) => {
     const nilai = event.target.value;
     if (key === 'periode') {
-      onChange({
-        ...filter,
-        periode: nilai,
-        pembanding: nilai === PERIODE_AWAL ? 'tanpa' : 'sebelumnya'
-      });
+      onChange({ ...filter, periode: nilai, pembanding: nilai === PERIODE_AWAL ? 'tanpa' : 'sebelumnya' });
     } else {
       onChange({ ...filter, [key]: nilai });
     }
@@ -79,15 +79,10 @@ export default function ReportFilters({ filter, onChange }) {
           aria-controls="report-filters-more"
           onClick={() => setTerbuka((v) => !v)}
         >
-          Filter lainnya{jumlahAktif > 0 && <span className="report-filters__count">{jumlahAktif}</span>}
+          Filter lainnya{kategoriAktif && <span className="report-filters__count">1</span>}
         </button>
         {terbuka && (
           <div id="report-filters-more" className="report-filters__popover">
-            <label>Kelompok responden
-              <select value={filter.kelompok} onChange={pilih('kelompok')}>
-                {PILIHAN_KELOMPOK.map((k) => <option key={k}>{k}</option>)}
-              </select>
-            </label>
             <label>Kategori instrumen
               <select value={filter.kategori} onChange={pilih('kategori')}>
                 {PILIHAN_KATEGORI.map((k) => <option key={k}>{k}</option>)}
@@ -98,7 +93,7 @@ export default function ReportFilters({ filter, onChange }) {
       </div>
 
       <span className="report-filters__spacer" />
-      <InfoTip label="Catatan perbandingan antar semester" teks={CATATAN_FILTER} />
+      <InfoTip label="Catatan perbandingan antar semester" teks={catatan} />
     </div>
   );
 }

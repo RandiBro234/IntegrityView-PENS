@@ -154,3 +154,23 @@
   .spanel__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .spanel__head { flex-wrap: wrap; }
 }
+
+/* Catatan kecil di bawah nilai metrik (mis. n kecil). */
+.spanel__stat-note {
+  font-size: 9.5px;
+  line-height: 1.2;
+  color: var(--text-secondary);
+}
+
+/* Keadaan netral saat tidak ada butir yang melewati ambang. */
+.spanel__rek-netral {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 0;
+  overflow: hidden;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--text-primary);
+}
+.spanel__rek-netral-note { color: var(--text-secondary); }

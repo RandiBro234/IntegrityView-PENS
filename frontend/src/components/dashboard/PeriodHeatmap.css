@@ -52,9 +52,9 @@
 .heatmap__data:focus-visible { outline: 2px solid var(--orange-500); }
 
 .heatmap__nilai { display: inline-flex; align-items: center; gap: 2px; font-variant-numeric: tabular-nums; }
-.heatmap__panah { font-size: 10px; font-weight: 800; line-height: 1; }
+.heatmap__panah { display: inline-flex; align-items: center; line-height: 1; }
 .heatmap__panah--naik { color: var(--teal-500); }
-.heatmap__panah--turun { color: var(--error-500); }
+.heatmap__panah--turun { color: var(--orange-500); }
 /* Di sel navy gelap panah memakai varian terang agar tetap terbaca. */
 .heatmap__cell--gelap .heatmap__panah--naik { color: #7FD6C2; }
-.heatmap__cell--gelap .heatmap__panah--turun { color: #FFB4A8; }
+.heatmap__cell--gelap .heatmap__panah--turun { color: #FFD1AE; }

@@ -1,4 +1,4 @@
-import { formatAngka, getDuplikatTerdeteksi } from '../../data/mock';
+import { formatAngka } from '../../data/mock';
 import PeriodTrend from './PeriodTrend';
 import Delta from '../dashboard/Delta';
 import './ReportTemplate.css';
@@ -18,15 +18,14 @@ function ShieldIcon({ size = 22 }) {
   );
 }
 
-/* Template laporan A4. Dipakai untuk pratinjau modal DAN render ke PDF,
-   agar tampilan pratinjau identik dengan hasil unduhan. */
+/* Template laporan A4. Pratinjau modal dan render PDF memakai komponen yang
+   sama. Hanya agregat: tanpa email, tanpa teks terbuka mentah. */
 export default function ReportTemplate({ info, st, rekomendasi, periode, tanggalCetak, laporan, hasil }) {
-  const duplikat = st.duplikat ?? getDuplikatTerdeteksi(info.key);
-  const reliabel = st.alpha >= 0.7;
+  const reliabel = st.alpha != null && st.alpha >= 0.7;
+  const simulasi = st.sumber === 'simulated' || hasil.pembanding?.sumber === 'simulated';
 
   return (
     <div className="rt" id="report-template">
-      {/* ============ HALAMAN 1 ============ */}
       <section className="rt__page">
         <header className="rt__header">
           <div className="rt__header-left">
@@ -51,42 +50,67 @@ export default function ReportTemplate({ info, st, rekomendasi, periode, tanggal
           <div className="rt__cards">
             <div className="rt__card">
               <span className="rt__card-label">Jumlah Responden</span>
-              <span className="rt__card-value">{st.jumlahResponden.toLocaleString('id-ID')}</span>
-              <Delta value={hasil.pembanding && st.jumlahResponden - hasil.pembanding.jumlahResponden} unit="responden" />
+              <span className="rt__card-value">{st.n.toLocaleString('id-ID')}</span>
+              <Delta value={hasil.pembanding ? st.n - hasil.pembanding.n : null} unit="responden" />
             </div>
             <div className="rt__card">
               <span className="rt__card-label">Rata-rata Skor</span>
-              <span className="rt__card-value">{formatAngka(st.skor)}%</span>
+              <span className="rt__card-value">{formatAngka(st.indeks)}%</span>
               <Delta value={hasil.delta} />
             </div>
             <div className="rt__card">
               <span className="rt__card-label">Setuju + Sangat Setuju</span>
-              <span className="rt__card-value">{formatAngka(st.persenSetuju)}%</span>
-              <Delta value={hasil.pembanding && st.persenSetuju - hasil.pembanding.persenSetuju} />
+              <span className="rt__card-value">{formatAngka(st.setuju)}%</span>
+              <Delta value={hasil.pembanding ? st.setuju - hasil.pembanding.setuju : null} />
             </div>
             <div className="rt__card">
               <span className="rt__card-label">Cronbach's Alpha</span>
               <span className="rt__card-value">
-                {formatAngka(st.alpha, 2)}
+                {st.alpha == null ? '—' : formatAngka(st.alpha, 2)}
                 {reliabel && <span className="rt__card-note">Reliabel</span>}
               </span>
-              <Delta value={hasil.pembanding && st.alpha - hasil.pembanding.alpha} unit="nilai" desimal={2} />
             </div>
           </div>
+
+          <div className="rt__section-title">
+            <span className="rt__bullet" aria-hidden="true" />
+            <h2>Skor per Butir</h2>
+          </div>
+          <table className="rt__table rt__table--butir">
+            <thead>
+              <tr>
+                <th>Butir</th>
+                <th className="rt__num rt__num--center">Rata-rata</th>
+                <th className="rt__num rt__num--center">Setuju + SS</th>
+              </tr>
+            </thead>
+            <tbody>
+              {st.butir.map((b) => (
+                <tr key={b.label}>
+                  <td>{b.teks}</td>
+                  <td className="rt__num rt__num--center">{formatAngka(b.rata, 2)}</td>
+                  <td className="rt__num rt__num--center">{formatAngka(b.persenSetuju)}%</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
 
           <div className="rt__section-title">
             <span className="rt__bullet" aria-hidden="true" />
             <h2>Rekomendasi</h2>
           </div>
           {rekomendasi.length === 0 ? (
-            <p className="rt__text">Tidak ada rekomendasi — seluruh indikator dalam batas wajar.</p>
+            <p className="rt__text">
+              Butir dengan skor terendah: {st.butirTerendah.label} (rata-rata {formatAngka(st.butirTerendah.rata, 2)}).
+              Tidak ada butir yang perlu perhatian khusus pada periode ini.
+            </p>
           ) : (
             <ol className="rt__rek">
               {rekomendasi.map((r, i) => (
                 <li key={i} className="rt__rek-item">
                   <span className={`rt__prio ${PRIORITAS_KELAS[r.prioritas] || ''}`}>{r.prioritas}</span>
                   <div>
-                    <p className="rt__rek-teks">{r.teks}</p>
+                    <p className="rt__rek-teks">{r.judul}</p>
                     <p className="rt__rek-dasar">Dasar data: {r.dasar}</p>
                   </div>
                 </li>
@@ -100,35 +124,80 @@ export default function ReportTemplate({ info, st, rekomendasi, periode, tanggal
           </div>
           <ul className="rt__kualitas">
             <li>Median skor: <strong>{formatAngka(st.median)}%</strong>.</li>
-            <li>Simpangan baku: <strong>{formatAngka(st.simpanganBaku, 2)}</strong>.</li>
-            <li>Persentase jawaban seragam: <strong>{formatAngka(st.persenSeragam)}%</strong>.</li>
-            <li>Jumlah duplikat terdeteksi: <strong>{duplikat}</strong>.</li>
-            <li>Jumlah responden (n): <strong>{st.jumlahResponden}</strong>.</li>
-            <li>Responden pembanding: <strong>{hasil.pembanding?.jumlahResponden ?? 'Tanpa pembanding'}</strong>.</li>
+            <li>Simpangan baku: <strong>{formatAngka(st.sd, 2)}</strong>.</li>
+            <li>Persentase jawaban seragam: <strong>{formatAngka(st.kualitas.seragam)}%</strong>.</li>
+            <li>Duplikat dibuang: <strong>{st.kualitas.duplikat}</strong>.</li>
+            <li>Baris tidak valid dibuang: <strong>{st.kualitas.dibuang}</strong>.</li>
+            <li>Jawaban terbuka ditahan: <strong>{st.kualitas.tertahan}</strong>.</li>
+            {st.kualitas.tema.length > 0 && (
+              <li>
+                Tema jawaban terbuka: <strong>{st.kualitas.tema.map((t) => `${t.tema} (${t.jumlah})`).join(', ')}</strong>.
+              </li>
+            )}
+            <li>Jumlah responden (n): <strong>{st.n}</strong>.</li>
+            {hasil.pembanding && (
+              <li>Responden pembanding: <strong>{hasil.pembanding.n}</strong>.</li>
+            )}
           </ul>
-
         </div>
 
         <footer className="rt__footer">
-          <span>Sebagian data pada dokumen ini bersumber dari simulasi untuk keperluan demonstrasi.</span>
+          <span>
+            {simulasi
+              ? 'Sebagian data pada dokumen ini bersumber dari simulasi untuk keperluan demonstrasi.'
+              : 'Data pada dokumen ini merupakan agregat hasil survei.'}
+          </span>
           <span>Halaman 1</span>
         </footer>
       </section>
+
       <section className="rt__page">
-        <header className="rt__header"><div><h1 className="rt__title">Perubahan antar semester</h1><p className="rt__subtitle">{info.namaPanjang}</p></div></header>
+        <header className="rt__header">
+          <div>
+            <h1 className="rt__title">Perubahan antar semester</h1>
+            <p className="rt__subtitle">{info.namaPanjang}</p>
+          </div>
+        </header>
         <div className="rt__body">
           <div className="rt__section-title"><span className="rt__bullet" aria-hidden="true" /><h2>Indeks per semester dan interval 95%</h2></div>
           <PeriodTrend tren={hasil.tren} selected={laporan.periode.key} />
           <p className="rt__text">Responden tiap semester berbeda; selisih bukan perubahan pada orang yang sama.</p>
-          {laporan.periodePembanding ? <>
-          <div className="rt__section-title"><span className="rt__bullet" aria-hidden="true" /><h2>Perubahan indeks per butir vs {laporan.periodePembanding.label}</h2></div>
-          <table className="rt__table rt__table--changes">
-            <thead><tr><th>Butir</th><th>Indeks {laporan.periode.label}</th><th>Indeks pembanding</th><th>Selisih (poin)</th></tr></thead>
-            <tbody>{hasil.perubahanButir.map((b) => <tr key={b.nama}><td>{b.nama}</td><td className="rt__num">{formatAngka(b.skor)}%</td><td className="rt__num">{b.sebelumnya == null ? '—' : `${formatAngka(b.sebelumnya)}%`}</td><td><Delta value={b.delta} compact /></td></tr>)}</tbody>
-          </table>
-          </> : <p className="rt__text">{laporan.periode.label} belum memiliki semester pembanding.</p>}
+          {laporan.periodePembanding ? (
+            <>
+              <div className="rt__section-title"><span className="rt__bullet" aria-hidden="true" /><h2>Perubahan indeks per butir vs {laporan.periodePembanding.label}</h2></div>
+              <table className="rt__table rt__table--changes">
+                <thead>
+                  <tr>
+                    <th>Butir</th>
+                    <th className="rt__num--center">Indeks {laporan.periode.label}</th>
+                    <th className="rt__num--center">Indeks pembanding</th>
+                    <th className="rt__num--center">Selisih (poin)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {hasil.perubahanButir.map((b) => (
+                    <tr key={b.label}>
+                      <td>{b.label}</td>
+                      <td className="rt__num rt__num--center">{formatAngka(b.skor)}%</td>
+                      <td className="rt__num rt__num--center">{b.sebelumnya == null ? '—' : `${formatAngka(b.sebelumnya)}%`}</td>
+                      <td className="rt__num rt__num--center"><Delta value={b.delta} compact /></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </>
+          ) : (
+            <p className="rt__text">{laporan.periode.label} belum memiliki semester pembanding.</p>
+          )}
         </div>
-        <footer className="rt__footer"><span>Sebagian data pada dokumen ini bersumber dari simulasi untuk keperluan demonstrasi.</span><span>Halaman 2</span></footer>
+        <footer className="rt__footer">
+          <span>
+            {simulasi
+              ? 'Sebagian data pada dokumen ini bersumber dari simulasi untuk keperluan demonstrasi.'
+              : 'Data pada dokumen ini merupakan agregat hasil survei.'}
+          </span>
+          <span>Halaman 2</span>
+        </footer>
       </section>
     </div>
   );

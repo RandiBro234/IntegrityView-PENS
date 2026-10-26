@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { BlobDecor } from '../components/cards/StatCard';
 import { ROLES, loginAs, formatAngka } from '../data/mock';
-import { getReportData } from '../data/reportData';
+import { getReportData } from '../data/surveyData';
 import { useReportFilters } from '../data/useReportFilters';
 import './AuthPage.css';
 
@@ -334,3 +334,4 @@ function Field({ label, error, children }) {
     </div>
   );
 }
+

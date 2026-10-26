@@ -1,9 +1,10 @@
-﻿import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BlobDecor } from '../components/cards/StatCard';
 import { KONTAK, labelPartisipan, formatAngka } from '../data/mock';
-import { getReportData } from '../data/reportData';
+import { getReportData } from '../data/surveyData';
 import { useReportFilters } from '../data/useReportFilters';
 import Delta from '../components/dashboard/Delta';
+import { formatDeltaAngka } from '../lib/formatDelta';
 import './LandingPage.css';
 
 const ALUR = [
@@ -45,10 +46,11 @@ function gradientLangkah(i) {
 export default function LandingPage({ onEnterDashboard, session }) {
   const [scrollY, setScrollY] = useState(0);
   const { filter } = useReportFilters();
-  const laporan = useMemo(() => getReportData({ ...filter, kategori: 'Semua' }), [filter]);
+  /* Selector sudah punya cache internal; dihitung langsung agar ikut diperbarui setelah data asli tiba. */
+  const laporan = getReportData({ ...filter, kategori: 'Semua' });
   const ringkasan = laporan.ringkasan;
   const ringkasanResponden = ringkasan.responden.total;
-  const surveiLanding = laporan.instrumen.filter((s) => s.aktif).map((s) => ({ ...s.info, responden: s.aktif.jumlahResponden }));
+  const surveiLanding = laporan.instrumen.filter((s) => s.aktif).map((s) => ({ ...s.info, responden: s.aktif.n }));
   const kategoriSkor = laporan.kategoriSkor;
   const { naik, turun } = laporan.perubahanTerbesar;
 
@@ -198,7 +200,7 @@ export default function LandingPage({ onEnterDashboard, session }) {
                        {naik.info.nama}
                     </span>
                   </div>
-                   <span className="landing__rentang-skor">{naik.delta > 0 ? '+' : ''}{formatAngka(naik.delta)} poin</span>
+                   <span className="landing__rentang-skor">{formatDeltaAngka(naik.delta)} poin</span>
                 </div>
 
                 {/* Baris terendah */}
@@ -209,7 +211,7 @@ export default function LandingPage({ onEnterDashboard, session }) {
                        {turun.info.nama}
                     </span>
                   </div>
-                   <span className="landing__rentang-skor">{turun.delta > 0 ? '+' : ''}{formatAngka(turun.delta)} poin</span>
+                   <span className="landing__rentang-skor">{formatDeltaAngka(turun.delta)} poin</span>
                 </div>
 
                 {/* Selisih */}
@@ -408,8 +410,8 @@ export default function LandingPage({ onEnterDashboard, session }) {
           </div>
         </div>
         <div className="landing__footer-bottom">
-           <span>IntegrityView, prototipe v3 Â· 2026.</span>
-          <span>Politeknik Elektronika Negeri Surabaya Â· Zona Integritas</span>
+           <span>IntegrityView, prototipe v3 · 2026.</span>
+          <span>Politeknik Elektronika Negeri Surabaya · Zona Integritas</span>
         </div>
       </footer>
 

@@ -7,14 +7,14 @@ import { formatAngka } from '../../data/mock';
 
 export default function StatistikPanel({ selectedKey, laporan, onOpenDetail }) {
   if (!selectedKey) {
-    return <p className="spanel spanel--empty">Belum ada data untuk kombinasi filter ini.</p>;
+    return <p className="spanel spanel--empty">Pilih satu instrumen untuk melihat ringkasan statistik dan rekomendasi.</p>;
   }
 
   const hasil = laporan?.instrumen.find((s) => s.info.key === selectedKey);
   const st = hasil?.aktif;
 
   if (!st) {
-    return <p className="spanel spanel--empty">Belum ada data untuk kombinasi filter ini (n kurang dari 5).</p>;
+    return <p className="spanel spanel--empty">Belum ada responden untuk instrumen ini pada periode terpilih.</p>;
   }
 
   const sebelumnya = hasil.pembanding;
@@ -37,30 +37,19 @@ export default function StatistikPanel({ selectedKey, laporan, onOpenDetail }) {
       </div>
 
       <div className="spanel__grid">
-        <Stat
-          label="Responden (n)"
-          value={st.jumlahResponden.toLocaleString('id-ID')}
-          delta={sebelumnya ? st.jumlahResponden - sebelumnya.jumlahResponden : null}
-          unit="responden"
-        />
-        <Stat label="Rata-rata skor" value={`${formatAngka(st.skor)}%`} delta={hasil.delta} />
+        <Stat label="Responden (n)" value={st.n.toLocaleString('id-ID')} />
+        <Stat label="Rata-rata skor" value={`${formatAngka(st.indeks)}%`} delta={hasil.delta} />
+        <Stat label="Median skor" value={`${formatAngka(st.median)}%`} />
+        <Stat label="Simpangan baku" value={formatAngka(st.sd, 2)} />
         <Stat
           label="Setuju + Sangat Setuju"
-          value={`${formatAngka(st.persenSetuju)}%`}
-          delta={sebelumnya ? st.persenSetuju - sebelumnya.persenSetuju : null}
+          value={`${formatAngka(st.setuju)}%`}
+          delta={sebelumnya ? st.setuju - sebelumnya.setuju : null}
         />
-        <Stat
-          label="Median skor"
-          value={`${formatAngka(st.median)}%`}
-          delta={sebelumnya ? st.median - sebelumnya.median : null}
-        />
-        <Stat label="Simpangan baku" value={formatAngka(st.simpanganBaku, 2)} />
         <Stat
           label="Cronbach's alpha"
-          value={formatAngka(st.alpha, 2)}
-          delta={sebelumnya ? st.alpha - sebelumnya.alpha : null}
-          unit="nilai"
-          desimal={2}
+          value={st.alpha == null ? '—' : formatAngka(st.alpha, 2)}
+          note={st.alphaCatatan}
         />
       </div>
 
@@ -68,28 +57,28 @@ export default function StatistikPanel({ selectedKey, laporan, onOpenDetail }) {
 
       <RekomendasiPanel
         items={hasil.rekomendasi}
+        butirTerendah={st.butirTerendah}
         onOpenDetail={() => onOpenDetail && onOpenDetail(selectedKey)}
       />
     </div>
   );
 }
 
-function Stat({ label, value, delta, unit, desimal }) {
+function Stat({ label, value, delta, note }) {
   return (
     <div className="spanel__stat">
       <span className="spanel__stat-value">{value}</span>
       <span className="spanel__stat-label">{label}</span>
-      {delta != null && <Delta value={delta} unit={unit} desimal={desimal} compact />}
+      {delta != null && <Delta value={delta} compact />}
+      {note && <span className="spanel__stat-note">{note}</span>}
     </div>
   );
 }
 
-function RekomendasiPanel({ items, onOpenDetail }) {
+function RekomendasiPanel({ items, butirTerendah, onOpenDetail }) {
   const areaRef = useRef(null);
   const [muat, setMuat] = useState(3);
 
-  /* Sembunyikan item yang tidak muat utuh: tiap item butuh ±70px
-     (judul + dasar data) dan 52px untuk judul section + tautan. */
   useLayoutEffect(() => {
     const area = areaRef.current;
     if (!area) return;
@@ -103,19 +92,30 @@ function RekomendasiPanel({ items, onOpenDetail }) {
     return () => ro.disconnect();
   }, []);
 
+  const kosong = !items.length;
   const jumlah = Math.min(muat, items.length);
 
   return (
     <div className="spanel__rek" ref={areaRef}>
       <div className="spanel__rek-head">
         <p className="spanel__eyebrow">Rekomendasi Otomatis</p>
-        <RecommendationPanel items={items} />
+        {!kosong && <RecommendationPanel items={items} />}
       </div>
-      <RecommendationList items={items} max={jumlah} />
-      {items.length > jumlah && (
-        <button type="button" className="spanel__more" onClick={onOpenDetail}>
-          Lihat semua rekomendasi
-        </button>
+
+      {kosong ? (
+        <div className="spanel__rek-netral">
+          <p>Butir dengan skor terendah: {butirTerendah.label} (rata-rata {formatAngka(butirTerendah.rata, 2)})</p>
+          <p className="spanel__rek-netral-note">Tidak ada butir yang perlu perhatian khusus pada periode ini.</p>
+        </div>
+      ) : (
+        <>
+          <RecommendationList items={items} max={jumlah} />
+          {items.length > jumlah && (
+            <button type="button" className="spanel__more" onClick={onOpenDetail}>
+              Lihat semua rekomendasi
+            </button>
+          )}
+        </>
       )}
     </div>
   );

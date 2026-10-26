@@ -85,7 +85,7 @@ export default function RecommendationPanel({ items = [], judul = 'Semua Rekomen
                   <li key={i} className="rek-panel__item">
                     <div className="rek-panel__item-head">
                       <span className={`reclist__prio ${PRIORITAS_CLASS[r.prioritas] || ''}`}>{r.prioritas}</span>
-                      <p className="rek-panel__teks">{r.teks}</p>
+                      <p className="rek-panel__teks">{r.judul}</p>
                     </div>
                     <p className="rek-panel__meta"><span>Dasar data</span>{r.dasar}</p>
                     <p className="rek-panel__meta"><span>Tindak lanjut</span>{TINDAK_LANJUT[r.prioritas] || TINDAK_LANJUT.Pantau}</p>
@@ -100,3 +100,4 @@ export default function RecommendationPanel({ items = [], judul = 'Semua Rekomen
     </>
   );
 }
+

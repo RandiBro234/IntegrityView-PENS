@@ -4,7 +4,7 @@ import Topbar from '../components/layout/Topbar';
 import {
   getUser, isAdmin, getRingkasanPengaduan, getPengaduan, formatAngka
 } from '../data/mock';
-import { PERIODE, getReportData } from '../data/reportData';
+import { PERIODE, getReportData } from '../data/surveyData';
 import { useReportFilters } from '../data/useReportFilters';
 import Delta from '../components/dashboard/Delta';
 import './LaporanPage.css';
@@ -15,7 +15,8 @@ export default function LaporanPage({ onNavigate }) {
   const { filter, setFilter } = useReportFilters();
 
   /* Sumber angka yang sama dengan dashboard: selector tunggal. */
-  const laporan = useMemo(() => getReportData(filter), [filter]);
+  /* Selector sudah punya cache internal; dihitung langsung agar ikut diperbarui setelah data asli tiba. */
+  const laporan = getReportData(filter);
   const periode = laporan.periode.label;
 
   const rekap = admin
@@ -23,9 +24,9 @@ export default function LaporanPage({ onNavigate }) {
       key: s.info.key,
       nama: s.info.nama,
       namaPanjang: s.info.namaPanjang,
-      skor: s.aktif.skor,
+      skor: s.aktif.indeks,
       delta: s.delta,
-      responden: s.aktif.jumlahResponden
+      responden: s.aktif.n
     }))
     : [];
 
@@ -169,3 +170,4 @@ function Kpi({ label, value, tone }) {
     </article>
   );
 }
+
