@@ -1,4 +1,4 @@
-﻿/* Satu sumber kebenaran untuk instrumen: slug, nama, tautan Google Form,
+/* Satu sumber kebenaran untuk instrumen: slug, nama, tautan Google Form,
    jumlah butir, dan alias nama_instrumen dari database.
    Teks butir dipakai persis; `label` adalah versi pendek untuk grafik. */
 
@@ -9,7 +9,7 @@ export const SKALA = [
   { nilai: 4, label: 'Sangat Setuju', singkat: 'SS', warna: '#0B1B33' }
 ];
 
-/* Ambang rekomendasi â€” satu tempat agar mudah diubah. */
+/* Ambang rekomendasi — satu tempat agar mudah diubah. */
 export const AMBANG = {
   rataRataTinggi: 2.75,
   rataRataPantau: 3.19,
@@ -223,7 +223,7 @@ export function getSurveyUrl(slug) {
   return PETA_SLUG.get(slug)?.url || null;
 }
 
-/* Alias nama_instrumen dari database â†’ slug konfigurasi.
+/* Alias nama_instrumen dari database → slug konfigurasi.
    Pencocokan tidak sensitif huruf besar/kecil dan spasi. */
 export const ALIAS_INSTRUMEN = {
   spip: 'spip',

@@ -1,9 +1,10 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BlobDecor } from '../components/cards/StatCard';
 import { KONTAK, labelPartisipan, formatAngka } from '../data/mock';
 import { getReportData } from '../data/surveyData';
 import { useReportFilters } from '../data/useReportFilters';
 import Delta from '../components/dashboard/Delta';
+import { formatDeltaAngka } from '../lib/formatDelta';
 import './LandingPage.css';
 
 const ALUR = [
@@ -199,7 +200,7 @@ export default function LandingPage({ onEnterDashboard, session }) {
                        {naik.info.nama}
                     </span>
                   </div>
-                   <span className="landing__rentang-skor">{naik.delta > 0 ? '+' : ''}{formatAngka(naik.delta)} poin</span>
+                   <span className="landing__rentang-skor">{formatDeltaAngka(naik.delta)} poin</span>
                 </div>
 
                 {/* Baris terendah */}
@@ -210,7 +211,7 @@ export default function LandingPage({ onEnterDashboard, session }) {
                        {turun.info.nama}
                     </span>
                   </div>
-                   <span className="landing__rentang-skor">{turun.delta > 0 ? '+' : ''}{formatAngka(turun.delta)} poin</span>
+                   <span className="landing__rentang-skor">{formatDeltaAngka(turun.delta)} poin</span>
                 </div>
 
                 {/* Selisih */}
@@ -409,8 +410,8 @@ export default function LandingPage({ onEnterDashboard, session }) {
           </div>
         </div>
         <div className="landing__footer-bottom">
-           <span>IntegrityView, prototipe v3 Â· 2026.</span>
-          <span>Politeknik Elektronika Negeri Surabaya Â· Zona Integritas</span>
+           <span>IntegrityView, prototipe v3 · 2026.</span>
+          <span>Politeknik Elektronika Negeri Surabaya · Zona Integritas</span>
         </div>
       </footer>
 

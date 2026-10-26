@@ -1,4 +1,4 @@
-﻿import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   PERIODE, PERIODE_AWAL, PILIHAN_PEMBANDING, PILIHAN_KATEGORI
 } from '../../data/surveyData';

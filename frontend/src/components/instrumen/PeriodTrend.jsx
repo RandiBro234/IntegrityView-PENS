@@ -1,4 +1,4 @@
-﻿import { formatAngka } from '../../data/mock';
+import { formatAngka } from '../../data/mock';
 import { arahPerubahan } from '../../data/surveyData';
 import './PeriodTrend.css';
 

@@ -1,4 +1,4 @@
-﻿/* Layout satu layar: header, filter, kartu, panel.
+/* Layout satu layar: header, filter, kartu, panel.
    Tinggi diambil dari sisa ruang grid (bukan calc piksel) agar tidak meluber
    ketika tinggi topbar berubah. */
 .detail-shell .app-main {

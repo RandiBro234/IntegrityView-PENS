@@ -1,4 +1,4 @@
-﻿import { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import Sidebar from '../components/layout/Sidebar';
 import Topbar from '../components/layout/Topbar';
 import { getUser } from '../data/mock';
@@ -124,9 +124,9 @@ export default function SurveiPage({ onNavigate, onOpenInstrument }) {
                   <p className="scard__desc">{d.deskripsi}</p>
                   <div className="scard__meta">
                     <span>{d.jumlahButir} pertanyaan</span>
-                    <span aria-hidden="true">Â·</span>
-                    <span>Â± {d.estimasiMenit} menit</span>
-                    <span aria-hidden="true">Â·</span>
+                    <span aria-hidden="true">·</span>
+                    <span>± {d.estimasiMenit} menit</span>
+                    <span aria-hidden="true">·</span>
                     <span>{d.kelompok}</span>
                   </div>
                   <div className="scard__actions">

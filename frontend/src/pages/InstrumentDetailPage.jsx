@@ -1,4 +1,4 @@
-﻿import { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import RecommendationList from '../components/instrumen/RecommendationList';
 import RecommendationPanel from '../components/instrumen/RecommendationPanel';
 import PeriodTrend from '../components/instrumen/PeriodTrend';

@@ -1,4 +1,4 @@
-﻿import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import './RecommendationPanel.css';
 
@@ -76,7 +76,7 @@ export default function RecommendationPanel({ items = [], judul = 'Semua Rekomen
                 <p className="rek-panel__eyebrow">Rekomendasi Otomatis</p>
                 <h2 className="rek-panel__title">{judul}</h2>
               </div>
-              <button type="button" ref={closeRef} className="rek-panel__close" onClick={tutup} aria-label="Tutup panel rekomendasi">Ã—</button>
+              <button type="button" ref={closeRef} className="rek-panel__close" onClick={tutup} aria-label="Tutup panel rekomendasi">×</button>
             </header>
 
             <div className="rek-panel__body">

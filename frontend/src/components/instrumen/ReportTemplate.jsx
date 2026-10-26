@@ -1,4 +1,4 @@
-﻿import { formatAngka } from '../../data/mock';
+import { formatAngka } from '../../data/mock';
 import PeriodTrend from './PeriodTrend';
 import Delta from '../dashboard/Delta';
 import './ReportTemplate.css';

@@ -1,8 +1,7 @@
-﻿import { formatAngka } from '../../data/mock';
+import { formatAngka } from '../../data/mock';
 import { PERIODE, arahPerubahan } from '../../data/surveyData';
+import { IkonNaik, IkonTurun } from './ArahIkon';
 import './PeriodHeatmap.css';
-
-const PANAH = { naik: '↑', turun: '↓' };
 
 export default function PeriodHeatmap({ instrumen, periode, selectedKey, onSelect }) {
   const adaData = instrumen.some((entry) => entry.tren.some((p) => p.indeks != null));
@@ -52,8 +51,8 @@ export default function PeriodHeatmap({ instrumen, periode, selectedKey, onSelec
                 <span className="heatmap__nilai">
                   {p.indeks == null ? '—' : `${formatAngka(p.indeks)}%`}
                   {(arah === 'naik' || arah === 'turun') && (
-                    <small className={`heatmap__panah heatmap__panah--${arah}`} aria-label={arah}>
-                      {PANAH[arah]}
+                    <small className={`heatmap__panah heatmap__panah--${arah}`} title={arah}>
+                      {arah === 'naik' ? <IkonNaik size={10} /> : <IkonTurun size={10} />}
                     </small>
                   )}
                 </span>

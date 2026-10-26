@@ -1,4 +1,4 @@
-﻿import { useMemo } from 'react';
+import { useMemo } from 'react';
 import Sidebar from '../components/layout/Sidebar';
 import Topbar from '../components/layout/Topbar';
 import {
@@ -90,7 +90,7 @@ export default function LaporanPage({ onNavigate }) {
         <main className="app-content">
           <header className="lpr-head">
             <div>
-              <p className="label-eyebrow">Laporan Â· Admin</p>
+              <p className="label-eyebrow">Laporan · Admin</p>
               <h1 className="lpr-head__title">Rekap Capaian Zona Integritas</h1>
               <p className="lpr-head__sub">Ringkasan skor seluruh instrumen dan pengaduan untuk periode terpilih.</p>
             </div>

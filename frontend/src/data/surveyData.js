@@ -1,4 +1,4 @@
-﻿import {
+import {
   INSTRUMENTS, SURVEI_INFO, SKALA, AMBANG,
   getInstrumen, slugDariNamaInstrumen, normalisasiKunci
 } from './instrumentConfig.js';
@@ -10,11 +10,11 @@
    ===================================================================== */
 
 export const PERIODE = [
-  { key: '2024-ganjil', label: '2024 Ganjil', tahun: '2024', semester: 'Ganjil', rentang: 'Sep 2024â€“Feb 2025' },
-  { key: '2025-genap', label: '2025 Genap', tahun: '2025', semester: 'Genap', rentang: 'Marâ€“Agu 2025' },
-  { key: '2025-ganjil', label: '2025 Ganjil', tahun: '2025', semester: 'Ganjil', rentang: 'Sep 2025â€“Feb 2026' },
-  { key: '2026-genap', label: '2026 Genap', tahun: '2026', semester: 'Genap', rentang: 'Marâ€“Agu 2026' },
-  { key: '2026-ganjil', label: '2026 Ganjil', tahun: '2026', semester: 'Ganjil', rentang: 'Sep 2026â€“Feb 2027', berjalan: true }
+  { key: '2024-ganjil', label: '2024 Ganjil', tahun: '2024', semester: 'Ganjil', rentang: 'Sep 2024–Feb 2025' },
+  { key: '2025-genap', label: '2025 Genap', tahun: '2025', semester: 'Genap', rentang: 'Mar–Agu 2025' },
+  { key: '2025-ganjil', label: '2025 Ganjil', tahun: '2025', semester: 'Ganjil', rentang: 'Sep 2025–Feb 2026' },
+  { key: '2026-genap', label: '2026 Genap', tahun: '2026', semester: 'Genap', rentang: 'Mar–Agu 2026' },
+  { key: '2026-ganjil', label: '2026 Ganjil', tahun: '2026', semester: 'Ganjil', rentang: 'Sep 2026–Feb 2027', berjalan: true }
 ];
 
 export const PERIODE_AWAL = PERIODE[0].key;
@@ -34,7 +34,7 @@ export const PILIHAN_KATEGORI = ['Semua', 'Layanan', 'Internal'];
 
 /* ---------------------------------------------------------------------
    Periode dari created_at (WIB, bukan UTC)
-   Sepâ€“Feb â†’ Ganjil tahun awal; Marâ€“Agu â†’ Genap tahun itu.
+   Sep–Feb → Ganjil tahun awal; Mar–Agu → Genap tahun itu.
    --------------------------------------------------------------------- */
 const WIB_OFFSET_MS = 7 * 60 * 60 * 1000;
 
@@ -176,7 +176,7 @@ function safeParse(teks) {
 }
 
 /* ---------------------------------------------------------------------
-   Baris mentah â†’ record ternormalisasi + dedup
+   Baris mentah → record ternormalisasi + dedup
    --------------------------------------------------------------------- */
 export function normalisasiBaris(rows = []) {
   const records = [];
@@ -353,7 +353,7 @@ export function hitungAgregat(slug, periode, records, sumber, kualitasTambahan =
 }
 
 /* ---------------------------------------------------------------------
-   Data simulasi (seed tetap) â€” hanya jika flag aktif
+   Data simulasi (seed tetap) — hanya jika flag aktif
    --------------------------------------------------------------------- */
 const SKENARIO = ['naik', 'naik', 'turun', 'stabil', 'naik', 'stabil', 'turun', 'naik', 'stabil', 'naik'];
 
@@ -731,7 +731,7 @@ export function getReportData(pilihan = DEFAULT_FILTER) {
   return hasil;
 }
 
-/* Ringkasan untuk landing/auth/pusat survei â€” sumber sama. */
+/* Ringkasan untuk landing/auth/pusat survei — sumber sama. */
 export function getRingkasanPublik(filter = DEFAULT_FILTER) {
   return getReportData({ ...filter, kategori: 'Semua' });
 }

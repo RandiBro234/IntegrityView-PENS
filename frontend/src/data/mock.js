@@ -1,4 +1,4 @@
-﻿/* Modul data non-survei: format angka, kontak, autentikasi demo, dan tiket
+/* Modul data non-survei: format angka, kontak, autentikasi demo, dan tiket
    pengaduan/WBS. Seluruh angka survei berasal dari src/data/surveyData.js. */
 
 export function formatAngka(x, desimal = 1) {

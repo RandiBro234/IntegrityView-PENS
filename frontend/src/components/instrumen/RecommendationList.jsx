@@ -1,4 +1,4 @@
-﻿import './RecommendationList.css';
+import './RecommendationList.css';
 
 const PRIORITAS_CLASS = {
   'Tinggi': 'prioritas--tinggi',
@@ -11,7 +11,7 @@ const PRIORITAS_CLASS = {
 export default function RecommendationList({ items, max = 3, onDetail, compact = false }) {
   if (!items || !items.length) {
     return (
-      <p className="reclist__empty">Tidak ada rekomendasi â€” seluruh indikator dalam batas wajar.</p>
+      <p className="reclist__empty">Tidak ada rekomendasi — seluruh indikator dalam batas wajar.</p>
     );
   }
 
