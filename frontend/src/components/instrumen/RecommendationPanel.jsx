@@ -27,13 +27,15 @@ function ArrowIcon() {
    Dipakai bersama oleh dashboard ringkasan dan semua dashboard instrumen. */
 export default function RecommendationPanel({ items = [], judul = 'Semua Rekomendasi' }) {
   const [terbuka, setTerbuka] = useState(false);
+  const [menutup, setMenutup] = useState(false);
   const triggerRef = useRef(null);
   const closeRef = useRef(null);
+  const timerRef = useRef(0);
   const kosong = !items.length;
 
   useEffect(() => {
     if (!terbuka) return;
-    const onKey = (event) => { if (event.key === 'Escape') setTerbuka(false); };
+    const onKey = (event) => { if (event.key === 'Escape') tutup(); };
     const overflowSemula = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     document.addEventListener('keydown', onKey);
@@ -42,11 +44,25 @@ export default function RecommendationPanel({ items = [], judul = 'Semua Rekomen
       document.removeEventListener('keydown', onKey);
       document.body.style.overflow = overflowSemula;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [terbuka]);
 
+  /* Tutup dengan animasi keluar, lalu kembalikan fokus ke tombol pemicu. */
   const tutup = () => {
-    setTerbuka(false);
-    triggerRef.current?.focus();
+    if (menutup) return;
+    setMenutup(true);
+    window.clearTimeout(timerRef.current);
+    timerRef.current = window.setTimeout(() => {
+      setTerbuka(false);
+      setMenutup(false);
+      triggerRef.current?.focus();
+    }, 180);
+  };
+
+  const buka = () => {
+    window.clearTimeout(timerRef.current);
+    setMenutup(false);
+    setTerbuka(true);
   };
 
   return (
@@ -55,7 +71,7 @@ export default function RecommendationPanel({ items = [], judul = 'Semua Rekomen
         type="button"
         ref={triggerRef}
         className="rek-trigger"
-        onClick={() => setTerbuka(true)}
+        onClick={buka}
         disabled={kosong}
         title={kosong ? 'Belum ada rekomendasi' : undefined}
         aria-haspopup="dialog"
@@ -67,10 +83,10 @@ export default function RecommendationPanel({ items = [], judul = 'Semua Rekomen
 
       {terbuka && createPortal(
         <div
-          className="rek-panel__overlay"
+          className={`rek-panel__overlay ${menutup ? 'is-tutup' : ''}`.trim()}
           onMouseDown={(event) => { if (event.target === event.currentTarget) tutup(); }}
         >
-          <aside className="rek-panel" role="dialog" aria-modal="true" aria-label={judul}>
+          <aside className={`rek-panel ${menutup ? 'is-tutup' : ''}`.trim()} role="dialog" aria-modal="true" aria-label={judul}>
             <header className="rek-panel__head">
               <div>
                 <p className="rek-panel__eyebrow">Rekomendasi Otomatis</p>

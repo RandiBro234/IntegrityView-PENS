@@ -1,15 +1,23 @@
 import { useState } from 'react';
 import Sidebar from '../components/layout/Sidebar';
 import Topbar from '../components/layout/Topbar';
+import SatisViewLink from '../components/laporan/SatisViewLink';
 import {
-  getUser, KATEGORI_ADUAN, savePengaduan, cariPengaduan,
+  getUser, savePengaduan, cariPengaduan,
   formatTanggal, formatTanggalWaktu
 } from '../data/mock';
+import {
+  kategoriPerGrup, deskripsiKategori, contohKategori, labelKategori
+} from '../data/reportCategories';
 import './PengaduanPage.css';
 
 const HUBUNGAN = ['Mahasiswa', 'Dosen', 'Tenaga Kependidikan', 'Masyarakat Umum', 'Alumni'];
 const TAHAP = ['Laporan Diterima', 'Sedang Diproses', 'Selesai Ditangani'];
 const URUT = { 'Baru': 0, 'Diproses': 1, 'Selesai': 2 };
+const FORM_KOSONG = {
+  judul: '', kategori: '', lokasi: '', deskripsi: '',
+  anonim: false, nama_pelapor: '', kontak_pelapor: '', hubungan: '', setuju: false
+};
 
 export default function PengaduanPage({ onNavigate, initialTab = 'buat', initialKode = '' }) {
   const user = getUser();
@@ -27,14 +35,15 @@ export default function PengaduanPage({ onNavigate, initialTab = 'buat', initial
             <header className="pg-head">
               <div>
                 <p className="label-eyebrow">Kanal Pelaporan</p>
-                <h1 className="pg-head__title">Pengaduan &amp; Whistleblowing System</h1>
+                <h1 className="pg-head__title">Whistleblowing System</h1>
                 <p className="pg-head__sub">
-                  Sampaikan masalah layanan atau fasilitas, atau lacak status laporan memakai kode tracking.
+                  Laporkan dugaan pelanggaran integritas di PENS. Identitas Anda dapat
+                  dirahasiakan sepenuhnya, dan status laporan bisa dipantau dengan kode laporan.
                 </p>
               </div>
             </header>
 
-            <div className="pg-tabs" role="tablist" aria-label="Mode pengaduan">
+            <div className="pg-tabs" role="tablist" aria-label="Mode laporan">
               <button
                 type="button" role="tab"
                 aria-selected={tab === 'buat'}
@@ -61,21 +70,16 @@ export default function PengaduanPage({ onNavigate, initialTab = 'buat', initial
   );
 }
 
-/* ---------- Buat laporan (multi-step) ---------- */
+/* ---------- Buat laporan (dua langkah) ---------- */
 
 function BuatLaporan() {
-  const [jenis, setJenis] = useState('pengaduan');
   const [step, setStep] = useState(0);
-  const [form, setForm] = useState({
-    judul: '', kategori: '', lokasi: '', deskripsi: '',
-    anonim: false, nama_pelapor: '', kontak_pelapor: '', hubungan: '', setuju: false
-  });
+  const [form, setForm] = useState(FORM_KOSONG);
   const [errors, setErrors] = useState({});
   const [hasil, setHasil] = useState(null);
+  const [tersalin, setTersalin] = useState(false);
 
-  const isWbs = jenis === 'wbs';
-  const kategoriOpsi = isWbs ? [...KATEGORI_ADUAN, 'Pungli', 'Gratifikasi', 'Benturan Kepentingan'] : KATEGORI_ADUAN;
-
+  const grup = kategoriPerGrup();
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
 
   const validasiStep1 = () => {
@@ -106,7 +110,6 @@ function BuatLaporan() {
     e.preventDefault();
     if (!validasiStep2()) return;
     const rec = savePengaduan({
-      jenis,
       judul: form.judul,
       kategori: form.kategori,
       lokasi: form.lokasi,
@@ -120,6 +123,13 @@ function BuatLaporan() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const salinKode = () => {
+    if (!navigator.clipboard) return;
+    navigator.clipboard.writeText(hasil.id);
+    setTersalin(true);
+    window.setTimeout(() => setTersalin(false), 2200);
+  };
+
   if (hasil) {
     return (
       <div className="pg-card pg-sukses">
@@ -131,11 +141,20 @@ function BuatLaporan() {
         <h2>Laporan terkirim</h2>
         <p>Simpan kode berikut untuk melacak status penanganan.</p>
         <div className="pg-sukses__kode">{hasil.id}</div>
+        <p className="pg-sukses__ingat">
+          {hasil.anonim
+            ? 'Anda melapor secara anonim. Kode ini satu-satunya cara memantau laporan, dan tidak bisa dipulihkan bila hilang.'
+            : 'Catat kode ini. Tanpa kode, status laporan tidak dapat dilacak.'}
+        </p>
         <div className="pg-sukses__actions">
-          <button type="button" className="btn btn-outline-navy" onClick={() => navigator.clipboard && navigator.clipboard.writeText(hasil.id)}>
-            Salin Kode
+          <button type="button" className="btn btn-outline-navy" onClick={salinKode}>
+            {tersalin ? 'Kode Tersalin' : 'Salin Kode'}
           </button>
-          <button type="button" className="btn btn-primary" onClick={() => { setHasil(null); setForm({ judul: '', kategori: '', lokasi: '', deskripsi: '', anonim: false, nama_pelapor: '', kontak_pelapor: '', hubungan: '', setuju: false }); setStep(0); }}>
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={() => { setHasil(null); setForm(FORM_KOSONG); setStep(0); setErrors({}); }}
+          >
             Buat Laporan Lain
           </button>
         </div>
@@ -145,23 +164,17 @@ function BuatLaporan() {
 
   return (
     <div className="pg-card">
-      <div className="pg-jenis" role="radiogroup" aria-label="Jenis laporan">
-        <button
-          type="button" role="radio" aria-checked={!isWbs}
-          className={`pg-jenis__opt ${!isWbs ? 'is-active' : ''}`}
-          onClick={() => setJenis('pengaduan')}
-        >
-          <span className="pg-jenis__title">Pengaduan Masyarakat</span>
-          <span className="pg-jenis__desc">Fasilitas, administrasi, kualitas layanan.</span>
-        </button>
-        <button
-          type="button" role="radio" aria-checked={isWbs}
-          className={`pg-jenis__opt ${isWbs ? 'is-active' : ''}`}
-          onClick={() => setJenis('wbs')}
-        >
-          <span className="pg-jenis__title">Whistleblowing System</span>
-          <span className="pg-jenis__desc">Dugaan pelanggaran integritas, mendukung anonim.</span>
-        </button>
+      <div className="pg-info">
+        <span className="pg-info__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="9" />
+            <path d="M12 11v5M12 8h.01" />
+          </svg>
+        </span>
+        <p className="pg-info__text">
+          Keluhan fasilitas, kenyamanan, atau kepuasan layanan tidak diproses di sini.
+          Sampaikan lewat <SatisViewLink />.
+        </p>
       </div>
 
       <div className="pg-steps">
@@ -172,23 +185,54 @@ function BuatLaporan() {
       </div>
 
       <form onSubmit={submit} noValidate>
+        {/* Langkah bergeser horizontal dengan fade saat pindah 1 -> 2. */}
+        <div className="pg-step-panel" key={step}>
         {step === 0 && (
           <>
             <Field label="Judul laporan" error={errors.judul}>
-              <input type="text" placeholder="Ringkas dalam satu kalimat" value={form.judul} onChange={(e) => set('judul', e.target.value)} />
+              <input
+                type="text"
+                placeholder="Ringkas dalam satu kalimat"
+                value={form.judul}
+                onChange={(e) => set('judul', e.target.value)}
+              />
             </Field>
+
             <Field label="Kategori" error={errors.kategori}>
               <select value={form.kategori} onChange={(e) => set('kategori', e.target.value)}>
                 <option value="">Pilih kategori</option>
-                {kategoriOpsi.map((k) => <option key={k} value={k}>{k}</option>)}
+                {grup.map((g) => (
+                  <optgroup key={g.key} label={g.label}>
+                    {g.kategori.map((k) => <option key={k.key} value={k.key}>{k.label}</option>)}
+                  </optgroup>
+                ))}
               </select>
             </Field>
-            <Field label="Lokasi / gedung terkait (opsional)">
-              <input type="text" placeholder="Opsional" value={form.lokasi} onChange={(e) => set('lokasi', e.target.value)} />
+            {form.kategori && (
+              <p className="pg-help">
+                {deskripsiKategori(form.kategori)}
+                {contohKategori(form.kategori) && <> Contoh: {contohKategori(form.kategori)}</>}
+              </p>
+            )}
+
+            <Field label="Lokasi / unit terkait (opsional)">
+              <input
+                type="text"
+                placeholder="Opsional"
+                value={form.lokasi}
+                onChange={(e) => set('lokasi', e.target.value)}
+              />
             </Field>
+
             <Field label="Deskripsi lengkap" error={errors.deskripsi}>
-              <textarea rows="5" placeholder="Jelaskan masalah, kapan terjadi, dan dampaknya" value={form.deskripsi} onChange={(e) => set('deskripsi', e.target.value)} />
+              <textarea
+                rows="5"
+                placeholder="Jelaskan apa yang terjadi, kapan, di mana, siapa yang terlibat, dan bukti yang Anda miliki."
+                value={form.deskripsi}
+                onChange={(e) => set('deskripsi', e.target.value)}
+              />
             </Field>
+
             <div className="pg-actions">
               <button type="button" className="btn btn-primary" onClick={next}>Lanjut</button>
             </div>
@@ -198,7 +242,8 @@ function BuatLaporan() {
         {step === 1 && (
           <>
             <div className="pg-note">
-              <strong>Pilihan anonim.</strong> Jika memilih anonim, nama, kontak, dan hubungan Anda tidak disimpan. Status hanya bisa dilacak memakai kode {isWbs ? 'WBS' : 'ADU'}.
+              <strong>Pilihan anonim.</strong> Jika memilih anonim, nama, kontak, dan hubungan Anda
+              tidak disimpan. Status hanya bisa dilacak memakai kode laporan.
             </div>
 
             <label className="pg-check">
@@ -235,6 +280,7 @@ function BuatLaporan() {
             </div>
           </>
         )}
+        </div>
       </form>
     </div>
   );
@@ -251,7 +297,7 @@ function LacakStatus({ initialKode }) {
   const cari = (e) => {
     e.preventDefault();
     const v = kode.trim();
-    if (!v) { setError('Masukkan kode terlebih dahulu.'); return; }
+    if (!v) { setError('Masukkan kode laporan terlebih dahulu.'); return; }
     setError('');
     setHasil(cariPengaduan(v));
     setDicari(true);
@@ -261,7 +307,13 @@ function LacakStatus({ initialKode }) {
     <div className="pg-lacak">
       <form className="pg-card pg-lacak__form" onSubmit={cari}>
         <Field label="Kode laporan" error={error}>
-          <input type="text" placeholder="Contoh: ADU-2026-0001 atau WBS-2026-001" value={kode} onChange={(e) => setKode(e.target.value)} autoComplete="off" />
+          <input
+            type="text"
+            placeholder="Contoh: WBS-2026-0002 atau ADU-2026-0001"
+            value={kode}
+            onChange={(e) => setKode(e.target.value)}
+            autoComplete="off"
+          />
         </Field>
         <div className="pg-actions">
           <button type="submit" className="btn btn-primary">Lacak Sekarang</button>
@@ -271,14 +323,17 @@ function LacakStatus({ initialKode }) {
       {dicari && (hasil ? <HasilLacak data={hasil} /> : (
         <div className="pg-card pg-state">
           <p className="pg-state__title">Kode tidak ditemukan</p>
-          <p className="pg-state__text">Kode "{kode}" tidak cocok dengan laporan mana pun. Pengaduan berformat ADU-2026-0001, WBS berformat WBS-2026-001.</p>
+          <p className="pg-state__text">
+            Kode &quot;{kode}&quot; tidak cocok dengan laporan mana pun. Format kode yang berlaku:
+            WBS-2026-0001, dan kode lama ADU-2026-0001.
+          </p>
         </div>
       ))}
 
       {!dicari && (
         <div className="pg-card pg-state">
           <p className="pg-state__title">Belum ada pencarian</p>
-          <p className="pg-state__text">Masukkan kode tracking untuk melihat status penanganan laporan.</p>
+          <p className="pg-state__text">Masukkan kode laporan untuk melihat status penanganan.</p>
         </div>
       )}
     </div>
@@ -296,7 +351,9 @@ function HasilLacak({ data }) {
         <span className={`badge badge-status badge-status-${data.status.toLowerCase()}`}>{data.status}</span>
       </div>
       <h2 className="pg-lacak__judul">{data.judul}</h2>
-      <p className="pg-lacak__meta">Kategori {data.kategori} · Dilaporkan {formatTanggal(data.waktuLapor)}</p>
+      <p className="pg-lacak__meta">
+        Kategori {labelKategori(data.kategori)} · Dilaporkan {formatTanggal(data.waktuLapor)}
+      </p>
 
       <ol className="pg-timeline">
         {TAHAP.map((label, i) => {

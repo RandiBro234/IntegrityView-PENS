@@ -8,6 +8,11 @@ html, body, #root {
   padding: 0;
 }
 
+html { scroll-behavior: smooth; }
+
+/* Judul section tidak tertutup navbar sticky saat menu diklik. */
+.landing__section-anchor { scroll-margin-top: calc(71px + 16px); }
+
 body {
   font-family: var(--font-family);
   background: var(--bg-page);
@@ -137,6 +142,102 @@ p { margin: 0; }
   right: -32px;
   width: 140px;
   height: 140px;
+}
+
+/* ================= Motion =================
+   Hanya opacity dan transform. State awal tersembunyi hanya aktif setelah
+   <html class="js">, sehingga konten tetap tampil tanpa JavaScript. */
+html.js [data-reveal] {
+  opacity: 0;
+}
+html.js [data-reveal='fade-up'] { transform: translate3d(0, var(--reveal-distance), 0); }
+html.js [data-reveal='fade-left'] { transform: translate3d(calc(var(--reveal-distance) * -1), 0, 0); }
+html.js [data-reveal='fade-right'] { transform: translate3d(var(--reveal-distance), 0, 0); }
+html.js [data-reveal='scale-in'] { transform: scale(0.96); }
+
+html.js [data-reveal].is-visible {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity var(--dur-base) var(--ease-out) var(--reveal-delay, 0ms),
+    transform var(--dur-base) var(--ease-out) var(--reveal-delay, 0ms);
+}
+
+/* Transisi antar halaman aplikasi. Animasi fallback hanya dipakai bila
+   View Transitions tidak tersedia, agar tidak dobel dengan snapshot native. */
+.page-transition {
+  min-height: 100%;
+  overflow-x: clip;
+}
+html.js:not(.vt) .page-transition {
+  animation: page-in 320ms var(--ease-out) both;
+}
+html.js:not(.vt) .page-transition.is-out {
+  animation: none;
+  opacity: 0;
+  transform: translate3d(0, -4px, 0);
+  transition: opacity 150ms var(--ease-in-out), transform 150ms var(--ease-in-out);
+}
+
+@keyframes page-in {
+  from { opacity: 0; transform: translate3d(0, 12px, 0); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Peningkatan bertahap bila View Transitions API tersedia.
+   Hanya area konten yang dianimasikan; sidebar dan topbar tetap diam. */
+@media (prefers-reduced-motion: no-preference) {
+  .app-content, .landing { view-transition-name: konten; }
+  ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
+  ::view-transition-old(konten) {
+    animation: vt-out 150ms var(--ease-in-out) both;
+  }
+  ::view-transition-new(konten) {
+    animation: vt-in 320ms var(--ease-out) both;
+  }
+  @keyframes vt-out {
+    from { opacity: 1; transform: none; }
+    to { opacity: 0; transform: translate3d(0, -4px, 0); }
+  }
+  @keyframes vt-in {
+    from { opacity: 0; transform: translate3d(0, 12px, 0); }
+    to { opacity: 1; transform: none; }
+  }
+}
+
+/* Skeleton shimmer tetap halus, lalu cross-fade ke konten. */
+.skeleton { will-change: opacity; }
+
+/* Mikro-interaksi tombol: naik 1px saat hover, turun + scale saat ditekan. */
+.btn:hover { transform: translateY(-1px); }
+.btn:active { transform: translateY(1px) scale(0.98); }
+.btn:focus-visible { outline: 2px solid var(--orange-500); outline-offset: 2px; }
+
+/* Ikon panah pada tautan bergeser ke kanan atas saat hover. */
+.arah-link { transition: transform var(--dur-fast) var(--ease-out); }
+a:hover > .arah-link,
+button:hover > .arah-link { transform: translate(2px, -2px); }
+
+/* Hormati preferensi sistem: hentikan semua gerakan. */
+@media (prefers-reduced-motion: reduce) {
+  html.js [data-reveal],
+  html.js [data-reveal].is-visible {
+    opacity: 1;
+    transform: none;
+    transition: opacity 120ms linear;
+  }
+  .page-transition,
+  .page-transition.is-out { animation: none; opacity: 1; transform: none; transition: opacity 120ms linear; }
+  .btn:hover, .btn:active { transform: none; }
+  .arah-link, a:hover > .arah-link, button:hover > .arah-link { transform: none; }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 @media (max-width: 900px) {

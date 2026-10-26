@@ -63,6 +63,8 @@
   min-width: 0;
 }
 .sebaran__row:hover { background: var(--bg-page); }
+.sebaran__row { transition: background 0.12s ease, transform var(--dur-fast) var(--ease-out); }
+.sebaran__row:hover { transform: translateY(-2px); }
 /* Highlight memakai outline agar ukuran baris tidak berubah. */
 .sebaran__row.is-selected {
   outline: 2px solid var(--navy-900);
@@ -93,6 +95,27 @@
   overflow: hidden;
   border-radius: 4px;
   background: var(--gray-50);
+  transform-origin: left center;
+}
+
+/* Batang tumbuh dari kiri (transform, bukan width) dengan stagger antarbaris. */
+html.js .sebaran__bar {
+  animation: sebaran-tumbuh var(--dur-base) var(--ease-out) both;
+  animation-delay: calc(var(--row-index, 0) * var(--stagger));
+}
+@keyframes sebaran-tumbuh {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+/* Label persentase baru muncul setelah batang selesai tumbuh. */
+html.js .sebaran__seg-label {
+  animation: sebaran-label-masuk var(--dur-fast) var(--ease-out) both;
+  animation-delay: calc(var(--row-index, 0) * var(--stagger) + var(--dur-base));
+}
+@keyframes sebaran-label-masuk {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 .sebaran__seg {
   position: relative;
