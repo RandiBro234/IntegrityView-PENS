@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+﻿import { useEffect, useMemo, useState } from 'react';
 import { BlobDecor } from '../components/cards/StatCard';
 import { KONTAK, labelPartisipan, formatAngka } from '../data/mock';
 import { getReportData } from '../data/reportData';
@@ -7,10 +7,10 @@ import Delta from '../components/dashboard/Delta';
 import './LandingPage.css';
 
 const ALUR = [
-  { n: 1, judul: 'Isi Survei / Lapor Aduan', desc: 'Dosen dan tenaga kependidikan mengisi instrumen atau menyampaikan laporan lewat kanal resmi. Bisa anonim penuh.' },
-  { n: 2, judul: 'Data Masuk Otomatis', desc: 'Respons terverifikasi Unit Penjaminan Mutu dan langsung tercatat di sistem.' },
+  { n: 1, judul: 'Isi Survei lewat Google Form', desc: 'Dosen dan tenaga kependidikan mengisi survei lewat Google Form dari Pusat Survei. Laporan pelanggaran tetap lewat kanal Pengaduan.' },
+  { n: 2, judul: 'Data Masuk ke Sistem', desc: 'Respons terverifikasi Unit Penjaminan Mutu dan tercatat di basis data survei.' },
   { n: 3, judul: 'Dianalisis Tim SPI', desc: 'Satuan Pengawasan Internal menghitung skor indeks dan menelaah temuan.' },
-  { n: 4, judul: 'Ditindaklanjuti & Dipublikasi', desc: 'Hasil tampil di dashboard publik dan rekomendasi diteruskan ke unit terkait.' }
+  { n: 4, judul: 'Ditindaklanjuti & Dipublikasi', desc: 'Hasil tampil di dashboard publik sebagai agregat dan rekomendasi diteruskan ke unit terkait.' }
 ];
 
 /* Gradasi latar per langkah, arah seragam 135deg, satu keluarga warna tema:
@@ -62,7 +62,8 @@ export default function LandingPage({ onEnterDashboard, session }) {
 
   return (
     <div className="landing">
-      <header className="landing__topbar">
+      <div className="landing__first-screen">
+        <header className="landing__topbar">
         <div className="landing__brand">
           <span className="landing__brand-name">IntegrityView</span>
         </div>
@@ -85,7 +86,7 @@ export default function LandingPage({ onEnterDashboard, session }) {
         ) : (
           <button type="button" className="btn btn-primary" onClick={onEnterDashboard}>Masuk</button>
         )}
-      </header>
+        </header>
 
       <section className="landing__hero">
         <div className="landing__hero-inner">
@@ -101,43 +102,46 @@ export default function LandingPage({ onEnterDashboard, session }) {
               <button type="button" className="btn btn-primary" onClick={onEnterDashboard}>
                 Buka Dashboard Publik
               </button>
-              <a href="#instrumen" className="btn btn-outline-light">Lihat Pusat Survei</a>
+              <button type="button" className="btn btn-outline-light" onClick={() => onEnterDashboard('survei')}>Lihat Pusat Survei</button>
             </div>
           </div>
 
           <div className="landing__hero-visual" aria-hidden="true">
-            <div className="landing__hero-photo" style={{ transform: `translateY(${parallax * 0.4}px)` }}>
-              <img src="/pens.jpeg" alt="" loading="eager" />
-              <div className="landing__hero-photo-scrim" />
-            </div>
+            <div className="landing__hero-frame" style={{ transform: `translateY(${parallax * 0.4}px)` }}>
+              <div className="landing__hero-photo">
+                <img src="/pens.jpeg" alt="" loading="eager" />
+                <div className="landing__hero-photo-scrim" />
+              </div>
 
-            <div className="landing__bento landing__bento--a" style={{ transform: `translateY(${-parallax}px)` }}>
-              <BlobDecor color="#0B1B33" />
-              <p className="label-eyebrow">Skor ZI {laporan.periode.short}</p>
-              <div className="landing__bento-value">{formatAngka(ringkasan.rataSkor)}<span>%</span></div>
-              <Delta value={ringkasan.delta} />
-            </div>
+              <div className="landing__bento landing__bento--a">
+                <BlobDecor color="#0B1B33" />
+                <p className="label-eyebrow">Skor ZI {laporan.periode.label}</p>
+                <div className="landing__bento-value">{formatAngka(ringkasan.rataSkor)}<span>%</span></div>
+                <Delta value={ringkasan.delta} />
+              </div>
 
-            <div className="landing__bento landing__bento--b" style={{ transform: `translateY(${parallax * 1.4}px)` }}>
-              <BlobDecor color="#FFFFFF" />
-              <p className="label-eyebrow" style={{ color: 'rgba(241,244,249,0.7)' }}>Responden</p>
-              <div className="landing__bento-value" style={{ color: '#fff' }}>{ringkasan.responden.total.toLocaleString('id-ID')}</div>
-              <span className="landing__bento-note">{laporan.periode.short}</span>
-            </div>
+              <div className="landing__bento landing__bento--b">
+                <BlobDecor color="#FFFFFF" />
+                <p className="label-eyebrow" style={{ color: 'rgba(241,244,249,0.7)' }}>Responden</p>
+                <div className="landing__bento-value" style={{ color: '#fff' }}>{ringkasan.responden.total.toLocaleString('id-ID')}</div>
+                <span className="landing__bento-note">{laporan.periode.label}</span>
+              </div>
 
-            <div className="landing__bento landing__bento--c" style={{ transform: `translateY(${-parallax * 0.7}px)` }}>
-              <p className="label-eyebrow" style={{ color: 'rgba(11,27,51,0.6)' }}>Instrumen aktif</p>
-              <div className="landing__bento-value">{ringkasan.totalInstrumen}</div>
-              <div className="landing__bento-bars">
-                <span style={{ height: '40%' }} />
-                <span style={{ height: '60%' }} />
-                <span style={{ height: '80%' }} />
-                <span style={{ height: '100%' }} />
+              <div className="landing__bento landing__bento--c">
+                <p className="label-eyebrow" style={{ color: 'rgba(11,27,51,0.6)' }}>Instrumen aktif</p>
+                <div className="landing__bento-value">{ringkasan.totalInstrumen}</div>
+                <div className="landing__bento-bars">
+                  <span style={{ height: '40%' }} />
+                  <span style={{ height: '60%' }} />
+                  <span style={{ height: '80%' }} />
+                  <span style={{ height: '100%' }} />
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
+      </div>
 
       <section className="landing__about" id="tentang">
         <div className="landing__about-inner">
@@ -210,7 +214,7 @@ export default function LandingPage({ onEnterDashboard, session }) {
 
                 {/* Selisih */}
                 <div className="landing__rentang-selisih">
-                   <span>vs {laporan.periodePembanding?.short}</span>
+                   <span>vs {laporan.periodePembanding?.label}</span>
                 </div>
               </div>
             </article>
@@ -227,7 +231,7 @@ export default function LandingPage({ onEnterDashboard, session }) {
         </div>
         <div className="landing__instr-grid">
            {surveiLanding.map(s => (
-            <button type="button" key={s.key} className="landing__instr-card" onClick={onEnterDashboard}>
+            <button type="button" key={s.key} className="landing__instr-card" onClick={() => onEnterDashboard('survei')} aria-label={`Buka Pusat Survei untuk ${s.namaPanjang}`}>
               <span className="landing__instr-chevron" aria-hidden="true">
                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="m9 6 6 6-6 6" />
@@ -330,13 +334,13 @@ export default function LandingPage({ onEnterDashboard, session }) {
             <h2>Jadi bagian dari transparansi kampus.</h2>
             <p>
               Terbuka untuk <strong>dosen dan tenaga kependidikan</strong> PENS.
-              Pengisian hanya <strong>± 5 menit</strong> per instrumen, respons anonim dan langsung masuk dashboard publik.
+              Pengisian lewat Google Form. Hasil ditampilkan sebagai agregat di dashboard publik tanpa menampilkan identitas responden.
             </p>
             <p className="landing__cta-partisipan">
               <strong className="landing__cta-partisipan-n">{ringkasanResponden.toLocaleString('id-ID')}</strong> responden telah berpartisipasi
             </p>
           </div>
-          <button type="button" className="btn btn-ghost-light landing__cta-btn" onClick={onEnterDashboard}>
+          <button type="button" className="btn btn-ghost-light landing__cta-btn" onClick={() => onEnterDashboard('survei')}>
             Mulai Isi Survei
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M5 12h14M13 6l6 6-6 6" />
@@ -404,8 +408,8 @@ export default function LandingPage({ onEnterDashboard, session }) {
           </div>
         </div>
         <div className="landing__footer-bottom">
-           <span>IntegrityView, prototipe v3 · 2026.</span>
-          <span>Politeknik Elektronika Negeri Surabaya · Zona Integritas</span>
+           <span>IntegrityView, prototipe v3 Â· 2026.</span>
+          <span>Politeknik Elektronika Negeri Surabaya Â· Zona Integritas</span>
         </div>
       </footer>
 
@@ -415,8 +419,9 @@ export default function LandingPage({ onEnterDashboard, session }) {
           <path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3" />
           <path d="M12 17h.01" />
         </svg>
-        Butuh Bantuan?
+        <span className="landing__help-label">Butuh Bantuan?</span>
       </button>
     </div>
   );
 }
+

@@ -1,28 +1,35 @@
-import { useMemo, useState } from 'react';
+﻿import { useMemo, useState } from 'react';
 import Sidebar from '../components/layout/Sidebar';
 import Topbar from '../components/layout/Topbar';
-import { SURVEI_DESKRIPSI, SURVEI_LANGKAH, getUser, jumlahTerisi, sudahDiisi } from '../data/mock';
+import { SURVEI_DESKRIPSI, getUser } from '../data/mock';
+import { SURVEY_LINKS } from '../data/surveyLinks';
 import { getReportData } from '../data/reportData';
 import { useReportFilters } from '../data/useReportFilters';
 import './SurveiPage.css';
 
 const KATEGORI = ['Semua', 'Integritas & Korupsi', 'Pelayanan Publik', 'Pelaporan', 'Budaya & 5R'];
 
-export default function SurveiPage({ onNavigate, onIsiSurvei }) {
+export default function SurveiPage({ onNavigate, onOpenInstrument }) {
   const user = getUser();
   const [kategori, setKategori] = useState('Semua');
 
   const { filter } = useReportFilters();
   const laporan = useMemo(() => getReportData({ ...filter, kategori: 'Semua' }), [filter]);
-  const daftar = useMemo(() => laporan.instrumen.map(({ info, aktif }) => ({
-    ...info,
-    deskripsi: SURVEI_DESKRIPSI[info.key] || '',
-    langkah: SURVEI_LANGKAH[info.key],
-    jumlahButir: aktif?.butir.length || 0,
-    responden: aktif?.jumlahResponden || 0
-  })), [laporan]);
-  const terisi = useMemo(() => jumlahTerisi(), []);
-  /* Jumlah instrumen & responden dari sumber yang sama dengan dashboard. */
+
+  const daftar = useMemo(() => laporan.instrumen.map(({ info, aktif }) => {
+    const link = SURVEY_LINKS.find((s) => s.slug === info.key);
+    const jumlahButir = aktif?.butir.length || 0;
+    return {
+      ...info,
+      deskripsi: SURVEI_DESKRIPSI[info.key] || '',
+      jumlahButir,
+      estimasiMenit: Math.max(3, Math.ceil(jumlahButir / 3)),
+      responden: aktif?.jumlahResponden || 0,
+      url: link?.url || null,
+      requiresGoogleLogin: !!link?.requiresGoogleLogin
+    };
+  }), [laporan]);
+
   const jumlahInstrumen = daftar.length;
   const totalResponden = laporan.ringkasan.responden.total;
 
@@ -33,11 +40,6 @@ export default function SurveiPage({ onNavigate, onIsiSurvei }) {
 
   const handleMenu = (key) => {
     if (onNavigate) onNavigate(key);
-  };
-
-  const mulaiBerikutnya = () => {
-    const belum = daftar.find((d) => !sudahDiisi(d.key)) || daftar[0];
-    if (belum && onIsiSurvei) onIsiSurvei(belum.key);
   };
 
   return (
@@ -53,19 +55,19 @@ export default function SurveiPage({ onNavigate, onIsiSurvei }) {
               <p className="label-eyebrow">Pusat Survei</p>
               <h1 className="survei-hero__title">Semua instrumen Zona Integritas di satu tempat.</h1>
               <p className="survei-hero__lead">
-                Pilih instrumen, klik Isi Survei, jawaban tersimpan di peramban ini. Progres pengisian dihitung dari respons yang sudah tersimpan.
+                Pengisian survei dilakukan lewat Google Form. Pilih instrumen, buka formulirnya,
+                lalu kembali ke sini untuk melihat hasil agregatnya di dashboard.
               </p>
             </div>
 
             <div className="survei-hero__progress">
               <div className="survei-hero__progress-num">
-                {terisi}<span className="survei-hero__progress-of"> / {jumlahInstrumen}</span>
+                {jumlahInstrumen}<span className="survei-hero__progress-of"> instrumen</span>
               </div>
-              <p className="survei-hero__progress-label">Survei sudah diisi</p>
-              <div className="survei-hero__progress-bar" role="progressbar" aria-valuenow={terisi} aria-valuemin="0" aria-valuemax={jumlahInstrumen}>
-                <span style={{ width: (terisi / jumlahInstrumen) * 100 + '%' }} />
-              </div>
-              <p className="survei-hero__progress-note">Hanya menghitung form internal di peramban ini.</p>
+              <p className="survei-hero__progress-label">Terhubung ke Google Form</p>
+              <p className="survei-hero__progress-note">
+                Formulir terbuka di tab baru. Hasil dibaca dari data agregat yang sudah masuk.
+              </p>
             </div>
           </section>
 
@@ -83,7 +85,7 @@ export default function SurveiPage({ onNavigate, onIsiSurvei }) {
               <span className="survei-stat__label">Instrumen aktif</span>
             </div>
             <div className="survei-stat">
-              <span className="survei-stat__num">{laporan.periode.short}</span>
+              <span className="survei-stat__num">{laporan.periode.label}</span>
               <span className="survei-stat__label">Periode data</span>
             </div>
           </section>
@@ -102,40 +104,57 @@ export default function SurveiPage({ onNavigate, onIsiSurvei }) {
                 </button>
               ))}
             </div>
-            <button type="button" className="btn btn-primary" onClick={mulaiBerikutnya}>
-              Mulai Survei Berikutnya
-            </button>
           </div>
+
+          <p className="survei-note">
+            Form terbuka di tab baru. Setelah selesai, kembali ke sini untuk melihat hasil di dashboard.
+          </p>
 
           {filtered.length === 0 ? (
             <p className="survei-empty">Tidak ada instrumen pada kategori ini.</p>
           ) : (
             <div className="survei-grid">
-              {filtered.map((d) => {
-                const sudah = sudahDiisi(d.key);
-                return (
-                  <article key={d.key} className={`scard ${sudah ? 'scard--done' : ''}`}>
-                    <div className="scard__top">
-                      <span className="scard__kategori">{d.kategori}</span>
-                      {sudah && <span className="badge badge-up">Sudah Diisi</span>}
-                    </div>
-                    <h3 className="scard__name">{d.namaPanjang}</h3>
-                    <p className="scard__desc">{d.deskripsi}</p>
-                    <div className="scard__meta">
-                      <span>{d.jumlahButir} pertanyaan</span>
-                      <span aria-hidden="true">·</span>
-                      <span>{d.responden.toLocaleString('id-ID')} responden</span>
-                    </div>
+              {filtered.map((d) => (
+                <article key={d.key} className="scard">
+                  <div className="scard__top">
+                    <span className="scard__kategori">{d.kategori}</span>
+                    {d.requiresGoogleLogin && <span className="scard__tag">Perlu akun Google</span>}
+                  </div>
+                  <h3 className="scard__name">{d.namaPanjang}</h3>
+                  <p className="scard__desc">{d.deskripsi}</p>
+                  <div className="scard__meta">
+                    <span>{d.jumlahButir} pertanyaan</span>
+                    <span aria-hidden="true">Â·</span>
+                    <span>Â± {d.estimasiMenit} menit</span>
+                    <span aria-hidden="true">Â·</span>
+                    <span>{d.kelompok}</span>
+                  </div>
+                  <div className="scard__actions">
+                    {d.url ? (
+                      <a
+                        className="btn btn-primary scard__cta"
+                        href={d.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`Isi survei ${d.namaPanjang} di tab baru`}
+                      >
+                        Isi Survei
+                      </a>
+                    ) : (
+                      <span className="btn scard__cta scard__cta--disabled" aria-disabled="true">
+                        Form belum tersedia
+                      </span>
+                    )}
                     <button
                       type="button"
-                      className={`btn btn-block scard__cta ${sudah ? 'btn-outline-navy' : 'btn-primary'}`}
-                      onClick={() => onIsiSurvei && onIsiSurvei(d.key)}
+                      className="scard__result"
+                      onClick={() => onOpenInstrument && onOpenInstrument(d.key)}
                     >
-                      {sudah ? 'Isi Ulang' : 'Isi Survei'}
+                      Lihat hasil
                     </button>
-                  </article>
-                );
-              })}
+                  </div>
+                </article>
+              ))}
             </div>
           )}
         </main>
@@ -143,3 +162,4 @@ export default function SurveiPage({ onNavigate, onIsiSurvei }) {
     </div>
   );
 }
+

@@ -1,4 +1,5 @@
+/* Warna mengikuti arahPerubahan(): naik hijau, turun merah, stabil abu-abu. */
 .delta { font-size: 12px; font-weight: 800; white-space: nowrap; font-variant-numeric: tabular-nums; }
-.delta--up { color: var(--teal-500); }
-.delta--down { color: var(--error-500); }
-.delta--flat { color: var(--text-secondary); }
+.delta--naik { color: var(--teal-500); }
+.delta--turun { color: var(--error-500); }
+.delta--stabil { color: var(--text-secondary); }

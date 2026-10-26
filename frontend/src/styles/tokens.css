@@ -37,6 +37,11 @@
   /* === Spacing === */
   --space-card: 22px;
   --gap-grid: 18px;
+  /* Jarak tunggal antar card dashboard (horizontal & vertikal). */
+  --gap: clamp(16px, 1.5vw, 28px);
+  --pad-page: clamp(16px, 2vw, 32px);
+  --pad-card: clamp(16px, 1.6vw, 24px);
+  --gap-sm: clamp(8px, 0.9vw, 14px);
 
   /* === Sidebar === */
   --sidebar-w: 76px;

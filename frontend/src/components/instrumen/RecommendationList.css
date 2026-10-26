@@ -19,13 +19,14 @@
 
 .reclist__row1 {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 10px;
   min-width: 0;
 }
 
 .reclist__prio {
   flex-shrink: 0;
+  margin-top: 1px;
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.06em;
@@ -38,6 +39,7 @@
 .prioritas--sedang { background: rgba(30, 58, 95, 0.1); color: var(--navy-500); }
 .prioritas--pantau { background: rgba(107, 114, 128, 0.12); color: var(--gray-500); }
 
+/* Judul dan dasar data membungkus penuh — tidak dipotong dengan elipsis. */
 .reclist__teks {
   flex: 1;
   min-width: 0;
@@ -45,14 +47,14 @@
   font-size: 12.5px;
   font-weight: 700;
   color: var(--text-primary);
-  line-height: 1.4;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  line-height: 1.45;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .reclist__detail {
   margin-left: auto;
+  align-self: flex-start;
   flex-shrink: 0;
   font-size: 11px;
   font-weight: 700;
@@ -67,9 +69,9 @@
   padding-left: 0;
   font-size: 11.5px;
   color: var(--text-secondary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  line-height: 1.45;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .reclist__empty {

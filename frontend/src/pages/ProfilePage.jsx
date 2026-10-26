@@ -34,10 +34,6 @@ export default function ProfilePage({ onNavigate }) {
             {/* Statistik personal */}
             <section className="pf-stats">
               <div className="pf-stat">
-                <span className="pf-stat__value">{profil.statistik.surveiDiisi}<span className="pf-stat__of">/{profil.statistik.totalSurvei}</span></span>
-                <span className="pf-stat__label">Survei diisi</span>
-              </div>
-              <div className="pf-stat">
                 <span className="pf-stat__value">{profil.statistik.laporanDibuat}</span>
                 <span className="pf-stat__label">Laporan dibuat</span>
               </div>
@@ -88,16 +84,16 @@ export default function ProfilePage({ onNavigate }) {
                 </div>
 
                 {tab === 'aktivitas' ? (
-                  profil.instrumenDiisi.length === 0 ? (
-                    <p className="pf-empty">Belum ada survei yang diisi. Buka Pusat Survei untuk mulai berpartisipasi.</p>
+                  profil.laporanUser.length === 0 ? (
+                    <p className="pf-empty">Belum ada laporan yang Anda buat. Buka kanal Pengaduan untuk menyampaikan laporan.</p>
                   ) : (
                     <ul className="pf-aktivitas">
-                      {profil.instrumenDiisi.map((d) => (
-                        <li key={d.key}>
+                      {profil.laporanUser.map((l) => (
+                        <li key={l.id}>
                           <span className="pf-aktivitas__dot" aria-hidden="true" />
                           <div>
-                            <p className="pf-aktivitas__teks">Mengisi {d.nama}</p>
-                            <p className="pf-aktivitas__waktu">{formatTanggalWaktu(d.waktu)}</p>
+                            <p className="pf-aktivitas__teks">{l.judul}</p>
+                            <p className="pf-aktivitas__waktu">{formatTanggalWaktu(l.waktuLapor)} · {l.status}</p>
                           </div>
                         </li>
                       ))}
@@ -112,7 +108,7 @@ export default function ProfilePage({ onNavigate }) {
                       <strong>Sesi berakhir otomatis.</strong> Anda keluar otomatis saat menutup peramban karena sesi disimpan sementara.
                     </li>
                     <li>
-                      <strong>Data hanya untuk pemantauan ZI.</strong> Jawaban survei dan laporan dipakai untuk capaian Zona Integritas PENS.
+                      <strong>Survei diisi lewat Google Form.</strong> Aplikasi hanya menampilkan hasil agregat, tanpa menampilkan identitas responden.
                     </li>
                   </ul>
                 )}
