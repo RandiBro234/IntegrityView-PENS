@@ -74,16 +74,20 @@
 .kpo-id { font-weight: 700; color: var(--navy-500); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .kpo-judul { font-weight: 600; color: var(--text-primary); max-width: 320px; }
 .kpo-muted { color: var(--text-secondary); white-space: nowrap; }
-.kpo-jenis {
-  font-size: 10.5px;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+/* Chip kategori dan status pelapor. */
+.kpo-chip {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
   padding: 3px 9px;
   border-radius: var(--radius-pill);
+  background: var(--bg-page);
+  border: 1px solid var(--border-soft);
+  color: var(--text-primary);
+  white-space: nowrap;
 }
-.kpo-jenis--pengaduan { background: rgba(30, 58, 95, 0.1); color: var(--navy-500); }
-.kpo-jenis--wbs { background: rgba(245, 132, 60, 0.14); color: #c25e1e; }
+.kpo-chip--alih { background: var(--gray-50); color: var(--text-secondary); }
+.kpo-chip--anon { background: rgba(30, 58, 95, 0.1); color: var(--navy-500); }
 
 .kpo-empty {
   background: var(--white);
@@ -126,6 +130,12 @@
   padding: 20px 24px;
   background: var(--white);
   border-bottom: 1px solid var(--border-soft);
+}
+.kpo-detail__chips {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 .kpo-detail__title { font-family: var(--font-display); font-size: 1.1rem; margin-top: 6px; }
 .kpo-detail__close {
@@ -191,4 +201,16 @@
   .kpo-kpi { grid-template-columns: repeat(2, 1fr); }
   .kpo-detail__split { grid-template-columns: 1fr; }
   .kpo-form-row { grid-template-columns: 1fr; }
+}
+
+/* Catatan pengalihan kategori lama ke SatisView. */
+.kpo-info {
+  padding: 12px 14px;
+  border: 1px solid var(--border-soft);
+  border-left: 3px solid var(--orange-500);
+  border-radius: 12px;
+  background: var(--bg-page);
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--text-secondary);
 }

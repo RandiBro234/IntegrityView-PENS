@@ -33,7 +33,7 @@ export default function ReportsTable({ rows, filterQuery = '' }) {
     <article className="card reports-card">
       <div className="reports-card__head">
         <div>
-          <p className="label-eyebrow">Pengaduan Terbaru</p>
+          <p className="label-eyebrow">Laporan WBS Terbaru</p>
           <p className="reports-card__sub">{filtered.length} laporan dalam filter saat ini</p>
         </div>
         <div className="reports-card__filters" role="tablist" aria-label="Filter status">
@@ -56,7 +56,7 @@ export default function ReportsTable({ rows, filterQuery = '' }) {
         <table className="reports-table">
           <thead>
             <tr>
-              <th>Kode Aduan</th>
+                    <th>Kode Laporan</th>
               <th>
                 <button type="button" className="reports-table__sort" onClick={() => setSortDesc(v => !v)}>
                   Tanggal {sortDesc ? '↓' : '↑'}
@@ -103,7 +103,7 @@ export default function ReportsTable({ rows, filterQuery = '' }) {
                   <button type="button" className="reports-card__close" onClick={() => setSelected(null)} aria-label="Tutup detail">×</button>
                 </div>
                 <p className="reports-card__detail-judul">{r.judul}</p>
-                <p className="reports-card__detail-meta">Kategori: <strong>{r.kategori}</strong> · Jenis: <strong>{r.jenis === 'wbs' ? 'Whistleblowing System' : 'Pengaduan Masyarakat'}</strong></p>
+                <p className="reports-card__detail-meta">Kategori: <strong>{r.kategori}</strong></p>
               </>
             );
           })()}

@@ -34,7 +34,7 @@ export const ROLES = {
     unit: 'D4 Teknik Informatika',
     jabatan: 'Dosen',
     sejak: '2022',
-    deskripsi: 'Isi survei, buat pengaduan, dan lacak status laporan Anda.'
+    deskripsi: 'Isi survei, buat laporan WBS, dan lacak status laporan Anda.'
   },
   admin: {
     key: 'admin',
@@ -117,15 +117,10 @@ export function getProfilDetail() {
   };
 }
 
-/* ================= Pengaduan & WBS (modul tiket, terpisah dari survei) ================= */
-
-export const KATEGORI_ADUAN = [
-  'Fasilitas/Sarana',
-  'Administrasi/Birokrasi',
-  'Kualitas Pelayanan',
-  'Kedisiplinan',
-  'Lainnya'
-];
+/* ================= Whistleblowing System (satu kanal pelaporan) =================
+   Hanya ada satu jenis laporan: dugaan pelanggaran integritas. Kategori ada di
+   src/data/reportCategories.js. Data seed di bawah dibiarkan apa adanya
+   (termasuk laporan lama berawalan ADU-) agar riwayat tetap bisa dibuka admin. */
 
 export const STATUS_ADUAN = ['Baru', 'Diproses', 'Selesai'];
 
@@ -218,25 +213,22 @@ export function getPengaduan() {
   return seed.concat(lokal).sort((a, b) => new Date(b.waktuLapor) - new Date(a.waktuLapor));
 }
 
-function kodeBerikut(jenis) {
-  const semua = getPengaduan().filter((p) => p.jenis === jenis);
+/* Kode laporan baru: WBS-TAHUN-NNNN. Kode lama ADU- tetap bisa dilacak. */
+function kodeBerikut() {
   const tahun = new Date().getFullYear();
-  const prefix = jenis === 'wbs' ? 'WBS' : 'ADU';
   let maks = 0;
-  semua.forEach((p) => {
+  getPengaduan().forEach((p) => {
     const m = p.id.match(/(\d+)$/);
     if (m) maks = Math.max(maks, parseInt(m[1], 10));
   });
-  const lebar = jenis === 'wbs' ? 3 : 4;
-  return prefix + '-' + tahun + '-' + String(maks + 1).padStart(lebar, '0');
+  return `WBS-${tahun}-${String(maks + 1).padStart(4, '0')}`;
 }
 
 export function savePengaduan(data) {
-  const jenis = data.jenis === 'wbs' ? 'wbs' : 'pengaduan';
   const now = new Date().toISOString();
   const record = {
-    id: kodeBerikut(jenis),
-    jenis,
+    id: kodeBerikut(),
+    jenis: 'wbs',
     judul: data.judul,
     kategori: data.kategori,
     lokasi: data.lokasi || '',

@@ -45,32 +45,28 @@
 }
 .pg-lacak .pg-card { max-width: none; }
 
-/* === Jenis pemilih === */
-.pg-jenis {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 22px;
-}
-.pg-jenis__opt {
-  text-align: left;
-  padding: 14px 16px;
-  border: 1.5px solid var(--border-soft);
-  border-radius: 14px;
-  background: var(--white);
+/* === Kotak info kanal (pengalihan ke SatisView) === */
+.pg-info {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
-  transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding: 12px 14px;
+  border: 1px solid var(--border-soft);
+  border-left: 3px solid var(--orange-500);
+  border-radius: 12px;
+  background: var(--bg-page);
 }
-.pg-jenis__opt:hover { border-color: var(--orange-500); }
-.pg-jenis__opt.is-active {
-  border-color: var(--orange-500);
-  background: rgba(245, 132, 60, 0.06);
-  box-shadow: 0 0 0 3px rgba(245, 132, 60, 0.12);
+.pg-info__icon { flex-shrink: 0; color: var(--orange-500); margin-top: 1px; }
+.pg-info__text { font-size: 12.5px; line-height: 1.55; color: var(--text-secondary); }
+
+/* Teks bantu di bawah select kategori. */
+.pg-help {
+  margin: -10px 0 18px;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--text-secondary);
 }
-.pg-jenis__title { font-size: 13.5px; font-weight: 800; color: var(--text-primary); }
-.pg-jenis__desc { font-size: 11.5px; color: var(--text-secondary); line-height: 1.4; }
 
 /* === Steps === */
 .pg-steps {
@@ -90,6 +86,7 @@
   font-weight: 800;
   display: grid;
   place-items: center;
+  transition: background-color var(--dur-base) var(--ease-out), border-color var(--dur-base) var(--ease-out), color var(--dur-fast) var(--ease-out);
 }
 .pg-dot.is-active { background: var(--orange-500); border-color: var(--orange-500); color: #fff; }
 .pg-steps__line { width: 36px; height: 2px; background: var(--border-soft); }
@@ -184,6 +181,12 @@
   padding: 14px 26px;
   margin: 8px 0;
 }
+.pg-sukses__ingat {
+  max-width: 46ch;
+  font-size: 12px !important;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
 .pg-sukses__actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 6px; }
 
 /* === Lacak === */
@@ -265,4 +268,22 @@
 @media (max-width: 720px) {
   .pg-card { padding: 20px 18px; }
   .pg-jenis { grid-template-columns: 1fr; }
+}
+
+/* === Transisi antar langkah form === */
+.pg-step-panel {
+  animation: pg-step-masuk var(--dur-base) var(--ease-out) both;
+}
+@keyframes pg-step-masuk {
+  from { opacity: 0; transform: translate3d(16px, 0, 0); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Layar sukses muncul dengan scale-in. */
+.pg-sukses {
+  animation: pg-sukses-masuk var(--dur-base) var(--ease-out) both;
+}
+@keyframes pg-sukses-masuk {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: none; }
 }

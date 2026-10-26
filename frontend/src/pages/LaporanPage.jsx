@@ -5,6 +5,7 @@ import {
   getUser, isAdmin, getRingkasanPengaduan, getPengaduan, formatAngka
 } from '../data/mock';
 import { PERIODE, getReportData } from '../data/surveyData';
+import { labelKategori } from '../data/reportCategories';
 import { useReportFilters } from '../data/useReportFilters';
 import Delta from '../components/dashboard/Delta';
 import './LaporanPage.css';
@@ -36,8 +37,10 @@ export default function LaporanPage({ onNavigate }) {
   const rekapKategori = useMemo(() => {
     const peta = {};
     pengaduan.forEach((p) => {
-      if (!peta[p.kategori]) peta[p.kategori] = { Baru: 0, Diproses: 0, Selesai: 0 };
-      peta[p.kategori][p.status] = (peta[p.kategori][p.status] || 0) + 1;
+      /* Kelompokkan dengan label kategori terbaru agar data lama ikut terbaca. */
+      const label = labelKategori(p.kategori);
+      if (!peta[label]) peta[label] = { Baru: 0, Diproses: 0, Selesai: 0 };
+      peta[label][p.status] = (peta[label][p.status] || 0) + 1;
     });
     return Object.entries(peta)
       .map(([kategori, v]) => ({ kategori, ...v, total: v.Baru + v.Diproses + v.Selesai }))
@@ -92,7 +95,7 @@ export default function LaporanPage({ onNavigate }) {
             <div>
               <p className="label-eyebrow">Laporan · Admin</p>
               <h1 className="lpr-head__title">Rekap Capaian Zona Integritas</h1>
-              <p className="lpr-head__sub">Ringkasan skor seluruh instrumen dan pengaduan untuk periode terpilih.</p>
+              <p className="lpr-head__sub">Ringkasan skor seluruh instrumen dan laporan WBS untuk periode terpilih.</p>
             </div>
             <div className="lpr-head__actions">
               <select
@@ -136,7 +139,7 @@ export default function LaporanPage({ onNavigate }) {
           </section>
 
           <section className="lpr-block">
-            <h2 className="lpr-block__title">Ringkasan pengaduan per kategori</h2>
+            <h2 className="lpr-block__title">Ringkasan laporan WBS per kategori</h2>
             <div className="lpr-table-wrap">
               <table className="lpr-table">
                 <thead>

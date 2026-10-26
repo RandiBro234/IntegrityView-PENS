@@ -5,6 +5,12 @@
   gap: var(--gap-sm);
   min-height: 0;
   height: 100%;
+  animation: spanel-masuk 200ms var(--ease-out) both;
+}
+/* Ganti instrumen terpilih: cross-fade singkat, bukan berkedip. */
+@keyframes spanel-masuk {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .spanel--empty {

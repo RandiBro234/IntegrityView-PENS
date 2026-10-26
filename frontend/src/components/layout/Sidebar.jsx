@@ -5,7 +5,7 @@ const MENUS = [
   { key: 'beranda', label: 'Beranda', icon: IconHome },
   { key: 'dashboard', label: 'Dashboard', icon: IconGrid },
   { key: 'survei', label: 'Survei', icon: IconClipboard },
-  { key: 'pengaduan', label: 'Pengaduan', icon: IconChat },
+  { key: 'pengaduan', label: 'WBS', icon: IconShield },
   { key: 'laporan', label: 'Laporan', icon: IconFile },
 ];
 
@@ -37,10 +37,11 @@ function IconClipboard() {
     </svg>
   );
 }
-function IconChat() {
+function IconShield() {
   return (
     <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M21 12a8 8 0 0 1-8 8H4l2-3a8 8 0 1 1 15-5Z" />
+      <path d="M12 22s8-3.6 8-10V5l-8-3-8 3v7c0 6.4 8 10 8 10Z" />
+      <path d="M12 8v5M12 16h.01" />
     </svg>
   );
 }

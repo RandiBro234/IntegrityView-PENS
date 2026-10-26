@@ -45,17 +45,22 @@ export default function SebaranJawabanChart({ data, selectedKey, onSelect, onOpe
     setTooltip({ x: e.clientX - rect.left, y: e.clientY - rect.top, item, segIdx });
   };
 
+  /* Kunci berubah saat data berubah, sehingga batang tumbuh ulang dari kiri
+     alih-alih melompat ke nilai baru. */
+  const versi = data.map((item) => `${item.key}:${Math.round(item.indeks * 10)}`).join('|');
+
   return (
-    <div className="sebaran">
+    <div className="sebaran" key={versi}>
       <SebaranLegend />
       <div className="sebaran__inner" ref={innerRef} onMouseLeave={() => setTooltip(null)}>
-        {data.map((item) => {
+        {data.map((item, baris) => {
           const isSelected = item.key === selectedKey;
           return (
             <button
               key={item.key}
               type="button"
               className={`sebaran__row ${isSelected ? 'is-selected' : ''}`}
+              style={{ '--row-index': baris }}
               onClick={() => onSelect(item.key)}
               aria-pressed={isSelected}
               aria-label={`Pilih ${item.namaPanjang}, indeks ${formatAngka(item.indeks)} persen`}

@@ -1,20 +1,25 @@
 import { useState } from 'react';
 import Sidebar from '../components/layout/Sidebar';
 import Topbar from '../components/layout/Topbar';
+import SatisViewLink from '../components/laporan/SatisViewLink';
 import {
   getUser, isAdmin, getPengaduan, updatePengaduan, tambahBalasan,
   getRingkasanPengaduan, STATUS_ADUAN, formatTanggal, formatTanggalWaktu
 } from '../data/mock';
+import {
+  opsiFilterKategori, labelKategori, kunciKategori, dialihkanKeSatisView
+} from '../data/reportCategories';
 import './KelolaPengaduanPage.css';
 
 const STATUS_BADGE = { 'Baru': 'badge-status-baru', 'Diproses': 'badge-status-diproses', 'Selesai': 'badge-status-selesai' };
+const OPSI_KATEGORI = opsiFilterKategori();
 
 export default function KelolaPengaduanPage({ onNavigate }) {
   const user = getUser();
   const admin = isAdmin();
   const [, setRefresh] = useState(0);
   const [filterStatus, setFilterStatus] = useState('');
-  const [filterJenis, setFilterJenis] = useState('');
+  const [filterKategori, setFilterKategori] = useState('');
   const [cari, setCari] = useState('');
   const [terpilih, setTerpilih] = useState(null);
 
@@ -23,8 +28,12 @@ export default function KelolaPengaduanPage({ onNavigate }) {
   const daftar = getPengaduan().filter((p) => {
     const q = cari.trim().toLowerCase();
     if (filterStatus && p.status !== filterStatus) return false;
-    if (filterJenis && p.jenis !== filterJenis) return false;
-    if (q && !(p.judul.toLowerCase().includes(q) || p.id.toLowerCase().includes(q) || p.kategori.toLowerCase().includes(q))) return false;
+    if (filterKategori && kunciKategori(p.kategori) !== filterKategori) return false;
+    if (q && !(
+      p.judul.toLowerCase().includes(q)
+      || p.id.toLowerCase().includes(q)
+      || labelKategori(p.kategori).toLowerCase().includes(q)
+    )) return false;
     return true;
   });
 
@@ -42,7 +51,7 @@ export default function KelolaPengaduanPage({ onNavigate }) {
           <main className="app-content">
             <div className="pg-guard">
               <h2>Halaman ini untuk admin Zona Integritas</h2>
-              <p>Manajemen pengaduan hanya dapat diakses setelah login sebagai admin.</p>
+              <p>Manajemen laporan WBS hanya dapat diakses setelah login sebagai admin.</p>
               <button type="button" className="btn btn-primary" onClick={() => handleMenu('beranda')}>
                 Kembali ke Beranda
               </button>
@@ -62,8 +71,10 @@ export default function KelolaPengaduanPage({ onNavigate }) {
           <header className="pg-head">
             <div>
               <p className="label-eyebrow">Manajemen · Admin</p>
-              <h1 className="pg-head__title">Pengaduan &amp; WBS</h1>
-              <p className="pg-head__sub">Kelola laporan yang masuk, perbarui status, dan balas pelapor.</p>
+              <h1 className="pg-head__title">Whistleblowing System</h1>
+              <p className="pg-head__sub">
+                Kelola laporan dugaan pelanggaran integritas, perbarui status, dan balas pelapor.
+              </p>
             </div>
           </header>
 
@@ -79,12 +90,20 @@ export default function KelolaPengaduanPage({ onNavigate }) {
               <option value="">Semua status</option>
               {STATUS_ADUAN.map((s) => <option key={s} value={s}>{s}</option>)}
             </select>
-            <select value={filterJenis} onChange={(e) => setFilterJenis(e.target.value)} aria-label="Filter jenis">
-              <option value="">Semua jenis</option>
-              <option value="pengaduan">Pengaduan</option>
-              <option value="wbs">WBS</option>
+            <select value={filterKategori} onChange={(e) => setFilterKategori(e.target.value)} aria-label="Filter kategori">
+              <option value="">Semua kategori</option>
+              {OPSI_KATEGORI.map((grup) => (
+                <optgroup key={grup.label} label={grup.label}>
+                  {grup.opsi.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+                </optgroup>
+              ))}
             </select>
-            <input type="search" placeholder="Cari judul, kode, atau kategori" value={cari} onChange={(e) => setCari(e.target.value)} />
+            <input
+              type="search"
+              placeholder="Cari judul, kode, atau kategori"
+              value={cari}
+              onChange={(e) => setCari(e.target.value)}
+            />
           </div>
 
           {daftar.length === 0 ? (
@@ -94,16 +113,19 @@ export default function KelolaPengaduanPage({ onNavigate }) {
               <table className="kpo-table">
                 <thead>
                   <tr>
-                    <th>Kode</th><th>Jenis</th><th>Judul</th><th>Kategori</th><th>Status</th><th>PIC</th><th>Waktu</th>
+                    <th>Kode</th><th>Judul</th><th>Kategori</th><th>Status</th><th>PIC</th><th>Waktu</th>
                   </tr>
                 </thead>
                 <tbody>
                   {daftar.map((p) => (
                     <tr key={p.id} className={terpilih === p.id ? 'is-selected' : ''} onClick={() => setTerpilih(p.id)}>
                       <td className="kpo-id">{p.id}</td>
-                      <td><span className={`kpo-jenis kpo-jenis--${p.jenis}`}>{p.jenis === 'wbs' ? 'WBS' : 'Pengaduan'}</span></td>
                       <td className="kpo-judul">{p.judul}</td>
-                      <td className="kpo-muted">{p.kategori}</td>
+                      <td>
+                        <span className={`kpo-chip ${dialihkanKeSatisView(p.kategori) ? 'kpo-chip--alih' : ''}`}>
+                          {labelKategori(p.kategori)}
+                        </span>
+                      </td>
                       <td><span className={`badge badge-status ${STATUS_BADGE[p.status]}`}>{p.status}</span></td>
                       <td className="kpo-muted">{p.pic || 'Belum ditugaskan'}</td>
                       <td className="kpo-muted">{formatTanggal(p.waktuLapor)}</td>
@@ -167,14 +189,18 @@ function DetailPanel({ data, onClose, onSaved, adminNama }) {
   };
 
   const balasan = (data.balasan || []).slice().reverse();
+  const dialihkan = dialihkanKeSatisView(data.kategori);
 
   return (
     <div className="kpo-overlay" onClick={onClose} role="presentation">
       <div className="kpo-detail" role="dialog" aria-modal="true" aria-label={`Detail ${data.id}`} onClick={(e) => e.stopPropagation()}>
         <div className="kpo-detail__head">
           <div>
-            <span className="kpo-id">{data.id}</span>{' '}
-            <span className={`kpo-jenis kpo-jenis--${data.jenis}`}>{data.jenis === 'wbs' ? 'WBS' : 'Pengaduan'}</span>
+            <div className="kpo-detail__chips">
+              <span className="kpo-id">{data.id}</span>
+              <span className={`kpo-chip ${dialihkan ? 'kpo-chip--alih' : ''}`}>{labelKategori(data.kategori)}</span>
+              {data.anonim && <span className="kpo-chip kpo-chip--anon">Anonim</span>}
+            </div>
             <h2 className="kpo-detail__title">{data.judul}</h2>
           </div>
           <button type="button" className="kpo-detail__close" onClick={onClose} aria-label="Tutup">×</button>
@@ -185,6 +211,13 @@ function DetailPanel({ data, onClose, onSaved, adminNama }) {
             <p className="kpo-sec__head">Deskripsi laporan</p>
             <p className="kpo-sec__text">{data.deskripsi}</p>
           </section>
+
+          {dialihkan && (
+            <div className="kpo-info">
+              Kategori laporan ini termasuk keluhan layanan atau fasilitas yang kini dialihkan ke{' '}
+              <SatisViewLink />. Laporan tetap tersimpan dan bisa ditindaklanjuti di sini.
+            </div>
+          )}
 
           <div className="kpo-detail__split">
             <section className="kpo-sec">
@@ -202,7 +235,7 @@ function DetailPanel({ data, onClose, onSaved, adminNama }) {
             <section className="kpo-sec">
               <p className="kpo-sec__head">Metadata</p>
               <ul className="kpo-dl">
-                <li><span>Kategori</span><span>{data.kategori}</span></li>
+                <li><span>Kategori</span><span>{labelKategori(data.kategori)}</span></li>
                 <li><span>Lokasi</span><span>{data.lokasi || 'Tidak disebutkan'}</span></li>
                 <li><span>Waktu lapor</span><span>{formatTanggalWaktu(data.waktuLapor)}</span></li>
                 <li><span>PIC saat ini</span><span>{data.pic || 'Belum ditugaskan'}</span></li>

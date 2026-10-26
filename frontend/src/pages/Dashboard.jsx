@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import Sidebar from '../components/layout/Sidebar';
 import Topbar from '../components/layout/Topbar';
 import RingkasanCards from '../components/dashboard/RingkasanCards';
@@ -16,6 +16,19 @@ export default function Dashboard({ onBackToLanding, onNavigate, onOpenInstrumen
   const { filter, setFilter, siap } = useReportFilters();
   const [selectedKey, setSelectedKey] = useState(null);
   const [tab, setTab] = useState('sebaran');
+
+  /* Indikator tab bergeser memakai transform, bukan left/width. */
+  const tabRef = useRef(null);
+  const [pil, setPil] = useState({ x: 0, skala: 1 });
+  useLayoutEffect(() => {
+    const wrap = tabRef.current;
+    if (!wrap) return;
+    const btn = wrap.querySelector(`[data-tab="${tab}"]`);
+    if (!btn) return;
+    const wb = wrap.getBoundingClientRect();
+    const bb = btn.getBoundingClientRect();
+    setPil({ x: bb.left - wb.left, skala: bb.width / 100 });
+  }, [tab]);
 
   /* Semua angka dashboard berasal dari selector tunggal. */
   const laporan = getReportData(filter);
@@ -71,9 +84,15 @@ export default function Dashboard({ onBackToLanding, onNavigate, onOpenInstrumen
                       <h2 className="dashboard__box-title" id="sebaran-title">
                         {tab === 'sebaran' ? 'Sebaran Jawaban per Instrumen' : 'Perubahan Indeks per Semester'}
                       </h2>
-                      <div className="dashboard__tabs" role="group" aria-label="Tampilan grafik">
+                      <div className="dashboard__tabs" role="group" aria-label="Tampilan grafik" ref={tabRef}>
+                        <span
+                          className="dashboard__tab-pil"
+                          aria-hidden="true"
+                          style={{ transform: `translateX(${pil.x}px) scaleX(${pil.skala})` }}
+                        />
                         <button
                           type="button"
+                          data-tab="sebaran"
                           className={tab === 'sebaran' ? 'is-active' : ''}
                           aria-pressed={tab === 'sebaran'}
                           onClick={() => setTab('sebaran')}
@@ -82,6 +101,7 @@ export default function Dashboard({ onBackToLanding, onNavigate, onOpenInstrumen
                         </button>
                         <button
                           type="button"
+                          data-tab="perubahan"
                           className={tab === 'perubahan' ? 'is-active' : ''}
                           aria-pressed={tab === 'perubahan'}
                           onClick={() => setTab('perubahan')}
@@ -91,25 +111,28 @@ export default function Dashboard({ onBackToLanding, onNavigate, onOpenInstrumen
                       </div>
                     </div>
 
-                    {tab === 'sebaran' ? (
-                      <SebaranJawabanChart
-                        data={sebaran}
-                        selectedKey={activeKey}
-                        onSelect={setSelectedKey}
-                        onOpenDetail={onOpenInstrument}
-                      />
-                    ) : (
-                      <PeriodHeatmap
-                        instrumen={laporan.instrumen}
-                        periode={filter.periode}
-                        selectedKey={activeKey}
-                        onSelect={setSelectedKey}
-                      />
-                    )}
+                    <div className="dashboard__tab-panel" key={tab}>
+                      {tab === 'sebaran' ? (
+                        <SebaranJawabanChart
+                          data={sebaran}
+                          selectedKey={activeKey}
+                          onSelect={setSelectedKey}
+                          onOpenDetail={onOpenInstrument}
+                        />
+                      ) : (
+                        <PeriodHeatmap
+                          instrumen={laporan.instrumen}
+                          periode={filter.periode}
+                          selectedKey={activeKey}
+                          onSelect={setSelectedKey}
+                        />
+                      )}
+                    </div>
                   </section>
 
                   <section className="dashboard__box dashboard__box--right" aria-label="Ringkasan statistik dan rekomendasi">
                     <StatistikPanel
+                      key={activeKey || 'kosong'}
                       selectedKey={activeKey}
                       laporan={laporan}
                       onOpenDetail={onOpenInstrument}

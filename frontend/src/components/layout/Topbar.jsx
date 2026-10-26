@@ -37,7 +37,7 @@ export default function Topbar({ user, notifCount = 3, onSearch, onProfil, showS
             </svg>
             <input
               type="search"
-              placeholder="Cari instrumen, laporan, atau kode aduan…"
+              placeholder="Cari instrumen, laporan, atau kode laporan…"
               value={query}
               onChange={(e) => {
                 setQuery(e.target.value);
@@ -82,3 +82,4 @@ export default function Topbar({ user, notifCount = 3, onSearch, onProfil, showS
     </header>
   );
 }
+
