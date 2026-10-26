@@ -1,12 +1,28 @@
-/* Layout satu layar: header auto, kartu auto, panel 1fr. */
+/* Layout satu layar: header, filter, kartu, panel.
+   Tinggi diambil dari sisa ruang grid (bukan calc piksel) agar tidak meluber
+   ketika tinggi topbar berubah. */
+.detail-shell .app-main {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  height: 100dvh;
+  min-height: 0;
+}
+.detail-shell .app-content {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
+  min-height: 0;
+  padding: var(--pad-page);
+}
+
 .idp {
   display: grid;
-  grid-template-rows: auto auto minmax(0, 1fr);
+  grid-template-rows: auto 40px auto minmax(0, 1fr);
   gap: 12px;
-  height: calc(100dvh - 132px);
+  height: 100%;
   min-height: 0;
 }
 .idp > * { min-height: 0; }
+.idp > .report-filters { margin: 0; }
 
 /* === Header === */
 .idp__header {
@@ -62,6 +78,15 @@
   color: var(--teal-500);
 }
 .idp__ekspor { padding: 8px 18px; font-size: 13px; }
+.idp__isi {
+  padding: 8px 16px;
+  font-size: 13px;
+  border-color: var(--border-soft);
+  color: var(--navy-900);
+  white-space: nowrap;
+}
+.idp__isi:hover { background: var(--gray-50); border-color: var(--orange-500); }
+.idp__isi:focus-visible { outline: 2px solid var(--orange-500); outline-offset: 2px; }
 
 /* === 4 kartu kecil === */
 .idp__cards {
@@ -75,7 +100,7 @@
   border: 1px solid var(--border-soft);
   border-radius: 16px;
   box-shadow: var(--shadow-soft);
-  padding: 12px 18px;
+  padding: 10px 16px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -83,6 +108,7 @@
   min-height: 0;
   overflow: hidden;
 }
+.idp__minicard .delta { font-size: 11px; line-height: 1.1; }
 .idp__minicard-label {
   font-size: 10px;
   font-weight: 700;
@@ -163,6 +189,73 @@
   flex-shrink: 0;
 }
 
+/* === Tab Distribusi / Perubahan antar semester === */
+.idp__tabs {
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  background: var(--gray-50);
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+.idp__tabs button {
+  padding: 5px 9px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+.idp__tabs button.is-active { background: var(--navy-900); color: var(--white); }
+.idp__tabs button:focus-visible { outline: 2px solid var(--orange-500); }
+
+/* Daftar perubahan per butir: batang divergen dari garis tengah. */
+.idp__change-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+.idp__change-row {
+  display: grid;
+  grid-template-columns: minmax(110px, 1.6fr) minmax(60px, 1fr) 64px;
+  gap: 10px;
+  align-items: center;
+  min-height: 28px;
+  border-bottom: 1px solid var(--border-soft);
+  font-size: 11.5px;
+}
+.idp__change-row:last-child { border-bottom: 0; }
+.idp__change-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+  color: var(--text-primary);
+}
+.idp__change-track {
+  position: relative;
+  height: 10px;
+  background: var(--gray-50);
+  border-radius: 3px;
+}
+.idp__change-track::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  left: 50%;
+  border-left: 1px solid var(--border-soft);
+}
+.idp__change-bar { position: absolute; top: 0; height: 100%; border-radius: 2px; }
+.idp__change-bar--naik { background: var(--teal-500); }
+.idp__change-bar--turun { background: var(--error-500); }
+.idp__change-bar--stabil { background: var(--gray-500); opacity: 0.5; }
+.idp__change-delta { text-align: right; font-variant-numeric: tabular-nums; }
+
+
 /* === Distribusi: baris tinggi tetap, scroll jika butir > muat === */
 .idp__dist-list {
   flex: 1;
@@ -214,7 +307,7 @@
   min-width: 0;
   overflow: hidden;
 }
-.idp__half--bottom { border-top: 1px solid var(--border-soft); }
+.idp__half--bottom { border-top: 1px solid var(--border-soft); overflow-y: auto; }
 
 .idp__half-head {
   display: flex;
@@ -331,6 +424,8 @@
 
 /* === Responsif === */
 @media (max-width: 900px) {
+  .detail-shell .app-main { height: auto; min-height: 100dvh; }
+  .detail-shell .app-content { display: block; padding: 16px; }
   .idp { height: auto; grid-template-rows: none; }
   .idp__header { flex-wrap: wrap; max-height: none; }
   .idp__cards { grid-template-columns: repeat(2, 1fr); max-height: none; }
@@ -340,3 +435,40 @@
   .idp__dist-list { max-height: 420px; }
   .idp__dist-list--scroll { max-height: 420px; }
 }
+
+/* === Modal pratinjau ekspor PDF (pratinjau identik dengan hasil unduhan) === */
+.idp__modal--report {
+  max-width: 900px;
+  max-height: 92dvh;
+}
+.idp__modal-preview {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  background: #E9EDF4;
+  padding: 20px;
+}
+.idp__preview-scale {
+  width: 794px;
+  margin: 0 auto;
+  transform-origin: top center;
+}
+.idp__modal-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 24px;
+  border-top: 1px solid var(--border-soft);
+  background: var(--white);
+  flex-shrink: 0;
+}
+.idp__spinner {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  animation: idp-spin 0.7s linear infinite;
+}
+@keyframes idp-spin { to { transform: rotate(360deg); } }
+.btn:disabled { opacity: 0.6; cursor: not-allowed; }

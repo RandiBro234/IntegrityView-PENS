@@ -3,6 +3,15 @@
   background: var(--bg-page);
 }
 
+/* Topbar + hero selalu memenuhi tepat satu layar. Tinggi hero dihitung dari
+   sisa ruang flex, bukan dari angka tinggi navbar tetap, sehingga tidak ada
+   celah putih saat zoom/font scaling mengubah tinggi topbar. */
+.landing__first-screen {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
 /* === Topbar (tetap terang di atas hero navy) === */
 .landing__topbar {
   position: sticky;
@@ -46,17 +55,24 @@
   box-shadow: 0 4px 12px rgba(11, 27, 51, 0.2);
 }
 
-/* === Hero: navy gelap === */
+/* === Hero: navy gelap ===
+   Mengisi sisa tinggi layar di bawah topbar; isi terpusat vertikal. Padding
+   memakai vh + safe area bawah agar tombol bantuan tidak menutup kartu. */
 .landing__hero {
-  padding: clamp(40px, 5vw, 88px) clamp(20px, 4vw, 56px) clamp(64px, 7vw, 104px);
+  --hero-h: clamp(320px, 62vh, 640px);
+  flex: 1 0 auto;
+  display: flex;
+  align-items: center;
+  padding: clamp(24px, 8.2vh, 72px) clamp(20px, 4vw, 56px) max(88px, clamp(24px, 8.2vh, 72px));
   background: linear-gradient(160deg, #0B1B33 0%, #13284A 100%);
 }
 .landing__hero-inner {
+  width: 100%;
   max-width: 1280px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 1.05fr 1fr;
-  gap: 48px;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  gap: clamp(24px, 4vw, 48px);
   align-items: center;
 }
 
@@ -65,46 +81,56 @@
 }
 
 .landing__hero-title {
-  font-size: clamp(2rem, 4.2vw, 3.1rem);
-  line-height: 1.12;
+  font-size: clamp(32px, min(4.2vw, 7vh), 64px);
+  line-height: 1.1;
   letter-spacing: -0.03em;
-  margin-top: 12px;
-  max-width: 18ch;
+  margin-top: clamp(8px, 1.6vh, 14px);
+  max-width: 20ch;
   color: #FFFFFF;
 }
 .landing__hero-lead {
-  margin-top: 18px;
-  font-size: 1rem;
+  margin-top: clamp(10px, 2.2vh, 18px);
+  font-size: clamp(0.95rem, 1.05vw, 1.05rem);
   color: #C6D0E4;
   max-width: 52ch;
-  line-height: 1.65;
+  line-height: 1.6;
 }
 .landing__hero-cta {
   display: flex;
-  gap: 12px;
-  margin-top: 28px;
+  gap: clamp(8px, 1.4vh, 12px);
+  margin-top: clamp(16px, 3vh, 28px);
   flex-wrap: wrap;
 }
 
-/* === Hero visual === */
+/* === Hero visual ===
+   Frame relatif membungkus gambar + kartu, sehingga posisi kartu selalu
+   dihitung terhadap gambar, bukan terhadap layar. */
 .landing__hero-visual {
   position: relative;
-  height: 520px;
-  /* beri ruang di bawah agar kartu terendah tidak tertutup widget bantuan */
-  margin-bottom: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+}
+.landing__hero-frame {
+  position: relative;
+  height: var(--hero-h);
+  width: min(100%, calc(var(--hero-h) * 4 / 3));
+  margin-inline: auto;
+  transition: transform 0.2s ease-out;
 }
 .landing__hero-photo {
   position: absolute;
-  inset: 8% 6%;
+  inset: 0;
   border-radius: 28px;
   overflow: hidden;
   box-shadow: 0 24px 48px rgba(11, 27, 51, 0.20);
-  transition: transform 0.2s ease-out;
 }
 .landing__hero-photo img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: 50% 38%;
   display: block;
 }
 .landing__hero-photo-scrim {
@@ -117,16 +143,16 @@
   position: absolute;
   background: var(--bg-card);
   border-radius: 22px;
-  padding: 18px 20px;
+  padding: clamp(12px, 1.6vh, 18px) clamp(12px, 1.2vw, 20px);
   box-shadow: 0 14px 40px rgba(0,0,0,0.40);
   border: 1px solid var(--border-soft);
   transition: transform 0.25s ease-out;
   overflow: hidden;
-  max-width: 220px;
+  max-width: clamp(150px, 42%, 220px);
 }
 .landing__bento--a { top: 4%; left: 0; z-index: 3; }
 .landing__bento--b {
-  bottom: 16%;
+  bottom: 14%;
   right: 0;
   background: var(--navy-700);
   border-color: rgba(255, 255, 255, 0.15);
@@ -149,16 +175,16 @@
 }
 
 .landing__bento-value {
-  font-size: 32px;
+  font-size: clamp(22px, 2.4vh, 32px);
   font-weight: 800;
   letter-spacing: -0.03em;
   color: var(--text-primary);
   line-height: 1;
-  margin: 8px 0 6px;
+  margin: clamp(5px, 1vh, 8px) 0 clamp(4px, 0.8vh, 6px);
   font-variant-numeric: tabular-nums;
 }
 .landing__bento-value span {
-  font-size: 16px;
+  font-size: clamp(12px, 1.6vh, 16px);
   font-weight: 700;
   color: var(--text-secondary);
   margin-left: 2px;
@@ -171,7 +197,7 @@
   display: flex;
   gap: 4px;
   align-items: flex-end;
-  height: 28px;
+  height: clamp(20px, 3vh, 28px);
   margin-top: 6px;
 }
 .landing__bento-bars span {
@@ -811,8 +837,8 @@
 /* === Help widget === */
 .landing__help {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
+  bottom: 16px;
+  right: 16px;
   z-index: 50;
   display: inline-flex;
   align-items: center;
@@ -827,6 +853,11 @@
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 .landing__help:hover { transform: translateY(-2px); box-shadow: 0 14px 28px rgba(11, 27, 51, 0.32); }
+/* Di layar sempit tombol menjadi ikon bulat agar tidak menutupi hero. */
+@media (max-width: 640px) {
+  .landing__help { width: 44px; height: 44px; padding: 0; justify-content: center; border-radius: 50%; }
+  .landing__help-label { display: none; }
+}
 
 /* === Responsive === */
 @media (max-width: 1100px) {
@@ -837,8 +868,8 @@
   .landing__lapor-grid { grid-template-columns: 1fr; }
 }
 @media (max-width: 960px) {
-  .landing__hero-inner { grid-template-columns: 1fr; gap: 32px; }
-  .landing__hero-visual { height: 420px; }
+  .landing__hero { --hero-h: clamp(280px, 48vh, 420px); min-height: auto; }
+  .landing__hero-inner { grid-template-columns: 1fr; gap: clamp(20px, 4vh, 32px); }
   .landing__nav { display: none; }
 }
 @media (max-width: 640px) {
@@ -846,9 +877,9 @@
   .landing__stats-grid { grid-template-columns: 1fr; }
   .landing__alur-list { grid-template-columns: 1fr; }
   .landing__footer-grid { grid-template-columns: 1fr; gap: 24px; }
-  .landing__hero-visual { height: 360px; }
-  .landing__bento { padding: 14px 16px; }
-  .landing__bento-value { font-size: 24px; }
+  .landing__hero { --hero-h: clamp(260px, 44vh, 360px); }
+  .landing__bento { padding: 12px 14px; }
+  .landing__bento-value { font-size: 22px; }
   .landing__about-inner { grid-template-columns: 1fr; gap: 18px; }
   /* Pada layar sempit, teks CTA full width dan tombol pindah ke bawah secara alami */
   .landing__cta-text { flex-basis: 100%; }

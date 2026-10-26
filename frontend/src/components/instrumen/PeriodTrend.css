@@ -1,8 +1,12 @@
 .period-trend { flex: 0 0 auto; width: 100%; min-width: 0; }
-.period-trend svg { display: block; width: 100%; max-height: 170px; overflow: visible; }
+.period-trend svg { display: block; width: 100%; max-height: 190px; overflow: visible; }
 .period-trend text { font: 10px var(--font-family); fill: var(--text-secondary); }
+.period-trend__nilai { font-weight: 800; fill: var(--text-primary); }
+.period-trend__tahun { font-size: 10.5px; font-weight: 800; fill: var(--text-primary); }
+.period-trend__semester { font-size: 9px; text-transform: uppercase; letter-spacing: 0.04em; }
 .period-trend__guide { stroke: var(--border-soft); stroke-width: 1; }
-.period-trend__line { stroke: var(--navy-900); stroke-width: 2; }
-.period-trend__ci { stroke: var(--orange-500); stroke-width: 4; opacity: 0.6; }
+/* Garis lurus tegas, tanpa smoothing. Warna diatur per ruas lewat inline style. */
+.period-trend__line { stroke-width: 2.2; stroke-linecap: butt; }
+.period-trend__ci { stroke: var(--orange-500); stroke-width: 4; opacity: 0.45; }
 .period-trend__point { fill: var(--navy-900); }
 .period-trend__selected { fill: var(--orange-500); stroke: var(--navy-900); stroke-width: 2; }

@@ -1,35 +1,96 @@
+/* === Dashboard satu layar ===
+   Baris: topbar (auto) · filter (auto) · KPI (auto) · dua panel (1fr).
+   Semua anak grid memakai min-height: 0 agar panel mengisi sisa tinggi. */
+.dashboard-shell .app-main {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  height: 100dvh;
+  min-height: 0;
+}
+.dashboard-shell .topbar {
+  height: 60px;
+  padding: 0 var(--pad-page);
+}
+.dashboard-shell .app-content {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
+  min-height: 0;
+  padding: var(--pad-page);
+}
+
+.dashboard__grid {
+  display: grid;
+  grid-template-rows: 40px auto minmax(0, 1fr);
+  gap: var(--gap);
+  width: 100%;
+  max-width: 1600px;
+  height: 100%;
+  min-height: 0;
+  margin-inline: auto;
+}
+.dashboard__grid > * { min-height: 0; }
+
+/* Dua panel sama tinggi; tinggi mengikuti baris 1fr, bukan isi. */
 .dashboard__duo {
   display: grid;
-  grid-template-columns: 3fr 2fr;
-  gap: var(--gap-grid);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  gap: var(--gap);
   align-items: stretch;
+  min-height: 0;
+  min-width: 0;
 }
 
 .dashboard__box {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-sm);
+  min-width: 0;
+  min-height: 0;
+  padding: var(--pad-card);
   background: var(--bg-card);
   border: 1px solid var(--border-soft);
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-soft);
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  min-height: 480px;
+  overflow: hidden;
 }
+.dashboard__box--left .sebaran,
+.dashboard__box--left .heatmap { flex: 1; min-height: 0; }
 
 .dashboard__box-head {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: flex-start;
-  gap: 12px;
+  gap: var(--gap-sm);
+  flex-shrink: 0;
+  min-width: 0;
 }
-
 .dashboard__box-title {
   font-family: var(--font-display);
-  font-size: 1.2rem;
+  font-size: clamp(1rem, 1.1vw, 1.2rem);
   letter-spacing: -0.02em;
-  margin-top: 6px;
+  line-height: 1.25;
+  min-width: 0;
 }
+
+/* Segmented control tab Sebaran / Perubahan. */
+.dashboard__tabs {
+  display: flex;
+  flex-shrink: 0;
+  gap: 2px;
+  padding: 2px;
+  background: var(--gray-50);
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+}
+.dashboard__tabs button {
+  padding: 5px 9px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+.dashboard__tabs button.is-active { background: var(--navy-900); color: var(--white); }
+.dashboard__tabs button:focus-visible { outline: 2px solid var(--orange-500); }
 
 .dashboard__notice {
   padding: 10px 16px;
@@ -44,14 +105,18 @@
 .dashboard__loading {
   display: flex;
   flex-direction: column;
-  gap: var(--gap-grid);
+  gap: var(--gap);
+  width: 100%;
+  max-width: 1600px;
+  height: 100%;
+  min-height: 0;
+  margin-inline: auto;
 }
 .dashboard__loading-cards {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--gap-grid);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--gap);
 }
-
 .skeleton {
   position: relative;
   overflow: hidden;
@@ -66,17 +131,35 @@
   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
   animation: skeleton-sweep 1.4s infinite;
 }
-.skeleton--card { height: 220px; }
-.skeleton--panel { height: 480px; }
-
+.skeleton--card { height: 76px; }
+.skeleton--panel { flex: 1; min-height: 0; }
 @keyframes skeleton-sweep {
   from { transform: translateX(-100%); }
   to { transform: translateX(100%); }
 }
 
-/* === Responsive === */
+/* Viewport pendek: rapatkan padding agar 10 baris + panel kanan tetap utuh. */
+@media (max-height: 700px) and (min-width: 1101px) {
+  .dashboard-shell {
+    --pad-page: 12px;
+    --pad-card: 12px;
+    --gap: 10px;
+    --gap-sm: 8px;
+  }
+  .dashboard-shell .topbar { height: 54px; }
+  .dashboard__box-title { font-size: 0.95rem; }
+}
+
+/* Di bawah 1100px panel turun menjadi satu kolom; halaman boleh digulir. */
 @media (max-width: 1100px) {
-  .dashboard__duo { grid-template-columns: 1fr; }
-  .dashboard__box { min-height: 0; }
+  .dashboard-shell .app-main { height: auto; min-height: 100dvh; }
+  .dashboard-shell .app-content { display: block; padding: 16px; }
+  .dashboard__grid { display: flex; flex-direction: column; height: auto; }
+  .dashboard__duo { grid-template-columns: minmax(0, 1fr); }
+  .dashboard__box { min-height: 420px; }
+}
+@media (max-width: 700px) {
+  .dashboard__box { padding: 16px; min-height: 360px; }
+  .dashboard__box-head { flex-wrap: wrap; }
   .dashboard__loading-cards { grid-template-columns: 1fr; }
 }

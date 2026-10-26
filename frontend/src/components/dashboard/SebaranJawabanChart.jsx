@@ -10,12 +10,20 @@ const SKALA = [
   { label: 'Sangat Setuju', short: 'SS', color: '#0B1B33' }
 ];
 
+/* Legenda satu baris: tepi kiri sejajar kolom nama, tepi kanan sejajar
+   kolom aksi. Label lengkap; di layar sempit berganti singkatan bertooltip. */
 export function SebaranLegend() {
-  return <div className="sebaran__legend" aria-label="Skala jawaban Likert">
-    {SKALA.map((s, i) => <span key={s.short} className="sebaran__legend-item" title={s.label}>
-      <span className="sebaran__legend-swatch" style={{ backgroundColor: s.color }} />{i + 1} {s.short}
-    </span>)}
-  </div>;
+  return (
+    <div className="sebaran__legend" aria-label="Skala jawaban Likert">
+      {SKALA.map((s) => (
+        <span key={s.short} className="sebaran__legend-item" title={`${s.short} · ${s.label}`}>
+          <span className="sebaran__legend-swatch" style={{ backgroundColor: s.color }} />
+          <span className="sebaran__legend-full">{s.label}</span>
+          <span className="sebaran__legend-short">{s.short}</span>
+        </span>
+      ))}
+    </div>
+  );
 }
 
 export default function SebaranJawabanChart({ data, selectedKey, onSelect, onOpenDetail }) {
@@ -41,16 +49,12 @@ export default function SebaranJawabanChart({ data, selectedKey, onSelect, onOpe
 
   const showTip = (e, item, segIdx) => {
     const rect = e.currentTarget.closest('.sebaran__inner').getBoundingClientRect();
-    setTooltip({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-      item,
-      segIdx
-    });
+    setTooltip({ x: e.clientX - rect.left, y: e.clientY - rect.top, item, segIdx });
   };
 
   return (
     <div className="sebaran">
+      <SebaranLegend />
       <div className="sebaran__inner" ref={innerRef} onMouseLeave={() => setTooltip(null)}>
         {data.map((item) => {
           const isSelected = item.key === selectedKey;
@@ -63,64 +67,59 @@ export default function SebaranJawabanChart({ data, selectedKey, onSelect, onOpe
               aria-pressed={isSelected}
               aria-label={`Pilih ${item.namaPanjang}, ${formatAngka(item.persenSetuju)} persen setuju`}
             >
-              <span className="sebaran__name">{item.nama}</span>
+              <span className="sebaran__name" title={item.namaPanjang}>{item.nama}</span>
 
               <span className="sebaran__bar" role="img" aria-label={`Sebaran jawaban ${item.nama}`}>
-                {item.distribusiPersen.map((pct, i) => {
-                  return (
-                    <span
-                      key={i}
-                      className="sebaran__seg"
-                      style={{ width: pct + '%', backgroundColor: SKALA[i].color }}
-                      onMouseMove={(e) => showTip(e, item, i)}
-                    >
-                      {barWidth * pct / 100 >= 40 && (
-                        <span className="sebaran__seg-label">{formatAngka(pct, 0)}%</span>
-                      )}
-                    </span>
-                  );
-                })}
+                {item.distribusiPersen.map((pct, i) => (
+                  <span
+                    key={i}
+                    className="sebaran__seg"
+                    style={{ width: pct + '%', backgroundColor: SKALA[i].color }}
+                    onMouseMove={(e) => showTip(e, item, i)}
+                  >
+                    {barWidth * pct / 100 >= 40 && (
+                      <span className="sebaran__seg-label">{formatAngka(pct, 0)}%</span>
+                    )}
+                  </span>
+                ))}
               </span>
 
-              <span className="sebaran__pct">
-                {formatAngka(item.persenSetuju)}%
-              </span>
-              <Delta value={item.delta} compact />
+              <span className="sebaran__pct">{formatAngka(item.persenSetuju)}%</span>
 
-              {onOpenDetail && (
-                <span
-                  className="sebaran__open"
-                  role="button"
-                  tabIndex={0}
-                  aria-label={`Buka dashboard lengkap ${item.nama}`}
-                  title={`Dashboard lengkap ${item.nama}`}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onOpenDetail(item.key);
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      onOpenDetail(item.key);
-                    }
-                  }}
-                >
-                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M7 17 17 7M9 7h8v8" />
-                  </svg>
-                </span>
-              )}
+              <span className="sebaran__delta-slot">
+                <Delta value={item.delta} compact />
+              </span>
+
+              {/* Kolom aksi selalu dicadangkan agar lebar baris tidak berubah. */}
+              <span className="sebaran__open-slot">
+                {onOpenDetail && (
+                  <span
+                    className="sebaran__open"
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`Buka dashboard lengkap ${item.nama}`}
+                    title={`Dashboard lengkap ${item.nama}`}
+                    onClick={(e) => { e.stopPropagation(); onOpenDetail(item.key); }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        onOpenDetail(item.key);
+                      }
+                    }}
+                  >
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M7 17 17 7M9 7h8v8" />
+                    </svg>
+                  </span>
+                )}
+              </span>
             </button>
           );
         })}
 
         {tooltip && (
-          <div
-            className="sebaran__tooltip"
-            style={{ left: tooltip.x + 14, top: tooltip.y - 8 }}
-            role="status"
-          >
+          <div className="sebaran__tooltip" style={{ left: tooltip.x + 14, top: tooltip.y - 8 }} role="status">
             <strong>{tooltip.item.namaPanjang}</strong>
             <span>
               {SKALA[tooltip.segIdx].label} ({tooltip.segIdx + 1}):{' '}
@@ -130,7 +129,6 @@ export default function SebaranJawabanChart({ data, selectedKey, onSelect, onOpe
           </div>
         )}
       </div>
-
     </div>
   );
 }

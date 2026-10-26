@@ -1,23 +1,34 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import Sidebar from '../components/layout/Sidebar';
 import Topbar from '../components/layout/Topbar';
 import {
-  getUser, isAdmin, getSemuaSurveiUntukLaporan, getRingkasanPengaduan,
-  getPengaduan, formatAngka
+  getUser, isAdmin, getRingkasanPengaduan, getPengaduan, formatAngka
 } from '../data/mock';
-import { useSurveiData } from '../data/api';
+import { PERIODE, getReportData } from '../data/reportData';
+import { useReportFilters } from '../data/useReportFilters';
+import Delta from '../components/dashboard/Delta';
 import './LaporanPage.css';
 
 export default function LaporanPage({ onNavigate }) {
   const user = getUser();
   const admin = isAdmin();
-  const { dataset } = useSurveiData();
-  const [periode, setPeriode] = useState('Agu 2026');
+  const { filter, setFilter } = useReportFilters();
 
-  const rekap = useMemo(
-    () => (admin && dataset ? getSemuaSurveiUntukLaporan(dataset) : []),
-    [admin, dataset]
-  );
+  /* Sumber angka yang sama dengan dashboard: selector tunggal. */
+  const laporan = useMemo(() => getReportData(filter), [filter]);
+  const periode = laporan.periode.label;
+
+  const rekap = admin
+    ? laporan.instrumen.filter((s) => s.aktif).map((s) => ({
+      key: s.info.key,
+      nama: s.info.nama,
+      namaPanjang: s.info.namaPanjang,
+      skor: s.aktif.skor,
+      delta: s.delta,
+      responden: s.aktif.jumlahResponden
+    }))
+    : [];
+
   const ringkasAduan = useMemo(() => getRingkasanPengaduan(), []);
   const pengaduan = useMemo(() => getPengaduan(), []);
 
@@ -37,7 +48,7 @@ export default function LaporanPage({ onNavigate }) {
       <div className="app-shell">
         <Sidebar active="laporan" onNavigate={onNavigate} user={user} />
         <div className="app-main">
-          <Topbar user={user} notifCount={0} onProfil={() => handleMenu('profil')} />
+          <Topbar user={user} notifCount={0} onProfil={() => onNavigate && onNavigate('profil')} />
           <main className="app-content">
             <div className="lpr-guard">
               <h2>Halaman ini untuk admin Zona Integritas</h2>
@@ -53,16 +64,12 @@ export default function LaporanPage({ onNavigate }) {
   }
 
   const handleMenu = (key) => onNavigate && onNavigate(key);
-
-  const rataSkor = rekap.length
-    ? rekap.reduce((a, r) => a + r.skor, 0) / rekap.length
-    : 0;
-
+  const rataSkor = laporan.ringkasan.rataSkor ?? 0;
 
   const ekspor = () => {
-    const baris = [['Instrumen', 'Nama Lengkap', 'Skor', 'Benchmark', 'Status', 'Responden']];
+    const baris = [['Instrumen', 'Nama Lengkap', 'Skor', 'Selisih', 'Responden', 'Periode']];
     rekap.forEach((r) => {
-      baris.push([r.nama, r.namaPanjang, r.skor + '%', r.benchmark + '%', r.status, r.responden]);
+      baris.push([r.nama, r.namaPanjang, r.skor + '%', r.delta == null ? '-' : r.delta.toFixed(2), r.responden, periode]);
     });
     const csv = baris.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\r\n');
     const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
@@ -87,17 +94,19 @@ export default function LaporanPage({ onNavigate }) {
               <p className="lpr-head__sub">Ringkasan skor seluruh instrumen dan pengaduan untuk periode terpilih.</p>
             </div>
             <div className="lpr-head__actions">
-              <select value={periode} onChange={(e) => setPeriode(e.target.value)} aria-label="Periode laporan">
-                <option>Agu 2026</option>
-                <option>Jul 2026</option>
-                <option>Jun 2026</option>
+              <select
+                value={filter.periode}
+                onChange={(e) => setFilter({ ...filter, periode: e.target.value })}
+                aria-label="Periode laporan"
+              >
+                {PERIODE.map((p) => <option key={p.key} value={p.key}>{p.label}</option>)}
               </select>
               <button type="button" className="btn btn-primary" onClick={ekspor}>Ekspor CSV</button>
             </div>
           </header>
 
           <div className="lpr-kpi">
-            <Kpi label="Instrumen Terpantau" value={rekap.length} />
+            <Kpi label="Instrumen Terpantau" value={laporan.ringkasan.totalInstrumen} />
             <Kpi label="Rata-rata Skor" value={formatAngka(rataSkor) + '%'} />
             <Kpi label="Total Laporan" value={ringkasAduan.total} />
             <Kpi label="Laporan Baru" value={ringkasAduan.Baru} tone="warn" />
@@ -108,26 +117,18 @@ export default function LaporanPage({ onNavigate }) {
             <div className="lpr-table-wrap">
               <table className="lpr-table">
                 <thead>
-                  <tr><th>Instrumen</th><th>Nama</th><th>Skor</th><th>Benchmark</th><th>Status</th><th>Responden</th></tr>
+                  <tr><th>Instrumen</th><th>Nama</th><th>Skor</th><th>Selisih</th><th>Responden</th></tr>
                 </thead>
                 <tbody>
-                  {rekap.map((r) => {
-                    const diAtas = r.skor >= r.benchmark;
-                    return (
-                      <tr key={r.key}>
-                        <td className="lpr-id">{r.nama}</td>
-                        <td>{r.namaPanjang}</td>
-                        <td className="lpr-id">{formatAngka(r.skor)}%</td>
-                        <td className="lpr-muted">{r.benchmark}%</td>
-                        <td>
-                          <span className={`badge badge-status ${diAtas ? 'badge-status-selesai' : 'badge-status-diproses'}`}>
-                            {diAtas ? 'Di atas target' : 'Di bawah target'}
-                          </span>
-                        </td>
-                        <td className="lpr-muted">{r.responden.toLocaleString('id-ID')}</td>
-                      </tr>
-                    );
-                  })}
+                  {rekap.map((r) => (
+                    <tr key={r.key}>
+                      <td className="lpr-id">{r.nama}</td>
+                      <td>{r.namaPanjang}</td>
+                      <td className="lpr-id">{formatAngka(r.skor)}%</td>
+                      <td><Delta value={r.delta} compact /></td>
+                      <td className="lpr-muted">{r.responden.toLocaleString('id-ID')}</td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
@@ -160,11 +161,11 @@ export default function LaporanPage({ onNavigate }) {
   );
 }
 
-function Kpi({ label, value, tone = '' }) {
+function Kpi({ label, value, tone }) {
   return (
-    <div className={`lpr-kpi__card ${tone ? 'lpr-kpi__card--' + tone : ''}`}>
-      <span className="lpr-kpi__label">{label}</span>
+    <article className={`lpr-kpi__card ${tone === 'warn' ? 'lpr-kpi__card--warn' : ''}`}>
       <span className="lpr-kpi__value">{value}</span>
-    </div>
+      <span className="lpr-kpi__label">{label}</span>
+    </article>
   );
 }

@@ -115,18 +115,18 @@ export default function ReportTemplate({ info, st, rekomendasi, periode, tanggal
         </footer>
       </section>
       <section className="rt__page">
-        <header className="rt__header"><div><h1 className="rt__title">Perbandingan antar tahun</h1><p className="rt__subtitle">{info.namaPanjang}</p></div></header>
+        <header className="rt__header"><div><h1 className="rt__title">Perubahan antar semester</h1><p className="rt__subtitle">{info.namaPanjang}</p></div></header>
         <div className="rt__body">
-          <div className="rt__section-title"><span className="rt__bullet" aria-hidden="true" /><h2>Indeks tahunan dan interval 95%</h2></div>
+          <div className="rt__section-title"><span className="rt__bullet" aria-hidden="true" /><h2>Indeks per semester dan interval 95%</h2></div>
           <PeriodTrend tren={hasil.tren} selected={laporan.periode.key} />
-          <p className="rt__text">Responden tiap tahun berbeda; selisih bukan perubahan pada orang yang sama.</p>
+          <p className="rt__text">Responden tiap semester berbeda; selisih bukan perubahan pada orang yang sama.</p>
           {laporan.periodePembanding ? <>
           <div className="rt__section-title"><span className="rt__bullet" aria-hidden="true" /><h2>Perubahan indeks per butir vs {laporan.periodePembanding.label}</h2></div>
           <table className="rt__table rt__table--changes">
-            <thead><tr><th>Butir</th><th>Indeks {laporan.periode.short}</th><th>Indeks pembanding</th><th>Selisih (poin)</th></tr></thead>
+            <thead><tr><th>Butir</th><th>Indeks {laporan.periode.label}</th><th>Indeks pembanding</th><th>Selisih (poin)</th></tr></thead>
             <tbody>{hasil.perubahanButir.map((b) => <tr key={b.nama}><td>{b.nama}</td><td className="rt__num">{formatAngka(b.skor)}%</td><td className="rt__num">{b.sebelumnya == null ? '—' : `${formatAngka(b.sebelumnya)}%`}</td><td><Delta value={b.delta} compact /></td></tr>)}</tbody>
           </table>
-          </> : <p className="rt__text">{laporan.periode.label} belum memiliki tahun pembanding.</p>}
+          </> : <p className="rt__text">{laporan.periode.label} belum memiliki semester pembanding.</p>}
         </div>
         <footer className="rt__footer"><span>Sebagian data pada dokumen ini bersumber dari simulasi untuk keperluan demonstrasi.</span><span>Halaman 2</span></footer>
       </section>

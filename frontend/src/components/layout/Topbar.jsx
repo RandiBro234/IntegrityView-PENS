@@ -26,7 +26,6 @@ export default function Topbar({ user, notifCount = 3, onSearch, onProfil, showS
         <p className="topbar__greeting">
           Hai, {user?.nama?.split(' ')[0] || 'Pengunjung'}
         </p>
-        {!compact && <p className="topbar__sub">Berikut ringkasan integritas kampus hari ini.</p>}
       </div>
 
       <div className="topbar__center">

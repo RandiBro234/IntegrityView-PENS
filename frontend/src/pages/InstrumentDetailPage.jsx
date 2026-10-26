@@ -2,12 +2,17 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import ItemDistributionBar, { SkalaLegend } from '../components/instrumen/ItemDistributionBar';
 import GroupComparisonBar, { urutkanPerSelisih } from '../components/instrumen/GroupComparisonBar';
 import RecommendationList from '../components/instrumen/RecommendationList';
+import RecommendationPanel from '../components/instrumen/RecommendationPanel';
 import DataQualityBadges from '../components/instrumen/DataQualityBadges';
-import {
-  SURVEI_INFO, getStatistikInstrumen, getRekomendasi,
-  getDuplikatTerdeteksi, formatAngka
-} from '../data/mock';
-import { useSurveiData } from '../data/api';
+import PeriodTrend from '../components/instrumen/PeriodTrend';
+import ReportTemplate from '../components/instrumen/ReportTemplate';
+import ReportFilters from '../components/dashboard/ReportFilters';
+import Delta from '../components/dashboard/Delta';
+import { unduhLaporanPdf, namaFileLaporan } from '../lib/reportPdf';
+import { formatAngka, SURVEI_INFO } from '../data/mock';
+import { getReportData } from '../data/reportData';
+import { useReportFilters } from '../data/useReportFilters';
+import { getSurveyLink } from '../data/surveyLinks';
 import './InstrumentDetailPage.css';
 
 const ROW_MIN = 32;
@@ -19,7 +24,11 @@ const BLOK_TINGGI = 18 + 8 + 28 + 6 + 28 + 22;
 
 export default function InstrumentDetailPage({ slug, onBack }) {
   const [modal, setModal] = useState(null);
-  const { dataset, loading } = useSurveiData();
+  const [tab, setTab] = useState('distribusi');
+  const [ekspor, setEkspor] = useState(false);
+  const [mengunduh, setMengunduh] = useState(false);
+  const reportRef = useRef(null);
+  const { filter, setFilter } = useReportFilters();
 
   const distRef = useRef(null);
   const [distAvail, setDistAvail] = useState(0);
@@ -28,59 +37,32 @@ export default function InstrumentDetailPage({ slug, onBack }) {
   const [kelompokAvail, setKelompokAvail] = useState(0);
 
   const info = useMemo(() => SURVEI_INFO.find((s) => s.key === slug), [slug]);
-  const st = useMemo(
-    () => (dataset ? getStatistikInstrumen(slug, dataset) : null),
-    [slug, dataset]
-  );
-  const rekomendasi = useMemo(
-    () => (dataset ? getRekomendasi(slug, dataset) : []),
-    [slug, dataset]
-  );
-  const duplikat = useMemo(
-    () => (dataset ? getDuplikatTerdeteksi(slug, dataset) : 0),
-    [slug, dataset]
-  );
+  const surveyLink = useMemo(() => getSurveyLink(slug), [slug]);
+  const laporan = useMemo(() => getReportData(filter), [filter]);
+  const hasil = laporan.instrumen.find((s) => s.info.key === slug);
+  const st = hasil?.aktif;
+  const rekomendasi = hasil?.rekomendasi || [];
+  const duplikat = st?.duplikat ?? 0;
 
   /* Ukur tinggi area daftar distribusi. */
   useEffect(() => {
     if (!distRef.current) return;
     const el = distRef.current;
-    const ro = new ResizeObserver((entries) => {
-      setDistAvail(entries[0].contentRect.height);
-    });
+    const ro = new ResizeObserver((entries) => setDistAvail(entries[0].contentRect.height));
     ro.observe(el);
     return () => ro.disconnect();
-  }, [loading]);
+  }, [tab, st]);
 
-  /* Ukur tinggi area daftar kelompok, hitung ulang otomatis saat resize. */
+  /* Ukur tinggi area daftar kelompok. */
   useEffect(() => {
     if (!kelompokRef.current) return;
     const el = kelompokRef.current;
-    const ro = new ResizeObserver((entries) => {
-      setKelompokAvail(entries[0].contentRect.height);
-    });
+    const ro = new ResizeObserver((entries) => setKelompokAvail(entries[0].contentRect.height));
     ro.observe(el);
     return () => ro.disconnect();
-  }, [loading]);
-
-  const sebaranButir = useMemo(() => {
-    if (!st) return [];
-    return st.butir
-      .map((b) => {
-        const n = b.distribusi[0] + b.distribusi[1] + b.distribusi[2] + b.distribusi[3];
-        const persen = n ? b.distribusi.map((v) => (v / n) * 100) : [0, 0, 0, 0];
-        return {
-          nama: b.nama,
-          sumber: st.sumber,
-          n,
-          distribusiAbsolut: b.distribusi,
-          distribusiPersen: persen.map((v) => Number(v.toFixed(1))),
-          persenSetuju: Number((persen[2] + persen[3]).toFixed(1))
-        };
-      })
-      .sort((a, b) => a.persenSetuju - b.persenSetuju);
   }, [st]);
 
+  const sebaranButir = hasil?.sebaranButir || [];
   const jumlahButir = sebaranButir.length;
 
   const rowHeight = useMemo(() => {
@@ -91,10 +73,9 @@ export default function InstrumentDetailPage({ slug, onBack }) {
 
   const perluScroll = jumlahButir * rowHeight > distAvail + 1 && jumlahButir > 0;
 
-  const kelompokUrut = useMemo(() => (st ? urutkanPerSelisih(st.butir) : []), [st]);
+  /* st berasal dari cache selector; nilainya stabil per filter. */
+  const kelompokUrut = st ? urutkanPerSelisih(st.butir) : [];
 
-  /* Jumlah blok kelompok yang muat utuh = floor(tinggi tersedia / tinggi blok).
-     Minimal 1 agar panel tidak pernah kosong, maksimal 3. */
   const jumlahKelompokMuat = useMemo(() => {
     if (!kelompokAvail) return 2;
     const muat = Math.floor((kelompokAvail + 22) / BLOK_TINGGI);
@@ -104,39 +85,23 @@ export default function InstrumentDetailPage({ slug, onBack }) {
   const maxRekomendasi = rekomendasi.length > 3 ? 2 : 3;
   const rekomendasiTampil = rekomendasi.slice(0, maxRekomendasi);
 
-  const handleEkspor = () => {
-    if (!st) return;
-    const baris = [
-      ['Butir', 'STS', 'TS', 'S', 'SS', 'Rata-rata', 'Dosen', 'Tendik'],
-      ...st.butir.map((b) => [
-        b.nama,
-        ...b.distribusi,
-        b.rata.toFixed(2),
-        b.kelompok.dosen.toFixed(2),
-        b.kelompok.tendik.toFixed(2)
-      ])
-    ];
-    const csv = baris.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `integrityview-${slug}-distribusi.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
+  const [tanggalCetak] = useState(() => {
+    const d = new Date();
+    const bulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+    return `${d.getDate()} ${bulan[d.getMonth()]} ${d.getFullYear()}`;
+  });
 
-  if (loading) {
-    return (
-      <div className="idp idp--loading" role="status" aria-label="Memuat detail instrumen">
-        <div className="skeleton" style={{ height: 48 }} />
-        <div className="idp__cards">
-          <div className="skeleton" /><div className="skeleton" /><div className="skeleton" /><div className="skeleton" />
-        </div>
-        <div className="skeleton" style={{ flex: 1 }} />
-      </div>
-    );
-  }
+  const handleUnduh = async () => {
+    if (!reportRef.current || mengunduh) return;
+    setMengunduh(true);
+    try {
+      const nama = namaFileLaporan(info?.nama || slug, laporan.periode.label);
+      await unduhLaporanPdf(reportRef.current, nama);
+      setEkspor(false);
+    } finally {
+      setMengunduh(false);
+    }
+  };
 
   if (!info || !st) {
     return (
@@ -149,7 +114,6 @@ export default function InstrumentDetailPage({ slug, onBack }) {
 
   return (
     <div className="idp">
-      {/* === Header === */}
       <header className="idp__header">
         <nav className="idp__breadcrumb" aria-label="Breadcrumb">
           <button type="button" className="idp__crumb-link" onClick={onBack}>Ringkasan</button>
@@ -158,56 +122,120 @@ export default function InstrumentDetailPage({ slug, onBack }) {
         </nav>
 
         <div className="idp__header-right">
-          <span className={`idp__badge ${st.sumber === 'riil' ? 'idp__badge--riil' : ''}`}>
-            {st.sumber === 'riil' ? 'Data riil' : 'Data simulasi'}
-          </span>
-          <span className="chip">Periode Mar–Agu 2026</span>
-          <button type="button" className="btn btn-primary idp__ekspor" onClick={handleEkspor}>
+          {surveyLink && (
+            <a
+              className="btn btn-outline-navy idp__isi"
+              href={surveyLink.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`Isi survei ${info.namaPanjang} di tab baru`}
+            >
+              Isi survei ini
+            </a>
+          )}
+          <button type="button" className="btn btn-primary idp__ekspor" onClick={() => setEkspor(true)}>
             Ekspor
           </button>
         </div>
       </header>
 
-      {/* === 4 kartu === */}
+      <ReportFilters filter={filter} onChange={setFilter} />
+
+      {/* === 4 kartu KPI + selisih antar semester === */}
       <div className="idp__cards">
-        <MiniCard label="Jumlah Responden (n)" value={st.jumlahResponden.toLocaleString('id-ID')} />
-        <MiniCard label="Rata-rata Skor" value={formatAngka(st.skor) + '%'} />
-        <MiniCard label="Setuju + Sangat Setuju" value={formatAngka(st.persenSetuju) + '%'} />
+        <MiniCard
+          label="Jumlah Responden (n)"
+          value={st.jumlahResponden.toLocaleString('id-ID')}
+          delta={hasil.pembanding ? st.jumlahResponden - hasil.pembanding.jumlahResponden : null}
+          unit="responden"
+        />
+        <MiniCard label="Rata-rata Skor" value={formatAngka(st.skor) + '%'} delta={hasil.delta} />
+        <MiniCard
+          label="Setuju + Sangat Setuju"
+          value={formatAngka(st.persenSetuju) + '%'}
+          delta={hasil.pembanding ? st.persenSetuju - hasil.pembanding.persenSetuju : null}
+        />
         <MiniCard
           label="Cronbach's Alpha"
           value={formatAngka(st.alpha, 2)}
           note={st.alpha >= 0.7 ? 'Reliabel' : null}
+          delta={hasil.pembanding ? st.alpha - hasil.pembanding.alpha : null}
+          unit="nilai"
+          desimal={2}
         />
       </div>
 
-      {/* === Dua panel === */}
       <div className="idp__panels">
         <section className="idp__panel idp__panel--left" aria-labelledby="dist-butir-title">
           <div className="idp__panel-head">
             <h2 className="idp__panel-title" id="dist-butir-title">
-              Distribusi Jawaban per Butir
-              <span className="idp__panel-count">{jumlahButir} butir</span>
+              {tab === 'distribusi' ? 'Distribusi Jawaban per Butir' : 'Perubahan antar semester'}
+              {tab === 'distribusi' && <span className="idp__panel-count">{jumlahButir} butir</span>}
             </h2>
-            <SkalaLegend />
+            <div className="idp__tabs" role="group" aria-label="Tampilan instrumen">
+              <button
+                type="button"
+                aria-pressed={tab === 'distribusi'}
+                className={tab === 'distribusi' ? 'is-active' : ''}
+                onClick={() => setTab('distribusi')}
+              >
+                Distribusi
+              </button>
+              <button
+                type="button"
+                aria-pressed={tab === 'perubahan'}
+                className={tab === 'perubahan' ? 'is-active' : ''}
+                onClick={() => setTab('perubahan')}
+              >
+                Perubahan antar semester
+              </button>
+            </div>
           </div>
 
-          <div
-            ref={distRef}
-            className={`idp__dist-list ${perluScroll ? 'idp__dist-list--scroll' : ''}`}
-          >
-            {sebaranButir.map((item) => (
-              <div key={item.nama} className="idp__dist-row" style={{ height: rowHeight, minHeight: rowHeight }}>
-                <ItemDistributionBar item={item} height={rowHeight} compact={rowHeight < 40} />
+          {tab === 'distribusi' ? (
+            <>
+              <SkalaLegend />
+              <div ref={distRef} className={`idp__dist-list ${perluScroll ? 'idp__dist-list--scroll' : ''}`}>
+                {sebaranButir.map((item) => (
+                  <div key={item.nama} className="idp__dist-row" style={{ height: rowHeight, minHeight: rowHeight }}>
+                    <ItemDistributionBar item={item} height={rowHeight} compact={rowHeight < 40} />
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-
-          <p className="idp__panel-note">
-            {perluScroll
-              ? 'Butir banyak — gulir untuk melihat seluruhnya. '
-              : ''}
-            Diurutkan dari persentase Setuju + Sangat Setuju terendah.
-          </p>
+              <p className="idp__panel-note">Diurutkan dari persentase Setuju + Sangat Setuju terendah.</p>
+            </>
+          ) : (
+            <>
+              <PeriodTrend tren={hasil.tren} selected={filter.periode} />
+              {laporan.periodePembanding ? (
+                <>
+                  <p className="idp__panel-note">
+                    Selisih indeks butir dibanding {laporan.periodePembanding.label} (poin).
+                  </p>
+                  <div className="idp__change-list">
+                    {hasil.perubahanButir.map((b) => (
+                      <div key={b.nama} className="idp__change-row">
+                        <span className="idp__change-name" title={b.nama}>{b.nama}</span>
+                        <span className="idp__change-track">
+                          <i
+                            className={`idp__change-bar idp__change-bar--${b.delta == null ? 'stabil' : b.delta >= 0.5 ? 'naik' : b.delta <= -0.5 ? 'turun' : 'stabil'}`}
+                            style={{
+                              width: b.delta == null ? '0%' : `${Math.min(48, Math.abs(b.delta) * 2)}%`,
+                              left: b.delta == null || b.delta >= 0 ? '50%' : 'auto',
+                              right: b.delta != null && b.delta < 0 ? '50%' : 'auto'
+                            }}
+                          />
+                        </span>
+                        <span className="idp__change-delta"><Delta value={b.delta} compact /></span>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <p className="idp__panel-note">{laporan.periode.label} belum memiliki semester pembanding.</p>
+              )}
+            </>
+          )}
         </section>
 
         <section className="idp__panel idp__panel--right">
@@ -235,11 +263,7 @@ export default function InstrumentDetailPage({ slug, onBack }) {
           <div className="idp__half idp__half--bottom">
             <div className="idp__half-head">
               <h2 className="idp__panel-title">Rekomendasi & Kualitas Data</h2>
-              {rekomendasi.length > maxRekomendasi && (
-                <button type="button" className="idp__more" onClick={() => setModal('rekomendasi-all')}>
-                  Lihat semua rekomendasi
-                </button>
-              )}
+              <RecommendationPanel items={rekomendasi} />
             </div>
 
             <RecommendationList
@@ -258,19 +282,12 @@ export default function InstrumentDetailPage({ slug, onBack }) {
         </section>
       </div>
 
-      {/* === Modal === */}
       {modal && (
         <div className="idp__modal-overlay" onClick={() => setModal(null)} role="presentation">
-          <div
-            className="idp__modal"
-            role="dialog"
-            aria-modal="true"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className="idp__modal" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
             <div className="idp__modal-head">
               <h3>
                 {modal === 'kelompok' && 'Perbandingan Kelompok — Semua Butir'}
-                {modal === 'rekomendasi-all' && 'Semua Rekomendasi'}
                 {modal.rekomendasi && 'Detail Rekomendasi'}
               </h3>
               <button type="button" className="idp__modal-close" onClick={() => setModal(null)} aria-label="Tutup">×</button>
@@ -286,14 +303,6 @@ export default function InstrumentDetailPage({ slug, onBack }) {
                 />
               ))}
 
-              {modal === 'rekomendasi-all' && (
-                <RecommendationList
-                  items={rekomendasi}
-                  max={rekomendasi.length}
-                  onDetail={(r) => setModal({ rekomendasi: r })}
-                />
-              )}
-
               {modal.rekomendasi && (
                 <>
                   <span className={`reclist__prio prioritas--${modal.rekomendasi.prioritas.toLowerCase()}`}>
@@ -307,11 +316,55 @@ export default function InstrumentDetailPage({ slug, onBack }) {
           </div>
         </div>
       )}
+      {ekspor && (
+        <div className="idp__modal-overlay" onClick={() => !mengunduh && setEkspor(false)} role="presentation">
+          <div
+            className="idp__modal idp__modal--report"
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Pratinjau Laporan ${info?.namaPanjang}`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="idp__modal-head">
+              <h3>Pratinjau Laporan — {info?.namaPanjang}</h3>
+              <button type="button" className="idp__modal-close" onClick={() => setEkspor(false)} aria-label="Tutup" disabled={mengunduh}>×</button>
+            </div>
+
+            <div className="idp__modal-preview">
+              <div className="idp__preview-scale" ref={reportRef}>
+                <ReportTemplate
+                  info={info}
+                  st={st}
+                  rekomendasi={rekomendasi}
+                  periode={laporan.periode.label}
+                  tanggalCetak={tanggalCetak}
+                  laporan={laporan}
+                  hasil={hasil}
+                />
+              </div>
+            </div>
+
+            <div className="idp__modal-foot">
+              <button type="button" className="btn btn-outline-navy" onClick={() => setEkspor(false)} disabled={mengunduh}>
+                Batal
+              </button>
+              <button type="button" className="btn btn-primary" onClick={handleUnduh} disabled={mengunduh}>
+                {mengunduh ? (
+                  <>
+                    <span className="idp__spinner" aria-hidden="true" />
+                    Menyiapkan…
+                  </>
+                ) : 'Unduh PDF'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-function MiniCard({ label, value, note }) {
+function MiniCard({ label, value, note, delta, unit, desimal }) {
   return (
     <article className="idp__minicard">
       <span className="idp__minicard-label">{label}</span>
@@ -319,6 +372,7 @@ function MiniCard({ label, value, note }) {
         {value}
         {note && <span className="idp__minicard-note">{note}</span>}
       </span>
+      {delta != null && <Delta value={delta} unit={unit} desimal={desimal} compact />}
     </article>
   );
 }
