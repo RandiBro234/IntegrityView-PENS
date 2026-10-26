@@ -1,9 +1,9 @@
 ﻿import { useMemo, useState } from 'react';
 import Sidebar from '../components/layout/Sidebar';
 import Topbar from '../components/layout/Topbar';
-import { SURVEI_DESKRIPSI, getUser } from '../data/mock';
-import { SURVEY_LINKS } from '../data/surveyLinks';
-import { getReportData } from '../data/reportData';
+import { getUser } from '../data/mock';
+import { SURVEI_DESKRIPSI } from '../data/instrumentConfig';
+import { getReportData } from '../data/surveyData';
 import { useReportFilters } from '../data/useReportFilters';
 import './SurveiPage.css';
 
@@ -14,19 +14,19 @@ export default function SurveiPage({ onNavigate, onOpenInstrument }) {
   const [kategori, setKategori] = useState('Semua');
 
   const { filter } = useReportFilters();
-  const laporan = useMemo(() => getReportData({ ...filter, kategori: 'Semua' }), [filter]);
+  /* Selector sudah punya cache internal; dihitung langsung agar ikut diperbarui setelah data asli tiba. */
+  const laporan = getReportData({ ...filter, kategori: 'Semua' });
 
   const daftar = useMemo(() => laporan.instrumen.map(({ info, aktif }) => {
-    const link = SURVEY_LINKS.find((s) => s.slug === info.key);
-    const jumlahButir = aktif?.butir.length || 0;
+    const jumlahButir = info.jumlahButir || 0;
     return {
       ...info,
       deskripsi: SURVEI_DESKRIPSI[info.key] || '',
       jumlahButir,
       estimasiMenit: Math.max(3, Math.ceil(jumlahButir / 3)),
-      responden: aktif?.jumlahResponden || 0,
-      url: link?.url || null,
-      requiresGoogleLogin: !!link?.requiresGoogleLogin
+      responden: aktif?.n || 0,
+      url: info.url || null,
+      requiresGoogleLogin: !!info.requiresGoogleLogin
     };
   }), [laporan]);
 
@@ -162,4 +162,9 @@ export default function SurveiPage({ onNavigate, onOpenInstrument }) {
     </div>
   );
 }
+
+
+
+
+
 

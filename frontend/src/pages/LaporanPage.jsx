@@ -1,10 +1,10 @@
-import { useMemo } from 'react';
+﻿import { useMemo } from 'react';
 import Sidebar from '../components/layout/Sidebar';
 import Topbar from '../components/layout/Topbar';
 import {
   getUser, isAdmin, getRingkasanPengaduan, getPengaduan, formatAngka
 } from '../data/mock';
-import { PERIODE, getReportData } from '../data/reportData';
+import { PERIODE, getReportData } from '../data/surveyData';
 import { useReportFilters } from '../data/useReportFilters';
 import Delta from '../components/dashboard/Delta';
 import './LaporanPage.css';
@@ -15,7 +15,8 @@ export default function LaporanPage({ onNavigate }) {
   const { filter, setFilter } = useReportFilters();
 
   /* Sumber angka yang sama dengan dashboard: selector tunggal. */
-  const laporan = useMemo(() => getReportData(filter), [filter]);
+  /* Selector sudah punya cache internal; dihitung langsung agar ikut diperbarui setelah data asli tiba. */
+  const laporan = getReportData(filter);
   const periode = laporan.periode.label;
 
   const rekap = admin
@@ -23,9 +24,9 @@ export default function LaporanPage({ onNavigate }) {
       key: s.info.key,
       nama: s.info.nama,
       namaPanjang: s.info.namaPanjang,
-      skor: s.aktif.skor,
+      skor: s.aktif.indeks,
       delta: s.delta,
-      responden: s.aktif.jumlahResponden
+      responden: s.aktif.n
     }))
     : [];
 
@@ -89,7 +90,7 @@ export default function LaporanPage({ onNavigate }) {
         <main className="app-content">
           <header className="lpr-head">
             <div>
-              <p className="label-eyebrow">Laporan · Admin</p>
+              <p className="label-eyebrow">Laporan Â· Admin</p>
               <h1 className="lpr-head__title">Rekap Capaian Zona Integritas</h1>
               <p className="lpr-head__sub">Ringkasan skor seluruh instrumen dan pengaduan untuk periode terpilih.</p>
             </div>
@@ -169,3 +170,6 @@ function Kpi({ label, value, tone }) {
     </article>
   );
 }
+
+
+

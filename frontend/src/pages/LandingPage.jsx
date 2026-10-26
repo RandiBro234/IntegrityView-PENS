@@ -1,7 +1,7 @@
-﻿import { useEffect, useMemo, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { BlobDecor } from '../components/cards/StatCard';
 import { KONTAK, labelPartisipan, formatAngka } from '../data/mock';
-import { getReportData } from '../data/reportData';
+import { getReportData } from '../data/surveyData';
 import { useReportFilters } from '../data/useReportFilters';
 import Delta from '../components/dashboard/Delta';
 import './LandingPage.css';
@@ -45,10 +45,11 @@ function gradientLangkah(i) {
 export default function LandingPage({ onEnterDashboard, session }) {
   const [scrollY, setScrollY] = useState(0);
   const { filter } = useReportFilters();
-  const laporan = useMemo(() => getReportData({ ...filter, kategori: 'Semua' }), [filter]);
+  /* Selector sudah punya cache internal; dihitung langsung agar ikut diperbarui setelah data asli tiba. */
+  const laporan = getReportData({ ...filter, kategori: 'Semua' });
   const ringkasan = laporan.ringkasan;
   const ringkasanResponden = ringkasan.responden.total;
-  const surveiLanding = laporan.instrumen.filter((s) => s.aktif).map((s) => ({ ...s.info, responden: s.aktif.jumlahResponden }));
+  const surveiLanding = laporan.instrumen.filter((s) => s.aktif).map((s) => ({ ...s.info, responden: s.aktif.n }));
   const kategoriSkor = laporan.kategoriSkor;
   const { naik, turun } = laporan.perubahanTerbesar;
 
@@ -424,4 +425,8 @@ export default function LandingPage({ onEnterDashboard, session }) {
     </div>
   );
 }
+
+
+
+
 

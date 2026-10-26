@@ -1,7 +1,7 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { BlobDecor } from '../components/cards/StatCard';
 import { ROLES, loginAs, formatAngka } from '../data/mock';
-import { getReportData } from '../data/reportData';
+import { getReportData } from '../data/surveyData';
 import { useReportFilters } from '../data/useReportFilters';
 import './AuthPage.css';
 
@@ -111,7 +111,7 @@ export default function AuthPage({ onSuccess, onBack }) {
           </div>
         </div>
 
-        <p className="auth__brand-foot">Zona Integritas PENS · Politeknik Elektronika Negeri Surabaya</p>
+        <p className="auth__brand-foot">Zona Integritas PENS Â· Politeknik Elektronika Negeri Surabaya</p>
       </aside>
 
       {/* === Kolom kanan: form === */}
@@ -180,7 +180,7 @@ export default function AuthPage({ onSuccess, onBack }) {
               >
                 <input
                   type="password"
-                  placeholder="••••••••"
+                  placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                   value={loginPass}
                   onChange={(e) => setLoginPass(e.target.value)}
                   aria-invalid={!!loginErrors.pass}
@@ -304,7 +304,7 @@ export default function AuthPage({ onSuccess, onBack }) {
         </div>
 
         <button type="button" className="auth__back" onClick={onBack}>
-          ← Kembali ke beranda
+          â† Kembali ke beranda
         </button>
       </main>
 
@@ -334,3 +334,4 @@ function Field({ label, error, children }) {
     </div>
   );
 }
+

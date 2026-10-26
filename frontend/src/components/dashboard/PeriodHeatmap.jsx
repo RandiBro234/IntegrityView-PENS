@@ -1,11 +1,12 @@
-import { formatAngka } from '../../data/mock';
-import { PERIODE, arahPerubahan } from '../../data/reportData';
+﻿import { formatAngka } from '../../data/mock';
+import { PERIODE, arahPerubahan } from '../../data/surveyData';
 import './PeriodHeatmap.css';
 
 const PANAH = { naik: '↑', turun: '↓' };
 
 export default function PeriodHeatmap({ instrumen, periode, selectedKey, onSelect }) {
-  if (!instrumen.length) return <p>Belum ada data untuk kombinasi filter ini.</p>;
+  const adaData = instrumen.some((entry) => entry.tren.some((p) => p.indeks != null));
+  if (!instrumen.length || !adaData) return <p>Belum ada responden untuk kombinasi filter ini.</p>;
 
   return (
     <div className="heatmap" role="table" aria-label="Indeks instrumen per semester">
@@ -36,19 +37,20 @@ export default function PeriodHeatmap({ instrumen, periode, selectedKey, onSelec
           <span role="rowheader">{entry.info.nama}</span>
           {entry.tren.map((p) => {
             const arah = arahPerubahan(p.deltaSemester);
+            const gelap = p.indeks != null && p.indeks > 62;
             return (
               <span
                 key={p.key}
                 role="cell"
-                className={`${periode === p.key ? 'heatmap__active' : ''} ${p.skor > 62 ? 'heatmap__cell--gelap' : ''}`.trim()}
-                title={`${entry.info.nama} · ${p.label} (${p.rentang}): ${p.skor == null ? 'n < 5' : `${formatAngka(p.skor)}%`}`}
+                className={`${periode === p.key ? 'heatmap__active' : ''} ${gelap ? 'heatmap__cell--gelap' : ''}`.trim()}
+                title={`${entry.info.nama} · ${p.label} (${p.rentang}): ${p.indeks == null ? 'belum ada data' : `${formatAngka(p.indeks)}%`}`}
                 style={{
-                  backgroundColor: `rgba(11, 27, 51, ${p.skor == null ? 0.05 : 0.12 + p.skor / 125})`,
-                  color: p.skor > 62 ? 'var(--white)' : 'var(--navy-900)'
+                  backgroundColor: `rgba(11, 27, 51, ${p.indeks == null ? 0.05 : 0.12 + p.indeks / 125})`,
+                  color: gelap ? 'var(--white)' : 'var(--navy-900)'
                 }}
               >
                 <span className="heatmap__nilai">
-                  {p.skor == null ? 'n < 5' : `${formatAngka(p.skor)}%`}
+                  {p.indeks == null ? '—' : `${formatAngka(p.indeks)}%`}
                   {(arah === 'naik' || arah === 'turun') && (
                     <small className={`heatmap__panah heatmap__panah--${arah}`} aria-label={arah}>
                       {PANAH[arah]}

@@ -1,4 +1,4 @@
-import './RecommendationList.css';
+﻿import './RecommendationList.css';
 
 const PRIORITAS_CLASS = {
   'Tinggi': 'prioritas--tinggi',
@@ -11,7 +11,7 @@ const PRIORITAS_CLASS = {
 export default function RecommendationList({ items, max = 3, onDetail, compact = false }) {
   if (!items || !items.length) {
     return (
-      <p className="reclist__empty">Tidak ada rekomendasi — seluruh indikator dalam batas wajar.</p>
+      <p className="reclist__empty">Tidak ada rekomendasi â€” seluruh indikator dalam batas wajar.</p>
     );
   }
 
@@ -25,13 +25,13 @@ export default function RecommendationList({ items, max = 3, onDetail, compact =
             <span className={`reclist__prio ${PRIORITAS_CLASS[r.prioritas] || ''}`}>
               {r.prioritas}
             </span>
-            <p className="reclist__teks" title={r.teks}>{r.teks}</p>
+            <p className="reclist__teks" title={r.judul}>{r.judul}</p>
             {onDetail && (
               <button
                 type="button"
                 className="reclist__detail"
                 onClick={() => onDetail(r)}
-                aria-label={`Detail rekomendasi: ${r.teks}`}
+                aria-label={`Detail rekomendasi: ${r.judul}`}
               >
                 Detail
               </button>
@@ -43,3 +43,5 @@ export default function RecommendationList({ items, max = 3, onDetail, compact =
     </ul>
   );
 }
+
+

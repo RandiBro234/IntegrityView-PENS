@@ -1,8 +1,8 @@
-import { formatAngka } from '../../data/mock';
-import { arahPerubahan } from '../../data/reportData';
+﻿import { formatAngka } from '../../data/mock';
+import { arahPerubahan } from '../../data/surveyData';
 import './Delta.css';
 
-const SIMBOL = { naik: '↑', turun: '↓', stabil: '—' };
+const SIMBOL = { naik: 'â†‘', turun: 'â†“', stabil: 'â€”' };
 
 /* Satu-satunya tampilan selisih skor. Arah ditentukan oleh arahPerubahan()
    di reportData agar aturan 0,5 poin konsisten di seluruh aplikasi. */
@@ -10,7 +10,7 @@ export default function Delta({ value, unit = 'poin', compact = false, desimal =
   if (value == null) return null;
   const arah = arahPerubahan(value);
   const angka = formatAngka(Math.abs(value), desimal);
-  const tanda = arah === 'naik' ? '+' : arah === 'turun' ? '−' : '';
+  const tanda = arah === 'naik' ? '+' : arah === 'turun' ? 'âˆ’' : '';
   return (
     <span
       className={`delta delta--${arah}`}
@@ -21,3 +21,4 @@ export default function Delta({ value, unit = 'poin', compact = false, desimal =
     </span>
   );
 }
+

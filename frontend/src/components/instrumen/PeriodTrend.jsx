@@ -1,5 +1,5 @@
-import { formatAngka } from '../../data/mock';
-import { arahPerubahan } from '../../data/reportData';
+﻿import { formatAngka } from '../../data/mock';
+import { arahPerubahan } from '../../data/surveyData';
 import './PeriodTrend.css';
 
 const WARNA = {
@@ -8,9 +8,9 @@ const WARNA = {
   stabil: 'var(--gray-500)'
 };
 
-/* Grafik garis lurus (tanpa smoothing) untuk 5 semester.
-   Tiap ruas diwarnai sesuai arah perubahan: naik hijau, turun merah,
-   stabil abu-abu. Pita tipis = interval kepercayaan 95%. */
+/* Garis lurus (tanpa smoothing) untuk 5 semester.
+   Tiap ruas diwarnai sesuai arah: naik hijau, turun merah, stabil abu-abu.
+   Pita tipis = interval kepercayaan 95%. */
 export default function PeriodTrend({ tren, selected }) {
   if (!tren?.length) return <p>Belum ada data untuk kombinasi filter ini.</p>;
   const lebar = 620;
@@ -28,31 +28,33 @@ export default function PeriodTrend({ tren, selected }) {
         ))}
 
         {tren.map((p, i) => {
-          if (p.skor == null) return null;
+          if (p.indeks == null) return null;
           const sebelumnya = i > 0 ? tren[i - 1] : null;
-          const arah = sebelumnya?.skor != null ? arahPerubahan(p.skor - sebelumnya.skor) : null;
+          const arah = sebelumnya?.indeks != null ? arahPerubahan(p.indeks - sebelumnya.indeks) : null;
           return (
             <g key={p.key}>
-              <line x1={x(i)} x2={x(i)} y1={y(p.ci.atas)} y2={y(p.ci.bawah)} className="period-trend__ci" />
+              {p.ci && (
+                <line x1={x(i)} x2={x(i)} y1={y(p.ci.atas)} y2={y(p.ci.bawah)} className="period-trend__ci" />
+              )}
               {arah && (
                 <line
                   x1={x(i - 1)}
-                  y1={y(sebelumnya.skor)}
+                  y1={y(sebelumnya.indeks)}
                   x2={x(i)}
-                  y2={y(p.skor)}
+                  y2={y(p.indeks)}
                   className="period-trend__line"
                   style={{ stroke: WARNA[arah] }}
                 />
               )}
               <circle
                 cx={x(i)}
-                cy={y(p.skor)}
+                cy={y(p.indeks)}
                 r={p.key === selected ? 5 : 4}
                 className={p.key === selected ? 'period-trend__selected' : 'period-trend__point'}
               >
-                <title>{p.label} ({p.rentang}): {formatAngka(p.skor)}%</title>
+                <title>{p.label} ({p.rentang}): {formatAngka(p.indeks)}%</title>
               </circle>
-              <text x={x(i)} y={y(p.skor) - 12} textAnchor="middle" className="period-trend__nilai">{formatAngka(p.skor)}%</text>
+              <text x={x(i)} y={y(p.indeks) - 12} textAnchor="middle" className="period-trend__nilai">{formatAngka(p.indeks)}%</text>
               <text x={x(i)} y="168" textAnchor="middle" className="period-trend__tahun">{p.tahun}</text>
               <text x={x(i)} y="179" textAnchor="middle" className="period-trend__semester">{p.semester}</text>
             </g>

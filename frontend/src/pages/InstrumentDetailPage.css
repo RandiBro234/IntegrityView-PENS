@@ -1,4 +1,4 @@
-/* Layout satu layar: header, filter, kartu, panel.
+﻿/* Layout satu layar: header, filter, kartu, panel.
    Tinggi diambil dari sisa ruang grid (bukan calc piksel) agar tidak meluber
    ketika tinggi topbar berubah. */
 .detail-shell .app-main {
@@ -294,7 +294,7 @@
 /* === Panel kanan 2 bagian: proporsi tetap 45/55, pemisah tak bergerak === */
 .idp__panel--right {
   display: grid;
-  grid-template-rows: minmax(0, 45fr) minmax(0, 55fr);
+  grid-template-rows: minmax(0, 55fr) minmax(0, 45fr);
   gap: 0;
   padding: 0;
 }
@@ -472,3 +472,119 @@
 }
 @keyframes idp-spin { to { transform: rotate(360deg); } }
 .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* === Tabel butir (teks lengkap + distribusi) === */
+.idp__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+.idp__legend-item { display: inline-flex; align-items: center; gap: 5px; font-weight: 600; }
+.idp__legend-swatch { width: 10px; height: 10px; border-radius: 3px; display: inline-block; flex-shrink: 0; }
+
+.idp__butir-table {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+.idp__butir-head,
+.idp__butir-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 64px 58px 132px;
+  gap: 10px;
+  align-items: center;
+}
+.idp__butir-head {
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border-soft);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+.idp__butir-head .idp__butir-rata,
+.idp__butir-head .idp__butir-setuju { text-align: right; }
+.idp__butir-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+.idp__butir-row {
+  min-height: 34px;
+  border-bottom: 1px solid var(--border-soft);
+  font-size: 11.5px;
+}
+.idp__butir-row:last-child { border-bottom: 0; }
+.idp__butir-teks {
+  min-width: 0;
+  color: var(--text-primary);
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+}
+.idp__butir-rata,
+.idp__butir-setuju {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.idp__butir-bar {
+  display: flex;
+  height: 14px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: var(--gray-50);
+}
+.idp__butir-seg { display: block; height: 100%; }
+
+/* === Kualitas data === */
+.idp__kualitas {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+.idp__kualitas li {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--text-secondary);
+}
+.idp__kualitas strong { color: var(--text-primary); font-variant-numeric: tabular-nums; }
+
+
+/* === Tema jawaban terbuka (agregat kata kunci) === */
+.idp__tema { flex-shrink: 0; min-width: 0; }
+.idp__tema-head {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+.idp__tema-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 11.5px;
+}
+.idp__tema-list li { display: flex; justify-content: space-between; gap: 8px; color: var(--text-primary); }
+.idp__tema-list strong { font-variant-numeric: tabular-nums; }
