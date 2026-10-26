@@ -287,4 +287,3 @@ export const SURVEI_INFO = INSTRUMENTS.map((i) => ({
   jumlahButir: i.butir.length
 }));
 
-

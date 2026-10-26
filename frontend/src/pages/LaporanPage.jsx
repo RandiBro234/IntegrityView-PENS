@@ -171,5 +171,3 @@ function Kpi({ label, value, tone }) {
   );
 }
 
-
-

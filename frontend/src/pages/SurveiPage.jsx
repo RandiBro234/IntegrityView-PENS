@@ -163,8 +163,3 @@ export default function SurveiPage({ onNavigate, onOpenInstrument }) {
   );
 }
 
-
-
-
-
-

@@ -44,4 +44,3 @@ export default function RecommendationList({ items, max = 3, onDetail, compact =
   );
 }
 
-
