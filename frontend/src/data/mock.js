@@ -231,6 +231,17 @@ function kodeBerikut(jenis) {
   return prefix + '-' + tahun + '-' + String(maks + 1).padStart(lebar, '0');
 }
 
+/* Simpan/mirror laporan ke localStorage. Dipakai sebagai fallback demo dan
+   agar laporan yang baru dikirim langsung muncul di halaman lacak/kelola
+   pada browser yang sama. */
+export function simpanPengaduanLokal(record) {
+  const arr = bacaAduanLokal();
+  const idx = arr.findIndex((p) => p.id === record.id);
+  if (idx >= 0) arr[idx] = record; else arr.push(record);
+  tulisAduanLokal(arr);
+  return record;
+}
+
 export function savePengaduan(data) {
   const jenis = data.jenis === 'wbs' ? 'wbs' : 'pengaduan';
   const now = new Date().toISOString();
@@ -253,10 +264,7 @@ export function savePengaduan(data) {
     catatanInternal: [],
     balasan: []
   };
-  const arr = bacaAduanLokal();
-  arr.push(record);
-  tulisAduanLokal(arr);
-  return record;
+  return simpanPengaduanLokal(record);
 }
 
 export function cariPengaduan(kode) {

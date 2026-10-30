@@ -2,3 +2,6 @@ project_id = "integrityview"
 
 [functions.webhook-survei]
 verify_jwt = false
+
+[functions.kirim-laporan]
+verify_jwt = false

@@ -2,9 +2,10 @@ import { useState } from 'react';
 import Sidebar from '../components/layout/Sidebar';
 import Topbar from '../components/layout/Topbar';
 import {
-  getUser, KATEGORI_ADUAN, savePengaduan, cariPengaduan,
+  getUser, KATEGORI_ADUAN, savePengaduan, simpanPengaduanLokal, cariPengaduan,
   formatTanggal, formatTanggalWaktu
 } from '../data/mock';
+import { kirimLaporan, laporanApiSiap } from '../data/laporanApi';
 import './PengaduanPage.css';
 
 const HUBUNGAN = ['Mahasiswa', 'Dosen', 'Tenaga Kependidikan', 'Masyarakat Umum', 'Alumni'];
@@ -72,11 +73,16 @@ function BuatLaporan() {
   });
   const [errors, setErrors] = useState({});
   const [hasil, setHasil] = useState(null);
+  const [mengirim, setMengirim] = useState(false);
+  const [errorKirim, setErrorKirim] = useState('');
 
   const isWbs = jenis === 'wbs';
   const kategoriOpsi = isWbs ? [...KATEGORI_ADUAN, 'Pungli', 'Gratifikasi', 'Benturan Kepentingan'] : KATEGORI_ADUAN;
 
-  const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
+  const set = (k, v) => {
+    setErrorKirim('');
+    setForm((f) => ({ ...f, [k]: v }));
+  };
 
   const validasiStep1 = () => {
     const e = {};
@@ -102,10 +108,11 @@ function BuatLaporan() {
   const next = () => { if (validasiStep1()) setStep(1); };
   const prev = () => setStep(0);
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault();
     if (!validasiStep2()) return;
-    const rec = savePengaduan({
+
+    const data = {
       jenis,
       judul: form.judul,
       kategori: form.kategori,
@@ -115,9 +122,49 @@ function BuatLaporan() {
       nama_pelapor: form.nama_pelapor,
       kontak_pelapor: form.kontak_pelapor,
       hubungan: form.hubungan
-    });
-    setHasil(rec);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    /* Tanpa env Supabase, tetap simpan lokal agar demo tidak rusak. */
+    if (!laporanApiSiap) {
+      setHasil(savePengaduan(data));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    setErrorKirim('');
+    setMengirim(true);
+    try {
+      const row = await kirimLaporan(data);
+      if (!row?.kode) throw new Error('Server tidak mengembalikan kode laporan.');
+
+      const rec = {
+        id: row.kode,
+        jenis: row.jenis || jenis,
+        judul: row.judul,
+        kategori: row.kategori,
+        lokasi: row.lokasi || '',
+        deskripsi: row.deskripsi,
+        anonim: !!row.anonim,
+        nama_pelapor: row.nama_pelapor,
+        kontak_pelapor: row.kontak_pelapor,
+        hubungan: row.hubungan,
+        status: row.status || 'Baru',
+        pic: row.pic || '',
+        waktuLapor: row.created_at || new Date().toISOString(),
+        waktuUpdate: row.updated_at || row.created_at || new Date().toISOString(),
+        riwayat: Array.isArray(row.riwayat) ? row.riwayat : [],
+        catatanInternal: Array.isArray(row.catatan_internal) ? row.catatan_internal : [],
+        balasan: Array.isArray(row.balasan) ? row.balasan : []
+      };
+
+      simpanPengaduanLokal(rec);
+      setHasil(rec);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (err) {
+      setErrorKirim(err.message || 'Gagal mengirim laporan. Coba lagi.');
+    } finally {
+      setMengirim(false);
+    }
   };
 
   if (hasil) {
@@ -228,10 +275,13 @@ function BuatLaporan() {
               <span>Saya menyetujui ketentuan dan menyatakan informasi ini benar.</span>
             </label>
             {errors.setuju && <p className="pg-error">{errors.setuju}</p>}
+            {errorKirim && <p className="pg-error">{errorKirim}</p>}
 
             <div className="pg-actions">
-              <button type="button" className="btn btn-outline-navy" onClick={prev}>Kembali</button>
-              <button type="submit" className="btn btn-primary">Kirim Laporan</button>
+              <button type="button" className="btn btn-outline-navy" onClick={prev} disabled={mengirim}>Kembali</button>
+              <button type="submit" className="btn btn-primary" disabled={mengirim}>
+                {mengirim ? 'Mengirim...' : 'Kirim Laporan'}
+              </button>
             </div>
           </>
         )}
