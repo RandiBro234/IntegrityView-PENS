@@ -31,9 +31,26 @@ function pertama(nilai: unknown): string | null {
 }
 
 function ambilEmail(data: Record<string, unknown>): string | null {
-  for (const kunci of ['Email Address', 'Email', 'email']) {
-    const nilai = pertama(data[kunci]);
-    if (nilai) return nilai;
+  const prioritas = [
+    'email address', 'email', 'alamat email', 'email responden',
+    'surel', 'respondent email', '__respondent_email'
+  ];
+  const entri = Object.entries(data);
+
+  for (const target of prioritas) {
+    for (const [kunci, nilai] of entri) {
+      if (kunci.trim().toLowerCase() === target) {
+        const v = pertama(nilai);
+        if (v) return v;
+      }
+    }
+  }
+
+  for (const [kunci, nilai] of entri) {
+    if (kunci.toLowerCase().includes('email')) {
+      const v = pertama(nilai);
+      if (v) return v;
+    }
   }
   return null;
 }
@@ -61,6 +78,14 @@ Deno.serve(async (req: Request) => {
 
   const instrumen = String(body.instrumen || 'UNKNOWN');
   const data = body.data || {};
+
+  if (typeof data !== 'object' || Array.isArray(data) || Object.keys(data).length === 0) {
+    return json({
+      error: 'data kosong. Cek trigger Apps Script: From form > On form submit, ' +
+        'dan pastikan payload berisi e.namedValues / e.response.'
+    }, 400);
+  }
+
   const email = ambilEmail(data);
 
   const supabase = createClient(
