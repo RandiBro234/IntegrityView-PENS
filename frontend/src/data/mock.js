@@ -201,6 +201,8 @@ export const PENGADUAN_SEED = [
 ];
 
 const ADU_KEY = 'iv2_pengaduan';
+/* Seed demo bisa dimatikan di produksi tanpa menghapus fallback lokal. */
+const DEMO_LAPORAN = String(import.meta.env.VITE_ENABLE_DEMO_LAPORAN ?? 'true') !== 'false';
 
 function bacaAduanLokal() {
   try { return JSON.parse(localStorage.getItem(ADU_KEY) || '[]'); }
@@ -214,7 +216,7 @@ function tulisAduanLokal(arr) {
 export function getPengaduan() {
   const lokal = bacaAduanLokal();
   const diEdit = new Set(lokal.map((p) => p.id));
-  const seed = PENGADUAN_SEED.filter((p) => !diEdit.has(p.id));
+  const seed = DEMO_LAPORAN ? PENGADUAN_SEED.filter((p) => !diEdit.has(p.id)) : [];
   return seed.concat(lokal).sort((a, b) => new Date(b.waktuLapor) - new Date(a.waktuLapor));
 }
 
@@ -262,7 +264,8 @@ export function savePengaduan(data) {
     waktuUpdate: now,
     riwayat: [{ status: 'Baru', tanggal: now, catatan: 'Laporan diterima.' }],
     catatanInternal: [],
-    balasan: []
+    balasan: [],
+    lampiran: []
   };
   return simpanPengaduanLokal(record);
 }

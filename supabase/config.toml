@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.kirim-laporan]
 verify_jwt = false
+
+[functions.buat-upload-lampiran]
+verify_jwt = false

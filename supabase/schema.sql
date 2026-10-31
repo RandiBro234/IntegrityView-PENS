@@ -55,6 +55,7 @@ create table if not exists public.pengaduan (
   riwayat jsonb not null default '[]'::jsonb,
   catatan_internal jsonb not null default '[]'::jsonb,
   balasan jsonb not null default '[]'::jsonb,
+  lampiran jsonb not null default '[]'::jsonb,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   constraint pengaduan_anonim_tanpa_identitas check (
@@ -80,6 +81,7 @@ create table if not exists public.whistleblowing (
   riwayat jsonb not null default '[]'::jsonb,
   catatan_internal jsonb not null default '[]'::jsonb,
   balasan jsonb not null default '[]'::jsonb,
+  lampiran jsonb not null default '[]'::jsonb,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   constraint whistleblowing_anonim_tanpa_identitas check (
@@ -174,3 +176,108 @@ select setval(
   false
 )
 where not exists (select 1 from public.whistleblowing);
+
+
+-- =====================================================================
+-- Lampiran, pelacakan status, dan rate limit
+-- =====================================================================
+
+alter table public.pengaduan
+  add column if not exists lampiran jsonb not null default '[]'::jsonb;
+alter table public.whistleblowing
+  add column if not exists lampiran jsonb not null default '[]'::jsonb;
+
+-- Pelacakan publik hanya mengembalikan field yang aman (tanpa PII,
+-- catatan internal, atau path lampiran).
+create or replace function public.lacak_laporan(p_kode text)
+returns jsonb
+language sql
+security definer
+stable
+set search_path = public
+as $$
+  with hasil as (
+    select
+      'pengaduan'::text as jenis,
+      kode, judul, kategori, status, riwayat, balasan,
+      coalesce(jsonb_array_length(lampiran), 0) as jumlah_lampiran,
+      created_at, updated_at
+    from public.pengaduan
+    where upper(kode) = upper(btrim(p_kode))
+    union all
+    select
+      'wbs'::text,
+      kode, judul, kategori, status, riwayat, balasan,
+      coalesce(jsonb_array_length(lampiran), 0),
+      created_at, updated_at
+    from public.whistleblowing
+    where upper(kode) = upper(btrim(p_kode))
+  )
+  select to_jsonb(h) from hasil h limit 1;
+$$;
+
+revoke all on function public.lacak_laporan(text) from public;
+grant execute on function public.lacak_laporan(text) to anon, authenticated;
+
+create table if not exists public.rate_limit_laporan (
+  ip_hash text not null,
+  aksi text not null,
+  window_start timestamptz not null default now(),
+  jumlah integer not null default 0,
+  primary key (ip_hash, aksi)
+);
+
+alter table public.rate_limit_laporan enable row level security;
+revoke all on public.rate_limit_laporan from anon, authenticated;
+grant all on public.rate_limit_laporan to service_role;
+
+create or replace function public.cek_rate_limit(
+  p_ip_hash text,
+  p_aksi text,
+  p_limit integer default 5,
+  p_window_menit integer default 10
+)
+returns boolean
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_jumlah integer;
+  v_batas timestamptz;
+begin
+  v_batas := now() - make_interval(mins => greatest(coalesce(p_window_menit, 10), 1));
+
+  insert into public.rate_limit_laporan as r (ip_hash, aksi, window_start, jumlah)
+  values (p_ip_hash, p_aksi, now(), 1)
+  on conflict (ip_hash, aksi) do update
+    set jumlah = case when r.window_start < v_batas then 1 else r.jumlah + 1 end,
+        window_start = case when r.window_start < v_batas then now() else r.window_start end
+  returning jumlah into v_jumlah;
+
+  return v_jumlah <= greatest(coalesce(p_limit, 5), 1);
+end;
+$$;
+
+revoke all on function public.cek_rate_limit(text, text, integer, integer)
+  from public, anon, authenticated;
+grant execute on function public.cek_rate_limit(text, text, integer, integer)
+  to service_role;
+
+-- Bucket privat untuk lampiran. Upload memakai signed URL dari Edge Function,
+-- jadi anon tidak perlu policy storage.objects.
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values (
+  'lampiran-laporan',
+  'lampiran-laporan',
+  false,
+  10485760,
+  array[
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'image/jpeg',
+    'image/png'
+  ]
+)
+on conflict (id) do nothing;

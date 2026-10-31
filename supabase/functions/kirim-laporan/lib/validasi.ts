@@ -1,3 +1,5 @@
+import { PayloadError } from '../../_shared/errors.ts';
+
 export type JenisLaporan = 'pengaduan' | 'wbs';
 
 export interface LaporanValid {
@@ -11,8 +13,6 @@ export interface LaporanValid {
   kontak_pelapor: string | null;
   hubungan: string | null;
 }
-
-export class PayloadError extends Error {}
 
 function teks(nilai: unknown): string {
   return typeof nilai === 'string' ? nilai.trim() : '';
