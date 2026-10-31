@@ -2,9 +2,13 @@ import { useState } from 'react';
 import Sidebar from '../components/layout/Sidebar';
 import Topbar from '../components/layout/Topbar';
 import {
-  getUser, KATEGORI_ADUAN, savePengaduan, cariPengaduan,
+  getUser, KATEGORI_ADUAN, savePengaduan, simpanPengaduanLokal, cariPengaduan,
   formatTanggal, formatTanggalWaktu
 } from '../data/mock';
+import {
+  kirimLaporan, lacakLaporan, unggahLampiran, laporanApiSiap,
+  validasiLampiranFile, MAKS_LAMPIRAN
+} from '../data/laporanApi';
 import './PengaduanPage.css';
 
 const HUBUNGAN = ['Mahasiswa', 'Dosen', 'Tenaga Kependidikan', 'Masyarakat Umum', 'Alumni'];
@@ -70,21 +74,71 @@ function BuatLaporan() {
     judul: '', kategori: '', lokasi: '', deskripsi: '',
     anonim: false, nama_pelapor: '', kontak_pelapor: '', hubungan: '', setuju: false
   });
+  const [lampiran, setLampiran] = useState([]);
   const [errors, setErrors] = useState({});
   const [hasil, setHasil] = useState(null);
+  const [mengirim, setMengirim] = useState(false);
+  const [statusKirim, setStatusKirim] = useState('');
+  const [errorKirim, setErrorKirim] = useState('');
 
   const isWbs = jenis === 'wbs';
   const kategoriOpsi = isWbs ? [...KATEGORI_ADUAN, 'Pungli', 'Gratifikasi', 'Benturan Kepentingan'] : KATEGORI_ADUAN;
 
-  const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
+  const set = (k, v) => {
+    setErrorKirim('');
+    setForm((f) => ({ ...f, [k]: v }));
+  };
 
   const validasiStep1 = () => {
     const e = {};
     if (!form.judul.trim()) e.judul = 'Judul wajib diisi.';
     if (!form.kategori) e.kategori = 'Kategori wajib dipilih.';
     if (!form.deskripsi.trim()) e.deskripsi = 'Deskripsi wajib diisi.';
+    if (lampiran.length > MAKS_LAMPIRAN) e.lampiran = `Maksimal ${MAKS_LAMPIRAN} lampiran.`;
+    for (const file of lampiran) {
+      const pesan = validasiLampiranFile(file);
+      if (pesan) { e.lampiran = pesan; break; }
+    }
     setErrors(e);
     return !Object.keys(e).length;
+  };
+
+  const pilihLampiran = (e) => {
+    const files = Array.from(e.target.files || []);
+    e.target.value = '';
+    if (!files.length) return;
+    setErrorKirim('');
+    if (lampiran.length + files.length > MAKS_LAMPIRAN) {
+      setErrors((prev) => ({ ...prev, lampiran: `Maksimal ${MAKS_LAMPIRAN} lampiran.` }));
+      return;
+    }
+    for (const file of files) {
+      const pesan = validasiLampiranFile(file);
+      if (pesan) {
+        setErrors((prev) => ({ ...prev, lampiran: pesan }));
+        return;
+      }
+    }
+    setErrors((prev) => ({ ...prev, lampiran: '' }));
+    setLampiran((prev) => [...prev, ...files]);
+  };
+
+  const hapusLampiran = (index) => {
+    setLampiran((prev) => prev.filter((_, i) => i !== index));
+    setErrors((prev) => ({ ...prev, lampiran: '' }));
+  };
+
+  const resetForm = () => {
+    setHasil(null);
+    setForm({
+      judul: '', kategori: '', lokasi: '', deskripsi: '',
+      anonim: false, nama_pelapor: '', kontak_pelapor: '', hubungan: '', setuju: false
+    });
+    setLampiran([]);
+    setErrors({});
+    setErrorKirim('');
+    setStatusKirim('');
+    setStep(0);
   };
 
   const validasiStep2 = () => {
@@ -102,10 +156,12 @@ function BuatLaporan() {
   const next = () => { if (validasiStep1()) setStep(1); };
   const prev = () => setStep(0);
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault();
+    if (mengirim) return;
     if (!validasiStep2()) return;
-    const rec = savePengaduan({
+
+    const data = {
       jenis,
       judul: form.judul,
       kategori: form.kategori,
@@ -115,9 +171,63 @@ function BuatLaporan() {
       nama_pelapor: form.nama_pelapor,
       kontak_pelapor: form.kontak_pelapor,
       hubungan: form.hubungan
-    });
-    setHasil(rec);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    /* Tanpa env Supabase, tetap simpan lokal agar demo tidak rusak. Lampiran
+       hanya bisa disimpan jika Storage tersedia. */
+    if (!laporanApiSiap) {
+      if (lampiran.length) {
+        setErrorKirim('Lampiran membutuhkan koneksi Supabase. Hapus lampiran atau sambungkan konfigurasi.');
+        return;
+      }
+      setHasil(savePengaduan(data));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    setErrorKirim('');
+    setMengirim(true);
+    setStatusKirim('');
+    try {
+      const unggahan = [];
+      for (let i = 0; i < lampiran.length; i += 1) {
+        setStatusKirim(`Mengunggah lampiran ${i + 1}/${lampiran.length}...`);
+        unggahan.push(await unggahLampiran(jenis, lampiran[i]));
+      }
+
+      setStatusKirim('Menyimpan laporan...');
+      const row = await kirimLaporan({ ...data, lampiran: unggahan });
+
+      const rec = {
+        id: row.kode,
+        jenis: row.jenis || jenis,
+        judul: row.judul,
+        kategori: row.kategori,
+        lokasi: row.lokasi || '',
+        deskripsi: row.deskripsi,
+        anonim: !!row.anonim,
+        nama_pelapor: row.nama_pelapor,
+        kontak_pelapor: row.kontak_pelapor,
+        hubungan: row.hubungan,
+        status: row.status || 'Baru',
+        pic: row.pic || '',
+        waktuLapor: row.created_at || new Date().toISOString(),
+        waktuUpdate: row.updated_at || row.created_at || new Date().toISOString(),
+        riwayat: Array.isArray(row.riwayat) ? row.riwayat : [],
+        catatanInternal: Array.isArray(row.catatan_internal) ? row.catatan_internal : [],
+        balasan: Array.isArray(row.balasan) ? row.balasan : [],
+        lampiran: Array.isArray(row.lampiran) ? row.lampiran : unggahan
+      };
+
+      simpanPengaduanLokal(rec);
+      setHasil(rec);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (err) {
+      setErrorKirim(err.message || 'Gagal mengirim laporan. Coba lagi.');
+    } finally {
+      setMengirim(false);
+      setStatusKirim('');
+    }
   };
 
   if (hasil) {
@@ -135,7 +245,7 @@ function BuatLaporan() {
           <button type="button" className="btn btn-outline-navy" onClick={() => navigator.clipboard && navigator.clipboard.writeText(hasil.id)}>
             Salin Kode
           </button>
-          <button type="button" className="btn btn-primary" onClick={() => { setHasil(null); setForm({ judul: '', kategori: '', lokasi: '', deskripsi: '', anonim: false, nama_pelapor: '', kontak_pelapor: '', hubungan: '', setuju: false }); setStep(0); }}>
+          <button type="button" className="btn btn-primary" onClick={resetForm}>
             Buat Laporan Lain
           </button>
         </div>
@@ -189,6 +299,34 @@ function BuatLaporan() {
             <Field label="Deskripsi lengkap" error={errors.deskripsi}>
               <textarea rows="5" placeholder="Jelaskan masalah, kapan terjadi, dan dampaknya" value={form.deskripsi} onChange={(e) => set('deskripsi', e.target.value)} />
             </Field>
+            <Field label="Lampiran bukti (opsional)" error={errors.lampiran}>
+              <input
+                type="file"
+                multiple
+                accept=".doc,.docx,.pdf,.jpg,.jpeg,.png"
+                onChange={pilihLampiran}
+              />
+              <p className="pg-hint">
+                Maks. {MAKS_LAMPIRAN} file, 10MB per file. Format PDF, Word, JPG, atau PNG.
+              </p>
+              {lampiran.length > 0 && (
+                <ul className="pg-filelist">
+                  {lampiran.map((file, i) => (
+                    <li className="pg-filelist__item" key={`${file.name}-${file.size}-${i}`}>
+                      <span className="pg-filelist__nama">{file.name}</span>
+                      <span className="pg-filelist__ukuran">{formatUkuran(file.size)}</span>
+                      <button
+                        type="button"
+                        className="pg-filelist__hapus"
+                        onClick={() => hapusLampiran(i)}
+                      >
+                        Hapus
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </Field>
             <div className="pg-actions">
               <button type="button" className="btn btn-primary" onClick={next}>Lanjut</button>
             </div>
@@ -228,10 +366,14 @@ function BuatLaporan() {
               <span>Saya menyetujui ketentuan dan menyatakan informasi ini benar.</span>
             </label>
             {errors.setuju && <p className="pg-error">{errors.setuju}</p>}
+            {errorKirim && <p className="pg-error">{errorKirim}</p>}
+            {mengirim && statusKirim && <p className="pg-progress">{statusKirim}</p>}
 
             <div className="pg-actions">
-              <button type="button" className="btn btn-outline-navy" onClick={prev}>Kembali</button>
-              <button type="submit" className="btn btn-primary">Kirim Laporan</button>
+              <button type="button" className="btn btn-outline-navy" onClick={prev} disabled={mengirim}>Kembali</button>
+              <button type="submit" className="btn btn-primary" disabled={mengirim}>
+                {mengirim ? 'Mengirim...' : 'Kirim Laporan'}
+              </button>
             </div>
           </>
         )}
@@ -246,15 +388,27 @@ function LacakStatus({ initialKode }) {
   const [kode, setKode] = useState(initialKode || '');
   const [hasil, setHasil] = useState(initialKode ? cariPengaduan(initialKode) : null);
   const [dicari, setDicari] = useState(!!initialKode);
+  const [mencari, setMencari] = useState(false);
+  const [peringatan, setPeringatan] = useState('');
   const [error, setError] = useState('');
 
-  const cari = (e) => {
+  const cari = async (e) => {
     e.preventDefault();
     const v = kode.trim();
     if (!v) { setError('Masukkan kode terlebih dahulu.'); return; }
     setError('');
-    setHasil(cariPengaduan(v));
-    setDicari(true);
+    setPeringatan('');
+    setMencari(true);
+    try {
+      const dariServer = laporanApiSiap ? await lacakLaporan(v) : null;
+      setHasil(dariServer || cariPengaduan(v));
+    } catch (err) {
+      setHasil(cariPengaduan(v));
+      setPeringatan(`${err.message} Menampilkan data lokal.`);
+    } finally {
+      setDicari(true);
+      setMencari(false);
+    }
   };
 
   return (
@@ -264,9 +418,13 @@ function LacakStatus({ initialKode }) {
           <input type="text" placeholder="Contoh: ADU-2026-0001 atau WBS-2026-001" value={kode} onChange={(e) => setKode(e.target.value)} autoComplete="off" />
         </Field>
         <div className="pg-actions">
-          <button type="submit" className="btn btn-primary">Lacak Sekarang</button>
+          <button type="submit" className="btn btn-primary" disabled={mencari}>
+            {mencari ? 'Mencari...' : 'Lacak Sekarang'}
+          </button>
         </div>
       </form>
+
+      {peringatan && <p className="pg-warning">{peringatan}</p>}
 
       {dicari && (hasil ? <HasilLacak data={hasil} /> : (
         <div className="pg-card pg-state">
@@ -286,21 +444,32 @@ function LacakStatus({ initialKode }) {
 }
 
 function HasilLacak({ data }) {
-  const idx = URUT[data.status] != null ? URUT[data.status] : 0;
-  const balasan = (data.balasan || []).slice().reverse();
+  const status = data.status || 'Baru';
+  const kode = data.kode || data.id;
+  const riwayat = Array.isArray(data.riwayat) ? data.riwayat : [];
+  const idx = URUT[status] != null ? URUT[status] : 0;
+  const balasan = (Array.isArray(data.balasan) ? data.balasan : []).slice().reverse();
+  const jumlahLampiran = data.jumlah_lampiran
+    ?? (Array.isArray(data.lampiran) ? data.lampiran.length : 0);
+  const waktuLapor = data.waktuLapor || data.created_at;
 
   return (
     <div className="pg-card">
       <div className="pg-lacak__head">
-        <span className="pg-kode">{data.id}</span>
-        <span className={`badge badge-status badge-status-${data.status.toLowerCase()}`}>{data.status}</span>
+        <span className="pg-kode">{kode}</span>
+        <span className={`badge badge-status badge-status-${status.toLowerCase()}`}>{status}</span>
       </div>
       <h2 className="pg-lacak__judul">{data.judul}</h2>
-      <p className="pg-lacak__meta">Kategori {data.kategori} · Dilaporkan {formatTanggal(data.waktuLapor)}</p>
+      <p className="pg-lacak__meta">
+        Kategori {data.kategori || '-'} · Dilaporkan {waktuLapor ? formatTanggal(waktuLapor) : '-'}
+      </p>
+      {jumlahLampiran > 0 && (
+        <p className="pg-lacak__meta">{jumlahLampiran} lampiran tersimpan (hanya dapat dibuka petugas).</p>
+      )}
 
       <ol className="pg-timeline">
         {TAHAP.map((label, i) => {
-          const r = data.riwayat[i];
+          const r = riwayat[i];
           const state = i < idx ? 'is-done' : i === idx ? 'is-active' : 'is-pending';
           return (
             <li key={label} className={`pg-timeline__item ${state}`}>
@@ -318,11 +487,11 @@ function HasilLacak({ data }) {
       {balasan.length > 0 && (
         <div className="pg-balasan-wrap">
           <h3 className="pg-lacak__sub">Balasan &amp; hasil penanganan</h3>
-          {balasan.map((b) => (
-            <div key={b.id} className="pg-balasan">
+          {balasan.map((b, i) => (
+            <div key={b.id || i} className="pg-balasan">
               <div className="pg-balasan__head">
-                <span className="pg-balasan__oleh">{b.oleh}</span>
-                <span className="pg-balasan__waktu">{formatTanggalWaktu(b.tanggal)}</span>
+                <span className="pg-balasan__oleh">{b.oleh || 'Petugas'}</span>
+                <span className="pg-balasan__waktu">{b.tanggal ? formatTanggalWaktu(b.tanggal) : '-'}</span>
               </div>
               {b.teks && <p className="pg-balasan__teks">{b.teks}</p>}
             </div>
@@ -341,4 +510,9 @@ function Field({ label, error, children }) {
       {error && <p className="pg-error">{error}</p>}
     </div>
   );
+}
+
+function formatUkuran(bytes) {
+  if (bytes >= 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  return `${Math.max(1, Math.round(bytes / 1024))} KB`;
 }

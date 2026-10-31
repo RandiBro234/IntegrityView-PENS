@@ -1,4 +1,5 @@
--- Skema IntegrityView (single-table + JSONB)
+-- Skema IntegrityView untuk PostgreSQL LOKAL (single-table + JSONB).
+-- Produksi/Supabase memakai supabase/schema.sql (termasuk RLS).
 -- Jalankan setelah database integrity_view_db dibuat:
 --   psql -U postgres -d integrity_view_db -f schema.sql
 

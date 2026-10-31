@@ -130,6 +130,69 @@
 .pg-field.has-error textarea { border-color: var(--error-500); }
 
 .pg-error { margin-top: 6px; font-size: 12px; color: var(--error-500); font-weight: 600; }
+.pg-progress { margin-top: 8px; font-size: 12.5px; font-weight: 600; color: var(--navy-500); }
+
+.pg-field input[type="file"] {
+  padding: 9px 12px;
+  background: var(--bg-page);
+  cursor: pointer;
+}
+.pg-hint {
+  margin-top: 6px;
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+.pg-filelist {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.pg-filelist__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  background: var(--bg-page);
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+}
+.pg-filelist__nama {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.pg-filelist__ukuran { flex-shrink: 0; font-size: 11.5px; color: var(--text-secondary); }
+.pg-filelist__hapus {
+  flex-shrink: 0;
+  padding: 2px 4px;
+  border: 0;
+  background: none;
+  color: var(--error-500);
+  font: inherit;
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.pg-filelist__hapus:hover { text-decoration: underline; }
+
+.pg-warning {
+  padding: 10px 14px;
+  border: 1px solid var(--orange-400);
+  border-radius: 12px;
+  background: var(--orange-100);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
 
 .pg-check {
   display: flex;

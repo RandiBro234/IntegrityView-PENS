@@ -9,51 +9,10 @@
 // SUPABASE_URL dan SUPABASE_SERVICE_ROLE_KEY sudah otomatis tersedia di
 // environment Edge Function, jadi tidak perlu diset manual.
 
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-
-const CORS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'content-type, x-webhook-secret',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS'
-};
-
-function json(body: unknown, status = 200) {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: { ...CORS, 'Content-Type': 'application/json' }
-  });
-}
-
-function pertama(nilai: unknown): string | null {
-  if (Array.isArray(nilai)) return nilai.length ? String(nilai[0]) : null;
-  if (nilai === null || nilai === undefined) return null;
-  return String(nilai);
-}
-
-function ambilEmail(data: Record<string, unknown>): string | null {
-  const prioritas = [
-    'email address', 'email', 'alamat email', 'email responden',
-    'surel', 'respondent email', '__respondent_email'
-  ];
-  const entri = Object.entries(data);
-
-  for (const target of prioritas) {
-    for (const [kunci, nilai] of entri) {
-      if (kunci.trim().toLowerCase() === target) {
-        const v = pertama(nilai);
-        if (v) return v;
-      }
-    }
-  }
-
-  for (const [kunci, nilai] of entri) {
-    if (kunci.toLowerCase().includes('email')) {
-      const v = pertama(nilai);
-      if (v) return v;
-    }
-  }
-  return null;
-}
+import { CORS, json } from './lib/http.ts';
+import { ambilEmail } from './lib/email.ts';
+import { buatClient } from './lib/supabase.ts';
+import { PayloadError, validasiData } from './lib/validasi.ts';
 
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
@@ -69,7 +28,7 @@ Deno.serve(async (req: Request) => {
     return json({ error: 'Unauthorized' }, 401);
   }
 
-  let body: { instrumen?: string; data?: Record<string, unknown> };
+  let body: { instrumen?: string; data?: unknown };
   try {
     body = await req.json();
   } catch {
@@ -77,21 +36,19 @@ Deno.serve(async (req: Request) => {
   }
 
   const instrumen = String(body.instrumen || 'UNKNOWN');
-  const data = body.data || {};
 
-  if (typeof data !== 'object' || Array.isArray(data) || Object.keys(data).length === 0) {
-    return json({
-      error: 'data kosong. Cek trigger Apps Script: From form > On form submit, ' +
-        'dan pastikan payload berisi e.namedValues / e.response.'
-    }, 400);
+  let data: Record<string, unknown>;
+  try {
+    data = validasiData(body.data ?? {});
+  } catch (error) {
+    if (error instanceof PayloadError) {
+      return json({ error: error.message }, 400);
+    }
+    throw error;
   }
 
   const email = ambilEmail(data);
-
-  const supabase = createClient(
-    Deno.env.get('SUPABASE_URL')!,
-    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-  );
+  const supabase = buatClient();
 
   const { error } = await supabase
     .from('survey_responses')

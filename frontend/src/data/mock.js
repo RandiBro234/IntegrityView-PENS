@@ -201,6 +201,8 @@ export const PENGADUAN_SEED = [
 ];
 
 const ADU_KEY = 'iv2_pengaduan';
+/* Seed demo bisa dimatikan di produksi tanpa menghapus fallback lokal. */
+const DEMO_LAPORAN = String(import.meta.env.VITE_ENABLE_DEMO_LAPORAN ?? 'true') !== 'false';
 
 function bacaAduanLokal() {
   try { return JSON.parse(localStorage.getItem(ADU_KEY) || '[]'); }
@@ -214,7 +216,7 @@ function tulisAduanLokal(arr) {
 export function getPengaduan() {
   const lokal = bacaAduanLokal();
   const diEdit = new Set(lokal.map((p) => p.id));
-  const seed = PENGADUAN_SEED.filter((p) => !diEdit.has(p.id));
+  const seed = DEMO_LAPORAN ? PENGADUAN_SEED.filter((p) => !diEdit.has(p.id)) : [];
   return seed.concat(lokal).sort((a, b) => new Date(b.waktuLapor) - new Date(a.waktuLapor));
 }
 
@@ -229,6 +231,17 @@ function kodeBerikut(jenis) {
   });
   const lebar = jenis === 'wbs' ? 3 : 4;
   return prefix + '-' + tahun + '-' + String(maks + 1).padStart(lebar, '0');
+}
+
+/* Simpan/mirror laporan ke localStorage. Dipakai sebagai fallback demo dan
+   agar laporan yang baru dikirim langsung muncul di halaman lacak/kelola
+   pada browser yang sama. */
+export function simpanPengaduanLokal(record) {
+  const arr = bacaAduanLokal();
+  const idx = arr.findIndex((p) => p.id === record.id);
+  if (idx >= 0) arr[idx] = record; else arr.push(record);
+  tulisAduanLokal(arr);
+  return record;
 }
 
 export function savePengaduan(data) {
@@ -251,12 +264,10 @@ export function savePengaduan(data) {
     waktuUpdate: now,
     riwayat: [{ status: 'Baru', tanggal: now, catatan: 'Laporan diterima.' }],
     catatanInternal: [],
-    balasan: []
+    balasan: [],
+    lampiran: []
   };
-  const arr = bacaAduanLokal();
-  arr.push(record);
-  tulisAduanLokal(arr);
-  return record;
+  return simpanPengaduanLokal(record);
 }
 
 export function cariPengaduan(kode) {
