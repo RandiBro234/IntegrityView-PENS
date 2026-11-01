@@ -9,34 +9,10 @@
 // SUPABASE_URL dan SUPABASE_SERVICE_ROLE_KEY sudah otomatis tersedia di
 // environment Edge Function, jadi tidak perlu diset manual.
 
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-
-const CORS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'content-type, x-webhook-secret',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS'
-};
-
-function json(body: unknown, status = 200) {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: { ...CORS, 'Content-Type': 'application/json' }
-  });
-}
-
-function pertama(nilai: unknown): string | null {
-  if (Array.isArray(nilai)) return nilai.length ? String(nilai[0]) : null;
-  if (nilai === null || nilai === undefined) return null;
-  return String(nilai);
-}
-
-function ambilEmail(data: Record<string, unknown>): string | null {
-  for (const kunci of ['Email Address', 'Email', 'email']) {
-    const nilai = pertama(data[kunci]);
-    if (nilai) return nilai;
-  }
-  return null;
-}
+import { CORS, json } from './lib/http.ts';
+import { ambilEmail } from './lib/email.ts';
+import { buatClient } from './lib/supabase.ts';
+import { PayloadError, validasiData } from './lib/validasi.ts';
 
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
@@ -52,7 +28,7 @@ Deno.serve(async (req: Request) => {
     return json({ error: 'Unauthorized' }, 401);
   }
 
-  let body: { instrumen?: string; data?: Record<string, unknown> };
+  let body: { instrumen?: string; data?: unknown };
   try {
     body = await req.json();
   } catch {
@@ -60,13 +36,19 @@ Deno.serve(async (req: Request) => {
   }
 
   const instrumen = String(body.instrumen || 'UNKNOWN');
-  const data = body.data || {};
-  const email = ambilEmail(data);
 
-  const supabase = createClient(
-    Deno.env.get('SUPABASE_URL')!,
-    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-  );
+  let data: Record<string, unknown>;
+  try {
+    data = validasiData(body.data ?? {});
+  } catch (error) {
+    if (error instanceof PayloadError) {
+      return json({ error: error.message }, 400);
+    }
+    throw error;
+  }
+
+  const email = ambilEmail(data);
+  const supabase = buatClient();
 
   const { error } = await supabase
     .from('survey_responses')
