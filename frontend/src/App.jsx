@@ -11,6 +11,7 @@ import LaporanPage from './pages/LaporanPage';
 import ProfilePage from './pages/ProfilePage';
 import Sidebar from './components/layout/Sidebar';
 import Topbar from './components/layout/Topbar';
+import IvyWidget from './components/ivy/IvyWidget';
 import { getUser, getSession, logout } from './data/mock';
 import { getSurveyUrl } from './data/surveyLinks';
 import { dukungViewTransition, prefersReducedMotion } from './lib/motion';
@@ -159,11 +160,15 @@ export default function App() {
   };
 
   return (
-    <div
-      key={page === 'instrumen-detail' ? `${page}-${instrumenSlug}` : page}
-      className={`page-transition ${keluar ? 'is-out' : ''}`.trim()}
-    >
-      {renderHalaman()}
-    </div>
+    <>
+      <div
+        key={page === 'instrumen-detail' ? `${page}-${instrumenSlug}` : page}
+        className={`page-transition ${keluar ? 'is-out' : ''}`.trim()}
+      >
+        {renderHalaman()}
+      </div>
+      {/* Di luar wadah transisi: state percakapan tidak ikut reset saat pindah halaman. */}
+      <IvyWidget />
+    </>
   );
 }

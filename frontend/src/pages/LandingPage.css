@@ -80,7 +80,7 @@
 
 /* === Hero: navy gelap ===
    Mengisi sisa tinggi layar di bawah topbar; isi terpusat vertikal. Padding
-   memakai vh + safe area bawah agar tombol bantuan tidak menutup kartu. */
+   memakai vh + safe area bawah agar widget Tanya Ivy tidak menutup kartu. */
 .landing__hero {
   --hero-h: clamp(320px, 62vh, 640px);
   flex: 1 0 auto;
@@ -248,7 +248,7 @@
 
 /* === Tentang (WHITE section) === */
 .landing__about {
-  padding: clamp(40px, 6vw, 80px) clamp(20px, 4vw, 56px);
+  padding: clamp(28px, 3.5vw, 52px) clamp(20px, 4vw, 56px);
   background: #FFFFFF;
   border-top: 1px solid #DCE4F0;
   border-bottom: 1px solid #DCE4F0;
@@ -292,9 +292,11 @@
 
 /* === Stats === */
 .landing__stats {
-  padding: clamp(40px, 6vw, 80px) clamp(20px, 4vw, 56px);
+  padding: clamp(24px, 3vw, 44px) clamp(20px, 4vw, 56px);
   background: #0B1B33;
 }
+/* Judul lebih dekat ke kartu: area navy tidak memanjang tanpa isi. */
+.landing__stats .landing__section-head { margin-bottom: 22px; }
 .landing__stats .landing__section-title { color: #FFFFFF; }
 .landing__stats .landing__section-title,
 .landing__stats h2 { color: #FFFFFF; }
@@ -310,11 +312,14 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 18px;
+  /* Semua kartu satu tinggi: 8 kartu mengisi 2 baris rapat, termasuk kartu
+     oranye "Perubahan Terbesar" yang isinya lebih panjang. */
+  grid-auto-rows: 1fr;
 }
 
 .landing__stat-card {
   position: relative;
-  padding: 24px;
+  padding: 18px;
   border-radius: var(--radius-card);
   background: var(--bg-card);
   border: 1px solid var(--border-soft);
@@ -322,8 +327,8 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  min-height: 160px;
+  gap: 6px;
+  min-height: 124px;
   transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
 .landing__stat-card:hover {
@@ -338,9 +343,17 @@
 .landing__stat-card--peach .label-eyebrow {
   color: rgba(255, 255, 255, 0.75) !important;
 }
+/* Kartu penutup dengan latar lembut oranye: beda dari putih, tidak sekuat
+   kartu oranye solid, jadi tidak berebut perhatian. */
+.landing__stat-card--lembut {
+  background: var(--orange-100);
+  border-color: var(--orange-100);
+}
+/* Dua kelas: mengalahkan warna default .label-eyebrow tanpa !important. */
+.landing__stat-card .landing__stat-eyebrow--teal { color: var(--teal-500); }
 
 .landing__stat-num {
-  font-size: clamp(30px, 3.2vw, 40px);
+  font-size: clamp(24px, 2.5vw, 31px);
   font-weight: 800;
   letter-spacing: -0.03em;
   line-height: 1;
@@ -348,43 +361,53 @@
   font-variant-numeric: tabular-nums;
 }
 .landing__stat-unit {
-  font-size: 18px;
+  font-size: 14px;
   color: var(--text-secondary);
   margin-left: 2px;
 }
 .landing__stat-label {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--text-secondary);
   margin-top: auto;
+}
+/* Kaki kartu penutup: keterangan + delta, selalu menempel di bawah. */
+.landing__stat-foot {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: auto;
+  font-size: 11.5px;
+  line-height: 1.4;
+  color: var(--text-secondary);
 }
 
 .landing__rentang {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-top: 10px;
+  gap: 8px;
+  margin-top: 4px;
   flex: 1;
 }
 .landing__rentang-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 /* Kiri: tag + nama tersusun vertikal */
 .landing__rentang-left {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
   min-width: 0;
 }
 /* Tag TERTINGGI / TERENDAH */
 .landing__rentang-tag {
-  font-size: 9.5px;
+  font-size: 9px;
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  padding: 2px 8px;
+  padding: 2px 7px;
   border-radius: var(--radius-pill);
   width: fit-content;
 }
@@ -398,7 +421,7 @@
 }
 /* Nama instrumen */
 .landing__rentang-nama {
-  font-size: 15px;
+  font-size: 13.5px;
   font-weight: 800;
   color: #fff;
   display: flex;
@@ -409,7 +432,7 @@
 }
 /* Skor — kanan, besar dan tegas */
 .landing__rentang-skor {
-  font-size: clamp(14px, 1.5vw, 22px);
+  font-size: clamp(13px, 1.2vw, 17px);
   font-weight: 800;
   color: #fff;
   font-variant-numeric: tabular-nums;
@@ -422,15 +445,15 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 4px;
-  padding-top: 10px;
+  margin-top: 0;
+  padding-top: 6px;
   border-top: 1px solid rgba(255,255,255,0.22);
-  font-size: 12.5px;
+  font-size: 11.5px;
   color: rgba(255,255,255,0.72);
 }
 .landing__rentang-selisih strong {
   color: #fff;
-  font-size: 14px;
+  font-size: 12.5px;
   font-weight: 800;
   font-variant-numeric: tabular-nums;
 }
@@ -661,14 +684,6 @@
   border: 1px solid var(--border-soft);
   color: var(--text-primary);
 }
-.landing__lapor-note {
-  margin-top: auto;
-  padding-top: 14px;
-  border-top: 1px solid var(--border-soft);
-  font-size: 12.5px;
-  line-height: 1.55;
-  color: var(--text-secondary);
-}
 
 /* === Alur (DARK — kontras setelah instrumen putih) === */
 .landing__alur {
@@ -736,34 +751,6 @@ html.js .landing__alur-arrow {
 }
 html.js .landing__alur-step.is-visible .landing__alur-arrow {
   transform: translateY(-50%) scaleX(1);
-}
-
-/* Petunjuk gulir di bawah hero. */
-.landing__scroll-hint {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  margin-top: clamp(12px, 2vh, 24px);
-  font-size: 10.5px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: rgba(198, 208, 228, 0.75);
-  animation: hint-masuk var(--dur-slow) var(--ease-out) 600ms both;
-}
-.landing__scroll-hint svg {
-  animation: hint-bounce 2.4s var(--ease-in-out) infinite;
-}
-.landing__scroll-hint.is-berhenti svg { animation: none; }
-.landing__scroll-hint.is-berhenti { opacity: 0.45; transition: opacity var(--dur-base) var(--ease-out); }
-@keyframes hint-masuk {
-  from { opacity: 0; transform: translate3d(0, 8px, 0); }
-  to { opacity: 1; transform: none; }
-}
-@keyframes hint-bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(5px); }
 }
 
 /* Tombol kembali ke atas: fade + geser, muncul setelah melewati hero. */
@@ -974,36 +961,6 @@ html.js .landing__alur-step.is-visible .landing__alur-arrow {
   font-size: 12.5px;
 }
 
-/* === Help widget === */
-.landing__help {
-  position: fixed;
-  bottom: 16px;
-  right: 16px;
-  z-index: 50;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 18px;
-  border-radius: var(--radius-pill);
-  background: var(--navy-900);
-  color: #fff;
-  font-size: 13.5px;
-  font-weight: 700;
-  box-shadow: 0 10px 24px rgba(11, 27, 51, 0.25);
-  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity var(--dur-base) var(--ease-out);
-  animation: help-masuk var(--dur-slow) var(--ease-out) 600ms both;
-}
-@keyframes help-masuk {
-  from { opacity: 0; transform: translate3d(0, 12px, 0); }
-  to { opacity: 1; transform: none; }
-}
-.landing__help:hover { transform: translateY(-2px); box-shadow: 0 14px 28px rgba(11, 27, 51, 0.32); }
-/* Di layar sempit tombol menjadi ikon bulat agar tidak menutupi hero. */
-@media (max-width: 640px) {
-  .landing__help { width: 44px; height: 44px; padding: 0; justify-content: center; border-radius: 50%; }
-  .landing__help-label { display: none; }
-}
-
 /* === Responsive === */
 @media (max-width: 1100px) {
   .landing__stats-grid { grid-template-columns: repeat(2, 1fr); }
@@ -1021,8 +978,9 @@ html.js .landing__alur-step.is-visible .landing__alur-arrow {
   .landing__lapor-grid { grid-template-columns: 1fr; }
 }
 @media (max-width: 640px) {
-  /* Padding sudah pakai clamp(), override hanya untuk grid layout */
-  .landing__stats-grid { grid-template-columns: 1fr; }
+  /* Padding sudah pakai clamp(), override hanya untuk grid layout.
+     Satu kolom: biarkan tiap kartu setinggi isinya sendiri. */
+  .landing__stats-grid { grid-template-columns: 1fr; grid-auto-rows: auto; }
   .landing__alur-list { grid-template-columns: 1fr; }
   .landing__footer-grid { grid-template-columns: 1fr; gap: 24px; }
   .landing__hero { --hero-h: clamp(260px, 44vh, 360px); }

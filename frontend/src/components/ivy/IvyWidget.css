@@ -1,0 +1,232 @@
+/* Widget Tanya Ivy — prototipe. Warna & bayangan dari tokens.css. */
+
+.ivy {
+  position: fixed;
+  right: var(--pad-page);
+  bottom: var(--pad-page);
+  z-index: 150; /* di bawah modal (200) supaya overlay tetap menutupi */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+  font-family: var(--font-family);
+}
+
+.ivy__bubble {
+  border: 0;
+  border-radius: var(--radius-pill);
+  padding: 14px 22px;
+  background: var(--orange-500);
+  color: var(--text-on-orange);
+  font: inherit;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: var(--shadow-hover);
+  transition: transform var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
+}
+
+.ivy__bubble:hover { background: var(--orange-400); transform: translateY(-2px); }
+.ivy__bubble:focus-visible { outline: 2px solid var(--navy-900); outline-offset: 3px; }
+.ivy__bubble.is-buka {
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  background: var(--navy-900);
+}
+
+.ivy__panel {
+  width: min(420px, calc(100vw - 2 * var(--pad-page)));
+  height: min(620px, calc(100dvh - 132px));
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-hover);
+  overflow: hidden;
+  animation: ivy-muncul var(--dur-base) var(--ease-out);
+}
+
+@keyframes ivy-muncul {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+
+.ivy__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px var(--pad-card);
+  background: var(--navy-900);
+  color: var(--text-on-dark);
+}
+
+.ivy__avatar {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-pill);
+  background: var(--orange-500);
+  color: var(--text-on-orange);
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.ivy__identitas { flex: 1; min-width: 0; }
+
+.ivy__nama {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.ivy__peran {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: var(--text-on-dark);
+  opacity: 0.72;
+}
+
+.ivy__tutup {
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--text-on-dark);
+  cursor: pointer;
+}
+
+.ivy__tutup:hover { background: rgba(255, 255, 255, 0.14); }
+.ivy__tutup:focus-visible { outline: 2px solid var(--orange-400); outline-offset: 2px; }
+
+.ivy__body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--pad-card);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--bg-page);
+}
+
+.ivy__balon {
+  margin: 0;
+  max-width: 88%;
+  padding: 12px 16px;
+  font-size: 14px;
+  line-height: 1.6;
+  border-radius: 16px;
+}
+
+.ivy__balon--ivy {
+  align-self: flex-start;
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  color: var(--text-primary);
+  border-bottom-left-radius: 6px;
+}
+
+.ivy__balon--user {
+  align-self: flex-end;
+  background: var(--navy-900);
+  color: var(--text-on-dark);
+  border-bottom-right-radius: 6px;
+}
+
+.ivy__balon--ketik { color: var(--text-secondary); font-style: italic; }
+
+.ivy__saran {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.ivy__chip {
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-pill);
+  padding: 8px 14px;
+  background: var(--bg-card);
+  color: var(--navy-900);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  transition: border-color var(--dur-fast) var(--ease-out);
+}
+
+.ivy__chip:hover { border-color: var(--orange-500); }
+.ivy__chip:focus-visible { outline: 2px solid var(--orange-500); outline-offset: 2px; }
+
+.ivy__form {
+  display: flex;
+  gap: 8px;
+  padding: 12px var(--pad-card) 6px;
+  border-top: 1px solid var(--border-soft);
+  background: var(--bg-card);
+}
+
+.ivy__input {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-pill);
+  padding: 11px 16px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--text-primary);
+  background: var(--bg-page);
+}
+
+.ivy__input:focus { outline: 2px solid var(--orange-500); outline-offset: 1px; }
+
+.ivy__kirim {
+  flex-shrink: 0;
+  border: 0;
+  border-radius: var(--radius-pill);
+  padding: 11px 18px;
+  background: var(--orange-500);
+  color: var(--text-on-orange);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ivy__kirim:disabled { opacity: 0.45; cursor: not-allowed; }
+.ivy__kirim:focus-visible { outline: 2px solid var(--navy-900); outline-offset: 2px; }
+
+.ivy__catatan {
+  margin: 0;
+  padding: 0 var(--pad-card) 10px;
+  background: var(--bg-card);
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+/* Widget fixed akan ikut terpotret oleh html2canvas saat ekspor PDF. */
+@media print {
+  .ivy { display: none; }
+}
+
+@media (max-width: 480px) {
+  .ivy { right: 16px; bottom: 16px; }
+  .ivy__panel { width: calc(100vw - 32px); height: calc(100dvh - 120px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ivy__panel { animation: none; }
+  .ivy__bubble { transition: none; }
+}

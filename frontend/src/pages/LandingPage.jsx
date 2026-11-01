@@ -1,10 +1,9 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { BlobDecor } from '../components/cards/StatCard';
-import { KONTAK, labelPartisipan } from '../data/mock';
+import { KONTAK, formatAngka, labelPartisipan } from '../data/mock';
 import { getReportData } from '../data/surveyData';
 import { useReportFilters } from '../data/useReportFilters';
 import Delta from '../components/dashboard/Delta';
-import SatisViewLink from '../components/laporan/SatisViewLink';
 import Reveal from '../components/motion/Reveal';
 import CountUp from '../components/motion/CountUp';
 import { kategoriPerGrup } from '../data/reportCategories';
@@ -70,6 +69,13 @@ export default function LandingPage({ onEnterDashboard, session }) {
   const surveiLanding = laporan.instrumen.filter((s) => s.aktif).map((s) => ({ ...s.info, responden: s.aktif.n }));
   const kategoriSkor = laporan.kategoriSkor;
   const { naik, turun } = laporan.perubahanTerbesar;
+
+  /* Kartu penutup baris kedua. Semua angkanya dari getReportData() yang sama:
+     tidak ada perhitungan baru di halaman. */
+  const { responden } = ringkasan;
+  const rekomendasiSemua = laporan.instrumen.flatMap((s) => s.rekomendasi);
+  const prioritasTinggi = rekomendasiSemua.filter((r) => r.prioritas === 'Tinggi').length;
+  const prioritasPantau = rekomendasiSemua.filter((r) => r.prioritas === 'Pantau').length;
 
   useEffect(() => {
     const fn = () => setScrollY(window.scrollY);
@@ -213,13 +219,6 @@ export default function LandingPage({ onEnterDashboard, session }) {
               </div>
             </div>
           </div>
-
-          <div className={`landing__scroll-hint ${scrollY > 24 ? 'is-berhenti' : ''}`} aria-hidden="true">
-            <span>Selengkapnya</span>
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="m6 9 6 6 6-6" />
-            </svg>
-          </div>
         </section>
       </div>
 
@@ -299,6 +298,51 @@ export default function LandingPage({ onEnterDashboard, session }) {
               </div>
             </Reveal>
           )}
+
+          <Reveal as="article" className="landing__stat-card" delay={(kategoriSkor.length + 1) * 70}>
+            <BlobDecor color="#0B1B33" />
+            <p className="label-eyebrow">Responden</p>
+            <div className="landing__stat-num">
+              <CountUp value={responden.total} />
+            </div>
+            <div className="landing__stat-foot">
+              <span>
+                {responden.adaKelompok
+                  ? `${formatAngka(responden.dosen, 0)} dosen · ${formatAngka(responden.tendik, 0)} tenaga kependidikan`
+                  : 'Dosen dan tenaga kependidikan'}
+              </span>
+              <Delta value={ringkasan.deltaResponden} unit="responden" />
+            </div>
+          </Reveal>
+
+          <Reveal as="article" className="landing__stat-card" delay={(kategoriSkor.length + 2) * 70}>
+            <BlobDecor color="#0B1B33" />
+            <p className="label-eyebrow landing__stat-eyebrow--teal">Cakupan Data</p>
+            <div className="landing__stat-num">
+              <CountUp value={ringkasan.realTerpakai} />
+              <span className="landing__stat-unit">/{ringkasan.totalInstrumen}</span>
+            </div>
+            <div className="landing__stat-foot">
+              <span>instrumen berisi data asli</span>
+              <span>
+                {ringkasan.simulasiTerpakai
+                  ? `${ringkasan.simulasiTerpakai} instrumen masih simulasi`
+                  : 'Seluruh instrumen berdata asli'}
+              </span>
+            </div>
+          </Reveal>
+
+          <Reveal as="article" className="landing__stat-card landing__stat-card--lembut" delay={(kategoriSkor.length + 3) * 70}>
+            <BlobDecor color="#F5843C" />
+            <p className="label-eyebrow">Tindak Lanjut</p>
+            <div className="landing__stat-num">
+              <CountUp value={prioritasTinggi} />
+            </div>
+            <div className="landing__stat-foot">
+              <span>rekomendasi prioritas tinggi</span>
+              <span>{prioritasPantau} rekomendasi perlu dipantau</span>
+            </div>
+          </Reveal>
         </div>
       </section>
 
@@ -400,9 +444,6 @@ export default function LandingPage({ onEnterDashboard, session }) {
                 </div>
               ))}
             </div>
-            <p className="landing__lapor-note">
-              Keluhan fasilitas atau kepuasan layanan? Gunakan <SatisViewLink />.
-            </p>
           </Reveal>
         </div>
       </section>
@@ -526,15 +567,6 @@ export default function LandingPage({ onEnterDashboard, session }) {
           <span>Politeknik Elektronika Negeri Surabaya · Zona Integritas</span>
         </div>
       </Reveal>
-
-      <button type="button" className="landing__help" aria-label="Butuh bantuan">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="12" cy="12" r="10" />
-          <path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3" />
-          <path d="M12 17h.01" />
-        </svg>
-        <span className="landing__help-label">Butuh Bantuan?</span>
-      </button>
 
       <button
         type="button"
