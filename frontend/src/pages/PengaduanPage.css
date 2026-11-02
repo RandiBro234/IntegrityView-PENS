@@ -45,21 +45,6 @@
 }
 .pg-lacak .pg-card { max-width: none; }
 
-/* === Kotak info kanal (pengalihan ke SatisView) === */
-.pg-info {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  margin-bottom: 20px;
-  padding: 12px 14px;
-  border: 1px solid var(--border-soft);
-  border-left: 3px solid var(--orange-500);
-  border-radius: 12px;
-  background: var(--bg-page);
-}
-.pg-info__icon { flex-shrink: 0; color: var(--orange-500); margin-top: 1px; }
-.pg-info__text { font-size: 12.5px; line-height: 1.55; color: var(--text-secondary); }
-
 /* Teks bantu di bawah select kategori. */
 .pg-help {
   margin: -10px 0 18px;

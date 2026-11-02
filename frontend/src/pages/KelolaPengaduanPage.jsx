@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import Sidebar from '../components/layout/Sidebar';
 import Topbar from '../components/layout/Topbar';
-import SatisViewLink from '../components/laporan/SatisViewLink';
 import {
   getUser, isAdmin, getPengaduan, updatePengaduan, tambahBalasan,
   getRingkasanPengaduan, STATUS_ADUAN, formatTanggal, formatTanggalWaktu
@@ -211,13 +210,6 @@ function DetailPanel({ data, onClose, onSaved, adminNama }) {
             <p className="kpo-sec__head">Deskripsi laporan</p>
             <p className="kpo-sec__text">{data.deskripsi}</p>
           </section>
-
-          {dialihkan && (
-            <div className="kpo-info">
-              Kategori laporan ini termasuk keluhan layanan atau fasilitas yang kini dialihkan ke{' '}
-              <SatisViewLink />. Laporan tetap tersimpan dan bisa ditindaklanjuti di sini.
-            </div>
-          )}
 
           <div className="kpo-detail__split">
             <section className="kpo-sec">

@@ -202,15 +202,3 @@
   .kpo-detail__split { grid-template-columns: 1fr; }
   .kpo-form-row { grid-template-columns: 1fr; }
 }
-
-/* Catatan pengalihan kategori lama ke SatisView. */
-.kpo-info {
-  padding: 12px 14px;
-  border: 1px solid var(--border-soft);
-  border-left: 3px solid var(--orange-500);
-  border-radius: 12px;
-  background: var(--bg-page);
-  font-size: 12.5px;
-  line-height: 1.55;
-  color: var(--text-secondary);
-}

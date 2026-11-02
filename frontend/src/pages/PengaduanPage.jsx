@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import Sidebar from '../components/layout/Sidebar';
 import Topbar from '../components/layout/Topbar';
-import SatisViewLink from '../components/laporan/SatisViewLink';
 import {
   getUser, savePengaduan, simpanPengaduanLokal, cariPengaduan,
   formatTanggal, formatTanggalWaktu
@@ -274,19 +273,6 @@ function BuatLaporan() {
 
   return (
     <div className="pg-card">
-      <div className="pg-info">
-        <span className="pg-info__icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="9" />
-            <path d="M12 11v5M12 8h.01" />
-          </svg>
-        </span>
-        <p className="pg-info__text">
-          Keluhan fasilitas, kenyamanan, atau kepuasan layanan tidak diproses di sini.
-          Sampaikan lewat <SatisViewLink />.
-        </p>
-      </div>
-
       <div className="pg-steps">
         <span className={`pg-dot ${step >= 0 ? 'is-active' : ''}`}>1</span>
         <span className="pg-steps__line" />

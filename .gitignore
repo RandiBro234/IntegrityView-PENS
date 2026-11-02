@@ -54,6 +54,21 @@ LANGKAH_SETUP_SUPABASE.md
 alur.md
 explaination.md
 
+# Dokumen kerja lokal di root — hanya README.md yang di-push.
+# Tanda "/" di depan supaya hanya berlaku untuk file di root repo.
+/AGENTS.md
+/DESIGN2.md
+/DESIGN_SYSTEM.md
+/PRD-IntegrityView-v3.md
+/Login & Registrasi IntegrityView.md
+
+# Berkas instruksi agen/AI lain (kalau nanti dibuat)
+/CLAUDE.md
+/GEMINI.md
+/.cursorrules
+/.cursor/
+/.github/copilot-instructions.md
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
