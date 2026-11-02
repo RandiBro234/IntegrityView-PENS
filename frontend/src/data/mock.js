@@ -215,6 +215,12 @@ export function getPengaduan() {
   return seed.concat(lokal).sort((a, b) => new Date(b.waktuLapor) - new Date(a.waktuLapor));
 }
 
+/* Laporan yang tersimpan di perangkat ini saja, tanpa seed demo. Dipakai
+   deteksi perubahan status untuk notifikasi pelapor. */
+export function getPengaduanLokal() {
+  return bacaAduanLokal();
+}
+
 /* Kode laporan baru: WBS-TAHUN-NNNN. Kode lama ADU- tetap bisa dilacak. */
 function kodeBerikut() {
   const tahun = new Date().getFullYear();

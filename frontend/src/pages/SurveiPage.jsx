@@ -47,7 +47,7 @@ export default function SurveiPage({ onNavigate, onOpenInstrument }) {
       <Sidebar active="survei" onNavigate={handleMenu} user={user} />
 
       <div className="app-main">
-        <Topbar user={user} notifCount={3} onProfil={() => handleMenu('profil')} />
+        <Topbar user={user} onProfil={() => handleMenu('profil')} onNavigate={handleMenu} />
 
         <main className="app-content">
           <section className="survei-hero">

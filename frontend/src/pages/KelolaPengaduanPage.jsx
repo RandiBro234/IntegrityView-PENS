@@ -47,7 +47,7 @@ export default function KelolaPengaduanPage({ onNavigate }) {
       <div className="app-shell">
         <Sidebar active="pengaduan" onNavigate={handleMenu} user={user} />
         <div className="app-main">
-          <Topbar user={user} notifCount={0} onProfil={() => handleMenu('profil')} />
+          <Topbar user={user} onProfil={() => handleMenu('profil')} onNavigate={handleMenu} />
           <main className="app-content">
             <div className="pg-guard">
               <h2>Halaman ini untuk admin Zona Integritas</h2>
@@ -66,7 +66,7 @@ export default function KelolaPengaduanPage({ onNavigate }) {
     <div className="app-shell">
       <Sidebar active="pengaduan" onNavigate={handleMenu} user={user} />
       <div className="app-main">
-        <Topbar user={user} notifCount={ringkas.Baru} onProfil={() => handleMenu('profil')} />
+        <Topbar user={user} onProfil={() => handleMenu('profil')} onNavigate={handleMenu} />
         <main className="app-content">
           <header className="pg-head">
             <div>

@@ -52,7 +52,7 @@ export default function LaporanPage({ onNavigate }) {
       <div className="app-shell">
         <Sidebar active="laporan" onNavigate={onNavigate} user={user} />
         <div className="app-main">
-          <Topbar user={user} notifCount={0} onProfil={() => onNavigate && onNavigate('profil')} />
+          <Topbar user={user} onProfil={() => onNavigate && onNavigate('profil')} onNavigate={onNavigate} />
           <main className="app-content">
             <div className="lpr-guard">
               <h2>Halaman ini untuk admin Zona Integritas</h2>
@@ -89,7 +89,7 @@ export default function LaporanPage({ onNavigate }) {
     <div className="app-shell">
       <Sidebar active="laporan" onNavigate={handleMenu} user={user} />
       <div className="app-main">
-        <Topbar user={user} notifCount={ringkasAduan.Baru} onProfil={() => handleMenu('profil')} />
+        <Topbar user={user} onProfil={() => handleMenu('profil')} onNavigate={handleMenu} />
         <main className="app-content">
           <header className="lpr-head">
             <div>

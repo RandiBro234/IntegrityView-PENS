@@ -15,7 +15,7 @@ export default function ProfilePage({ onNavigate }) {
     <div className="app-shell">
       <Sidebar active="profil" onNavigate={handleMenu} user={user} />
       <div className="app-main">
-        <Topbar user={user} notifCount={0} onProfil={() => handleMenu('profil')} />
+        <Topbar user={user} onProfil={() => handleMenu('profil')} onNavigate={handleMenu} />
         <main className="app-content">
           <div className="pf-shell">
             {/* Kartu identitas */}

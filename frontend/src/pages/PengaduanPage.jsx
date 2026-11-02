@@ -36,7 +36,7 @@ export default function PengaduanPage({ onNavigate, initialTab = 'buat', initial
     <div className="app-shell">
       <Sidebar active="pengaduan" onNavigate={handleMenu} user={user} />
       <div className="app-main">
-        <Topbar user={user} notifCount={user.role === 'admin' ? 3 : 0} onProfil={() => handleMenu('profil')} />
+        <Topbar user={user} onProfil={() => handleMenu('profil')} onNavigate={handleMenu} />
         <main className="app-content">
           <div className="pg-shell">
             <header className="pg-head">

@@ -133,7 +133,7 @@ export default function App() {
         <div className="app-shell detail-shell">
           <Sidebar active="dashboard" onNavigate={goMenu} user={user} />
           <div className="app-main">
-            <Topbar user={user} notifCount={3} onProfil={() => goMenu('profil')} />
+            <Topbar user={user} onProfil={() => goMenu('profil')} onNavigate={goMenu} />
             <main className="app-content">
               <InstrumentDetailPage slug={instrumenSlug} onBack={() => pindah(() => setPage('dashboard'))} />
             </main>
