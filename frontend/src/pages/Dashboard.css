@@ -74,6 +74,7 @@
 
 /* Segmented control tab Sebaran / Perubahan. */
 .dashboard__tabs {
+  position: relative;
   display: flex;
   flex-shrink: 0;
   gap: 2px;
@@ -83,14 +84,41 @@
   border-radius: 8px;
 }
 .dashboard__tabs button {
+  position: relative;
+  z-index: 1;
   padding: 5px 9px;
   border-radius: 6px;
   font-size: 11.5px;
   font-weight: 700;
   color: var(--text-secondary);
+  transition: color var(--dur-fast) var(--ease-out);
 }
-.dashboard__tabs button.is-active { background: var(--navy-900); color: var(--white); }
-.dashboard__tabs button:focus-visible { outline: 2px solid var(--orange-500); }
+.dashboard__tabs button.is-active { color: var(--white); }
+.dashboard__tabs button:focus-visible { outline: 2px solid var(--orange-500); outline-offset: 1px; }
+/* Pil aktif bergeser halus: hanya transform. */
+.dashboard__tab-pil {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  left: 2px;
+  width: 100px;
+  border-radius: 6px;
+  background: var(--navy-900);
+  transform-origin: left center;
+  transition: transform var(--dur-base) var(--ease-out);
+  pointer-events: none;
+}
+.dashboard__tab-panel {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  animation: tab-panel-masuk 240ms var(--ease-out) both;
+}
+@keyframes tab-panel-masuk {
+  from { opacity: 0; transform: translate3d(0, 6px, 0); }
+  to { opacity: 1; transform: none; }
+}
 
 .dashboard__notice {
   padding: 10px 16px;

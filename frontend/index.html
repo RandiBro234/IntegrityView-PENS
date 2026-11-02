@@ -5,7 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>IntegrityView — Platform Analitik Zona Integritas PENS</title>
     <meta name="description" content="Platform monitoring capaian Zona Integritas PENS: pusat survei, dashboard analitik publik, dan kanal pengaduan.">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <!-- Menandai bahwa JS aktif. Tanpa baris ini, konten reveal tetap terlihat. -->
+    <script>
+      document.documentElement.classList.add('js');
+      /* Browser dengan View Transitions memakai transisi native, bukan animasi fallback. */
+      if (typeof document.startViewTransition === 'function') {
+        document.documentElement.classList.add('vt');
+      }
+    </script>    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
   </head>

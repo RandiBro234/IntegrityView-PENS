@@ -42,6 +42,7 @@
   justify-content: flex-end;
   background: rgba(11, 27, 51, 0.45);
   backdrop-filter: blur(2px);
+  animation: rek-overlay-masuk var(--dur-fast) var(--ease-out) both;
 }
 .rek-panel {
   display: flex;
@@ -52,11 +53,26 @@
   background: var(--white);
   border-left: 1px solid var(--border-soft);
   box-shadow: -12px 0 40px rgba(11, 27, 51, 0.25);
-  animation: rek-panel-masuk 0.22s ease-out;
+  animation: rek-panel-masuk var(--dur-base) var(--ease-out) both;
+}
+@keyframes rek-overlay-masuk {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 @keyframes rek-panel-masuk {
-  from { transform: translateX(24px); opacity: 0; }
+  from { transform: translateX(100%); opacity: 0.6; }
   to { transform: translateX(0); opacity: 1; }
+}
+/* Animasi keluar: overlay memudar, panel bergeser ke kanan. */
+.rek-panel__overlay.is-tutup { animation: rek-overlay-keluar var(--dur-fast) var(--ease-in-out) both; }
+.rek-panel.is-tutup { animation: rek-panel-keluar var(--dur-fast) var(--ease-in-out) both; }
+@keyframes rek-overlay-keluar {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+@keyframes rek-panel-keluar {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(100%); opacity: 0.6; }
 }
 
 .rek-panel__head {

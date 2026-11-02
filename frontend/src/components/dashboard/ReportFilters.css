@@ -38,6 +38,12 @@
   box-shadow: var(--shadow-hover);
   display: grid;
   gap: 12px;
+  transform-origin: top left;
+  animation: filter-popover-masuk var(--dur-fast) var(--ease-out) both;
+}
+@keyframes filter-popover-masuk {
+  from { opacity: 0; transform: translate3d(0, -6px, 0) scale(0.98); }
+  to { opacity: 1; transform: none; }
 }
 .report-filters__popover label { display: grid; gap: 5px; color: var(--text-secondary); font-size: 12px; font-weight: 700; }
 .report-filters__popover select { width: 100%; padding: 0 8px; }

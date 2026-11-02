@@ -349,6 +349,11 @@
   place-items: center;
   z-index: 200;
   padding: 20px;
+  animation: idp-overlay-masuk var(--dur-fast) var(--ease-out) both;
+}
+@keyframes idp-overlay-masuk {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 .idp__modal {
   background: var(--white);

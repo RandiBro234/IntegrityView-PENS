@@ -3,6 +3,7 @@ import './StatistikPanel.css';
 import RecommendationList from '../instrumen/RecommendationList';
 import RecommendationPanel from '../instrumen/RecommendationPanel';
 import Delta from './Delta';
+import CountUp from '../motion/CountUp';
 import { formatAngka } from '../../data/mock';
 
 export default function StatistikPanel({ selectedKey, laporan, onOpenDetail }) {
@@ -37,18 +38,22 @@ export default function StatistikPanel({ selectedKey, laporan, onOpenDetail }) {
       </div>
 
       <div className="spanel__grid">
-        <Stat label="Responden (n)" value={st.n.toLocaleString('id-ID')} />
-        <Stat label="Rata-rata skor" value={`${formatAngka(st.indeks)}%`} delta={hasil.delta} />
-        <Stat label="Median skor" value={`${formatAngka(st.median)}%`} />
-        <Stat label="Simpangan baku" value={formatAngka(st.sd, 2)} />
+        <Stat label="Responden (n)" angka={st.n} desimal={0} />
+        <Stat label="Rata-rata skor" angka={st.indeks} desimal={1} suffix="%" delta={hasil.delta} />
+        <Stat label="Median skor" angka={st.median} desimal={1} suffix="%" />
+        <Stat label="Simpangan baku" angka={st.sd} desimal={2} />
         <Stat
           label="Setuju + Sangat Setuju"
-          value={`${formatAngka(st.setuju)}%`}
+          angka={st.setuju}
+          desimal={1}
+          suffix="%"
           delta={sebelumnya ? st.setuju - sebelumnya.setuju : null}
         />
         <Stat
           label="Cronbach's alpha"
-          value={st.alpha == null ? '—' : formatAngka(st.alpha, 2)}
+          angka={st.alpha}
+          desimal={2}
+          kosong="—"
           note={st.alphaCatatan}
         />
       </div>
@@ -64,10 +69,14 @@ export default function StatistikPanel({ selectedKey, laporan, onOpenDetail }) {
   );
 }
 
-function Stat({ label, value, delta, note }) {
+function Stat({ label, angka, desimal = 0, suffix = '', kosong = null, delta, note }) {
+  const isi = angka == null
+    ? (kosong || '—')
+    : <CountUp value={angka} desimal={desimal} suffix={suffix} />;
+
   return (
     <div className="spanel__stat">
-      <span className="spanel__stat-value">{value}</span>
+      <span className="spanel__stat-value">{isi}</span>
       <span className="spanel__stat-label">{label}</span>
       {delta != null && <Delta value={delta} compact />}
       {note && <span className="spanel__stat-note">{note}</span>}

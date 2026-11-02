@@ -46,6 +46,17 @@
   /* === Sidebar === */
   --sidebar-w: 76px;
 
+  /* === Motion (satu sumber untuk semua animasi) ===
+     Ubah nilai di sini untuk menyetel kecepatan/easing seluruh aplikasi.
+     Hanya opacity dan transform yang dianimasikan. */
+  --dur-fast: 180ms;
+  --dur-base: 420ms;
+  --dur-slow: 700ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --stagger: 70ms;
+  --reveal-distance: 24px;
+
   /* === Typography === */
   --font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-display: 'Sora', 'Plus Jakarta Sans', system-ui, sans-serif;

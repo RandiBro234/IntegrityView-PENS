@@ -62,8 +62,14 @@
   color: var(--text-secondary);
 }
 
+/* Pembungkus bell + panel dropdown notifikasi. */
+.topbar__notif-wrap {
+  position: relative;
+}
+
 .topbar__notif {
   position: relative;
+  cursor: pointer;
   width: 40px;
   height: 40px;
   border-radius: 50%;

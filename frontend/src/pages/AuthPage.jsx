@@ -137,11 +137,11 @@ export default function AuthPage({ onSuccess, onBack }) {
           </div>
 
           {mode === 'login' ? (
-            <form className="auth__form" onSubmit={submitLogin} noValidate>
+            <form className="auth__form" key="login" onSubmit={submitLogin} noValidate>
               <h2 className="auth__form-title">Selamat datang kembali.</h2>
               <p className="auth__form-sub">Pilih peran Anda, lalu masuk dengan email institusi.</p>
 
-              <div className="auth__roles" role="radiogroup" aria-label="Pilih peran">
+              <div className="auth__roles" role="radiogroup" aria-label="Pilih peran" key={loginRole}>
                 {Object.values(ROLES).map((r) => (
                   <button
                     key={r.key}
@@ -198,9 +198,9 @@ export default function AuthPage({ onSuccess, onBack }) {
               </p>
             </form>
           ) : (
-            <form className="auth__form" onSubmit={submitRegister} noValidate>
+            <form className="auth__form" key="register" onSubmit={submitRegister} noValidate>
               <h2 className="auth__form-title">Buat akun dosen/tendik.</h2>
-              <p className="auth__form-sub">Satu akun untuk seluruh instrumen survei dan kanal pengaduan.</p>
+              <p className="auth__form-sub">Satu akun untuk seluruh instrumen survei dan kanal pelaporan WBS.</p>
 
               <Field label="Nama lengkap" error={regErrors.nama}>
                 <input
@@ -334,4 +334,5 @@ function Field({ label, error, children }) {
     </div>
   );
 }
+
 

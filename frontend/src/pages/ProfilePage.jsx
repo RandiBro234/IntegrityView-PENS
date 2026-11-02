@@ -15,7 +15,7 @@ export default function ProfilePage({ onNavigate }) {
     <div className="app-shell">
       <Sidebar active="profil" onNavigate={handleMenu} user={user} />
       <div className="app-main">
-        <Topbar user={user} notifCount={0} onProfil={() => handleMenu('profil')} />
+        <Topbar user={user} onProfil={() => handleMenu('profil')} onNavigate={handleMenu} />
         <main className="app-content">
           <div className="pf-shell">
             {/* Kartu identitas */}
@@ -85,7 +85,7 @@ export default function ProfilePage({ onNavigate }) {
 
                 {tab === 'aktivitas' ? (
                   profil.laporanUser.length === 0 ? (
-                    <p className="pf-empty">Belum ada laporan yang Anda buat. Buka kanal Pengaduan untuk menyampaikan laporan.</p>
+                    <p className="pf-empty">Belum ada laporan yang Anda buat. Buka kanal WBS untuk menyampaikan laporan.</p>
                   ) : (
                     <ul className="pf-aktivitas">
                       {profil.laporanUser.map((l) => (
@@ -120,3 +120,4 @@ export default function ProfilePage({ onNavigate }) {
     </div>
   );
 }
+

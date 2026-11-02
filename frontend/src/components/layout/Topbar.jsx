@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { getNotifikasi, hitungBelumDibaca, tandaiDibaca, tandaiSemuaDibaca } from '../../data/notifikasi';
+import NotifPanel from './NotifPanel';
 import './Topbar.css';
 
 function formatTanggal(d) {
@@ -11,14 +13,37 @@ function formatJam(d) {
   return `${p(d.getHours())}.${p(d.getMinutes())}`;
 }
 
-export default function Topbar({ user, notifCount = 3, onSearch, onProfil, showSearch = true, compact = false }) {
+export default function Topbar({ user, onSearch, onProfil, onNavigate, showSearch = true, compact = false }) {
   const [now, setNow] = useState(() => new Date());
   const [query, setQuery] = useState('');
+  const [bukaNotif, setBukaNotif] = useState(false);
+  const [daftarNotif, setDaftarNotif] = useState([]);
 
   useEffect(() => {
     const t = setInterval(() => setNow(new Date()), 30000);
     return () => clearInterval(t);
   }, []);
+
+  /* Notifikasi dihitung ulang setiap kali peran berubah, saat panel dibuka,
+     dan setelah status dibaca diubah. */
+  const peran = user?.role;
+  useEffect(() => {
+    setDaftarNotif(getNotifikasi(user));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [peran]);
+
+  const bukaPanel = () => {
+    if (!bukaNotif) setDaftarNotif(getNotifikasi(user));
+    setBukaNotif((v) => !v);
+  };
+
+  const pilihNotif = (n) => {
+    setDaftarNotif((d) => tandaiDibaca(d, n.id));
+    setBukaNotif(false);
+    if (onNavigate && n.halaman) onNavigate(n.halaman);
+  };
+
+  const belumDibaca = hitungBelumDibaca(daftarNotif);
 
   return (
     <header className={`topbar ${compact ? 'topbar--compact' : ''}`}>
@@ -37,7 +62,7 @@ export default function Topbar({ user, notifCount = 3, onSearch, onProfil, showS
             </svg>
             <input
               type="search"
-              placeholder="Cari instrumen, laporan, atau kode aduan…"
+              placeholder="Cari instrumen, laporan, atau kode laporan…"
               value={query}
               onChange={(e) => {
                 setQuery(e.target.value);
@@ -55,13 +80,31 @@ export default function Topbar({ user, notifCount = 3, onSearch, onProfil, showS
           <span className="topbar__clock-date">{formatTanggal(now)}</span>
         </div>
 
-        <button type="button" className="topbar__notif" aria-label={`${notifCount} notifikasi belum dibaca`}>
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
-            <path d="M13.7 21a2 2 0 0 1-3.4 0" />
-          </svg>
-          {notifCount > 0 && <span className="topbar__notif-badge">{notifCount}</span>}
-        </button>
+        {user && user.role !== 'guest' && (
+          <div className="topbar__notif-wrap">
+            <button
+              type="button"
+              className="topbar__notif"
+              aria-label={belumDibaca > 0 ? `${belumDibaca} notifikasi belum dibaca` : 'Notifikasi'}
+              aria-expanded={bukaNotif}
+              onClick={bukaPanel}
+            >
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+                <path d="M13.7 21a2 2 0 0 1-3.4 0" />
+              </svg>
+              {belumDibaca > 0 && <span className="topbar__notif-badge">{belumDibaca}</span>}
+            </button>
+            {bukaNotif && (
+              <NotifPanel
+                daftar={daftarNotif}
+                onPilih={pilihNotif}
+                onTandaiSemua={() => setDaftarNotif((d) => tandaiSemuaDibaca(d))}
+                onTutup={() => setBukaNotif(false)}
+              />
+            )}
+          </div>
+        )}
 
         {user && user.role !== 'guest' ? (
           <button
@@ -82,3 +125,4 @@ export default function Topbar({ user, notifCount = 3, onSearch, onProfil, showS
     </header>
   );
 }
+
