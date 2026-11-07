@@ -7,6 +7,7 @@ import ReportFilters from '../components/dashboard/ReportFilters';
 import Delta from '../components/dashboard/Delta';
 import { unduhLaporanPdf, namaFileLaporan } from '../lib/reportPdf';
 import { formatAngka } from '../data/mock';
+import { keSkor } from '../lib/formatSkor';
 import { getInstrumen, getReportData, SKALA } from '../data/surveyData';
 import { useReportFilters } from '../data/useReportFilters';
 import './InstrumentDetailPage.css';
@@ -106,7 +107,7 @@ export default function InstrumentDetailPage({ slug, onBack }) {
 
       <div className="idp__cards">
         <MiniCard label="Jumlah Responden (n)" value={st.n.toLocaleString('id-ID')} />
-        <MiniCard label="Rata-rata Skor" value={formatAngka(st.indeks) + '%'} delta={hasil.delta} />
+        <MiniCard label="Rata-rata Skor (1–4)" value={formatAngka(keSkor(st.indeks), 2)} delta={hasil.delta} deltaSkalaSkor />
         <MiniCard
           label="Setuju + Sangat Setuju"
           value={formatAngka(st.setuju) + '%'}
@@ -191,7 +192,7 @@ export default function InstrumentDetailPage({ slug, onBack }) {
               {laporan.periodePembanding ? (
                 <>
                   <p className="idp__panel-note">
-                    Selisih indeks butir dibanding {laporan.periodePembanding.label} (poin persen).
+                    Selisih rata-rata skor butir dibanding {laporan.periodePembanding.label} (skala 1–4).
                   </p>
                   <div className="idp__change-list">
                     {hasil.perubahanButir.map((b) => (
@@ -207,7 +208,7 @@ export default function InstrumentDetailPage({ slug, onBack }) {
                             }}
                           />
                         </span>
-                        <span className="idp__change-delta"><Delta value={b.delta} compact /></span>
+                        <span className="idp__change-delta"><Delta value={b.delta} compact skalaSkor /></span>
                       </div>
                     ))}
                   </div>
@@ -328,7 +329,7 @@ export default function InstrumentDetailPage({ slug, onBack }) {
   );
 }
 
-function MiniCard({ label, value, note, delta }) {
+function MiniCard({ label, value, note, delta, deltaSkalaSkor = false }) {
   return (
     <article className="idp__minicard">
       <span className="idp__minicard-label">{label}</span>
@@ -336,7 +337,7 @@ function MiniCard({ label, value, note, delta }) {
         {value}
         {note && <span className="idp__minicard-note">{note}</span>}
       </span>
-      {delta != null && <Delta value={delta} compact />}
+      {delta != null && <Delta value={delta} compact skalaSkor={deltaSkalaSkor} />}
     </article>
   );
 }

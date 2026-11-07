@@ -18,7 +18,7 @@ export function recordsUntuk(slug, periodeKey) {
 
 export function agregat(slug, periodeKey) {
   const kunci = `${slug}|${periodeKey}`;
-  if (cacheAgregat.has(kunci)) return cacheAgregat.get(kunci);
+  if (cacheAgregat.has(kunci)) return cacheAgregat.get(kunci);  
   const { records, sumber } = recordsUntuk(slug, periodeKey);
   const hasil = hitungAgregat(slug, periodeKey, records, sumber, {
     dibuang: store.dibuang[slug] || 0,

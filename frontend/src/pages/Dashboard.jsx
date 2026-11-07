@@ -82,7 +82,7 @@ export default function Dashboard({ onBackToLanding, onNavigate, onOpenInstrumen
                   <section className="dashboard__box dashboard__box--left" aria-labelledby="sebaran-title">
                     <div className="dashboard__box-head">
                       <h2 className="dashboard__box-title" id="sebaran-title">
-                        {tab === 'sebaran' ? 'Sebaran Jawaban per Instrumen' : 'Perubahan Indeks per Semester'}
+                        {tab === 'sebaran' ? 'Sebaran Jawaban per Instrumen' : 'Perubahan Skor per Semester'}
                       </h2>
                       <div className="dashboard__tabs" role="group" aria-label="Tampilan grafik" ref={tabRef}>
                         <span

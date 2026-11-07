@@ -1,5 +1,6 @@
 import './RingkasanCards.css';
 import { formatAngka } from '../../data/mock';
+import { keSkor } from '../../lib/formatSkor';
 import Delta from './Delta';
 import InfoTip from './InfoTip';
 import Reveal from '../motion/Reveal';
@@ -10,8 +11,9 @@ export default function RingkasanCards({ ringkasan, pembanding }) {
   const vs = pembanding ? `dibanding ${pembanding.label}` : 'tanpa pembanding';
 
   const catatanSkor = [
-    r.ci ? `Interval kepercayaan 95%: ${formatAngka(r.ci.bawah)}% – ${formatAngka(r.ci.atas)}%` : null,
-    'Indeks = total skor aktual / total skor maksimal × 100',
+    r.ci ? `Interval kepercayaan 95%: ${formatAngka(keSkor(r.ci.bawah), 2)} – ${formatAngka(keSkor(r.ci.atas), 2)} pada skala 1–4` : null,
+    'Rata-rata skor memakai skala asli kuesioner: 1 = Sangat Tidak Setuju, 4 = Sangat Setuju.',
+    'Setuju + Sangat Setuju dihitung dari jumlah jawaban orang, bukan dari skor, jadi angkanya bisa berbeda.',
     r.simulasiTerpakai > 0 ? `termasuk ${r.simulasiTerpakai} instrumen simulasi` : null
   ].filter(Boolean).join('\n');
 
@@ -53,16 +55,16 @@ export default function RingkasanCards({ ringkasan, pembanding }) {
 
       <Reveal as="article" className="rcard" delay={140}>
         <div className="rcard__top">
-          <p className="rcard__eyebrow">Rata-rata Skor ZI</p>
+          <p className="rcard__eyebrow">Rata-rata Skor ZI (1–4)</p>
           <InfoTip label="Metode skor" teks={catatanSkor} />
         </div>
         <div className="rcard__main">
           <strong className="rcard__num">
             {r.rataSkor == null
               ? 'Belum ada data'
-              : <><CountUp value={r.rataSkor} desimal={1} /><span className="rcard__unit">%</span></>}
+              : <><CountUp value={keSkor(r.rataSkor)} desimal={2} /><span className="rcard__unit"> / 4</span></>}
           </strong>
-          {r.delta != null && <span className="rcard__delta" title={vs}><Delta value={r.delta} /></span>}
+          {r.delta != null && <span className="rcard__delta" title={vs}><Delta value={r.delta} skalaSkor /></span>}
         </div>
       </Reveal>
     </div>

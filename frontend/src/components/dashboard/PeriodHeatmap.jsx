@@ -1,4 +1,5 @@
 import { formatAngka } from '../../data/mock';
+import { keSkor } from '../../lib/formatSkor';
 import { PERIODE, arahPerubahan } from '../../data/surveyData';
 import { IkonNaik, IkonTurun } from './ArahIkon';
 import './PeriodHeatmap.css';
@@ -8,7 +9,7 @@ export default function PeriodHeatmap({ instrumen, periode, selectedKey, onSelec
   if (!instrumen.length || !adaData) return <p>Belum ada responden untuk kombinasi filter ini.</p>;
 
   return (
-    <div className="heatmap" role="table" aria-label="Indeks instrumen per semester">
+    <div className="heatmap" role="table" aria-label="Rata-rata skor instrumen per semester (skala 1–4)">
       <div className="heatmap__row heatmap__head" role="row">
         <span role="columnheader">Instrumen</span>
         {PERIODE.map((p) => (
@@ -42,14 +43,14 @@ export default function PeriodHeatmap({ instrumen, periode, selectedKey, onSelec
                 key={p.key}
                 role="cell"
                 className={`${periode === p.key ? 'heatmap__active' : ''} ${gelap ? 'heatmap__cell--gelap' : ''}`.trim()}
-                title={`${entry.info.nama} · ${p.label} (${p.rentang}): ${p.indeks == null ? 'belum ada data' : `${formatAngka(p.indeks)}%`}`}
+                title={`${entry.info.nama} · ${p.label} (${p.rentang}): ${p.indeks == null ? 'belum ada data' : `rata-rata skor ${formatAngka(keSkor(p.indeks), 2)} dari 4`}`}
                 style={{
                   backgroundColor: `rgba(11, 27, 51, ${p.indeks == null ? 0.05 : 0.12 + p.indeks / 125})`,
                   color: gelap ? 'var(--white)' : 'var(--navy-900)'
                 }}
               >
                 <span className="heatmap__nilai">
-                  {p.indeks == null ? '—' : `${formatAngka(p.indeks)}%`}
+                  {p.indeks == null ? '—' : formatAngka(keSkor(p.indeks), 2)}
                   {(arah === 'naik' || arah === 'turun') && (
                     <small className={`heatmap__panah heatmap__panah--${arah}`} title={arah}>
                       {arah === 'naik' ? <IkonNaik size={10} /> : <IkonTurun size={10} />}
