@@ -1,4 +1,5 @@
 import { formatAngka } from '../../data/mock';
+import { keSkor } from '../../lib/formatSkor';
 import PeriodTrend from './PeriodTrend';
 import Delta from '../dashboard/Delta';
 import './ReportTemplate.css';
@@ -54,9 +55,9 @@ export default function ReportTemplate({ info, st, rekomendasi, periode, tanggal
               <Delta value={hasil.pembanding ? st.n - hasil.pembanding.n : null} unit="responden" />
             </div>
             <div className="rt__card">
-              <span className="rt__card-label">Rata-rata Skor</span>
-              <span className="rt__card-value">{formatAngka(st.indeks)}%</span>
-              <Delta value={hasil.delta} />
+              <span className="rt__card-label">Rata-rata Skor (1–4)</span>
+              <span className="rt__card-value">{formatAngka(keSkor(st.indeks), 2)}</span>
+              <Delta value={hasil.delta} skalaSkor />
             </div>
             <div className="rt__card">
               <span className="rt__card-label">Setuju + Sangat Setuju</span>
@@ -123,7 +124,7 @@ export default function ReportTemplate({ info, st, rekomendasi, periode, tanggal
             <h2>Catatan Kualitas Data</h2>
           </div>
           <ul className="rt__kualitas">
-            <li>Median skor: <strong>{formatAngka(st.median)}%</strong>.</li>
+            <li>Median skor: <strong>{formatAngka(keSkor(st.median), 2)}</strong> dari 4.</li>
             <li>Simpangan baku: <strong>{formatAngka(st.sd, 2)}</strong>.</li>
             <li>Persentase jawaban seragam: <strong>{formatAngka(st.kualitas.seragam)}%</strong>.</li>
             <li>Duplikat dibuang: <strong>{st.kualitas.duplikat}</strong>.</li>
@@ -159,28 +160,28 @@ export default function ReportTemplate({ info, st, rekomendasi, periode, tanggal
           </div>
         </header>
         <div className="rt__body">
-          <div className="rt__section-title"><span className="rt__bullet" aria-hidden="true" /><h2>Indeks per semester dan interval 95%</h2></div>
+          <div className="rt__section-title"><span className="rt__bullet" aria-hidden="true" /><h2>Rata-rata skor per semester dan interval 95%</h2></div>
           <PeriodTrend tren={hasil.tren} selected={laporan.periode.key} />
           <p className="rt__text">Responden tiap semester berbeda; selisih bukan perubahan pada orang yang sama.</p>
           {laporan.periodePembanding ? (
             <>
-              <div className="rt__section-title"><span className="rt__bullet" aria-hidden="true" /><h2>Perubahan indeks per butir vs {laporan.periodePembanding.label}</h2></div>
+              <div className="rt__section-title"><span className="rt__bullet" aria-hidden="true" /><h2>Perubahan skor per butir vs {laporan.periodePembanding.label}</h2></div>
               <table className="rt__table rt__table--changes">
                 <thead>
                   <tr>
                     <th>Butir</th>
-                    <th className="rt__num--center">Indeks {laporan.periode.label}</th>
-                    <th className="rt__num--center">Indeks pembanding</th>
-                    <th className="rt__num--center">Selisih (poin)</th>
+                    <th className="rt__num--center">Skor {laporan.periode.label}</th>
+                    <th className="rt__num--center">Skor pembanding</th>
+                    <th className="rt__num--center">Selisih skor</th>
                   </tr>
                 </thead>
                 <tbody>
                   {hasil.perubahanButir.map((b) => (
                     <tr key={b.label}>
                       <td>{b.label}</td>
-                      <td className="rt__num rt__num--center">{formatAngka(b.skor)}%</td>
-                      <td className="rt__num rt__num--center">{b.sebelumnya == null ? '—' : `${formatAngka(b.sebelumnya)}%`}</td>
-                      <td className="rt__num rt__num--center"><Delta value={b.delta} compact /></td>
+                      <td className="rt__num rt__num--center">{formatAngka(keSkor(b.skor), 2)}</td>
+                      <td className="rt__num rt__num--center">{b.sebelumnya == null ? '—' : formatAngka(keSkor(b.sebelumnya), 2)}</td>
+                      <td className="rt__num rt__num--center"><Delta value={b.delta} compact skalaSkor /></td>
                     </tr>
                   ))}
                 </tbody>

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import './SebaranJawabanChart.css';
 import { formatAngka } from '../../data/mock';
 import { SKALA } from '../../data/surveyData';
+import { keSkor } from '../../lib/formatSkor';
 import Delta from './Delta';
 
 /* Legenda satu baris, sejajar tepi kolom nama dan tepi kolom aksi. */
@@ -63,7 +64,7 @@ export default function SebaranJawabanChart({ data, selectedKey, onSelect, onOpe
               style={{ '--row-index': baris }}
               onClick={() => onSelect(item.key)}
               aria-pressed={isSelected}
-              aria-label={`Pilih ${item.namaPanjang}, indeks ${formatAngka(item.indeks)} persen`}
+              aria-label={`Pilih ${item.namaPanjang}, rata-rata skor ${formatAngka(keSkor(item.indeks), 2)} dari 4`}
             >
               <span className="sebaran__name" title={item.namaPanjang}>{item.nama}</span>
 
@@ -82,10 +83,10 @@ export default function SebaranJawabanChart({ data, selectedKey, onSelect, onOpe
                 ))}
               </span>
 
-              <span className="sebaran__pct">{formatAngka(item.indeks)}%</span>
+              <span className="sebaran__pct">{formatAngka(keSkor(item.indeks), 2)}</span>
 
               <span className="sebaran__delta-slot">
-                <Delta value={item.delta} compact />
+                <Delta value={item.delta} compact skalaSkor />
               </span>
 
               <span className="sebaran__open-slot">

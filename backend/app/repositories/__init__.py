@@ -1,1 +1,0 @@
-"""Lapisan akses data."""

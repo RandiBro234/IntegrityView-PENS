@@ -8,6 +8,7 @@ import { PERIODE, getReportData } from '../data/surveyData';
 import { labelKategori } from '../data/reportCategories';
 import { useReportFilters } from '../data/useReportFilters';
 import Delta from '../components/dashboard/Delta';
+import { keSkor } from '../lib/formatSkor';
 import './LaporanPage.css';
 
 export default function LaporanPage({ onNavigate }) {
@@ -71,9 +72,11 @@ export default function LaporanPage({ onNavigate }) {
   const rataSkor = laporan.ringkasan.rataSkor ?? 0;
 
   const ekspor = () => {
-    const baris = [['Instrumen', 'Nama Lengkap', 'Skor', 'Selisih', 'Responden', 'Periode']];
+    const baris = [['Instrumen', 'Nama Lengkap', 'Skor (1-4)', 'Selisih skor', 'Responden', 'Periode']];
     rekap.forEach((r) => {
-      baris.push([r.nama, r.namaPanjang, r.skor + '%', r.delta == null ? '-' : r.delta.toFixed(2), r.responden, periode]);
+      const skor = keSkor(r.skor);
+      const selisih = r.delta == null ? '-' : (r.delta / 25).toFixed(2).replace('.', ',');
+      baris.push([r.nama, r.namaPanjang, skor.toFixed(2).replace('.', ','), selisih, r.responden, periode]);
     });
     const csv = baris.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\r\n');
     const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
@@ -111,7 +114,7 @@ export default function LaporanPage({ onNavigate }) {
 
           <div className="lpr-kpi">
             <Kpi label="Instrumen Terpantau" value={laporan.ringkasan.totalInstrumen} />
-            <Kpi label="Rata-rata Skor" value={formatAngka(rataSkor) + '%'} />
+            <Kpi label="Rata-rata Skor (1–4)" value={formatAngka(keSkor(rataSkor), 2)} />
             <Kpi label="Total Laporan" value={ringkasAduan.total} />
             <Kpi label="Laporan Baru" value={ringkasAduan.Baru} tone="warn" />
           </div>
@@ -128,8 +131,8 @@ export default function LaporanPage({ onNavigate }) {
                     <tr key={r.key}>
                       <td className="lpr-id">{r.nama}</td>
                       <td>{r.namaPanjang}</td>
-                      <td className="lpr-id">{formatAngka(r.skor)}%</td>
-                      <td><Delta value={r.delta} compact /></td>
+                      <td className="lpr-id">{formatAngka(keSkor(r.skor), 2)}</td>
+                      <td><Delta value={r.delta} compact skalaSkor /></td>
                       <td className="lpr-muted">{r.responden.toLocaleString('id-ID')}</td>
                     </tr>
                   ))}

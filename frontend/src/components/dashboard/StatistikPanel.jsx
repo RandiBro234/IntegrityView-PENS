@@ -5,6 +5,7 @@ import RecommendationPanel from '../instrumen/RecommendationPanel';
 import Delta from './Delta';
 import CountUp from '../motion/CountUp';
 import { formatAngka } from '../../data/mock';
+import { keSkor } from '../../lib/formatSkor';
 
 export default function StatistikPanel({ selectedKey, laporan, onOpenDetail }) {
   if (!selectedKey) {
@@ -39,8 +40,14 @@ export default function StatistikPanel({ selectedKey, laporan, onOpenDetail }) {
 
       <div className="spanel__grid">
         <Stat label="Responden (n)" angka={st.n} desimal={0} />
-        <Stat label="Rata-rata skor" angka={st.indeks} desimal={1} suffix="%" delta={hasil.delta} />
-        <Stat label="Median skor" angka={st.median} desimal={1} suffix="%" />
+        <Stat
+          label="Rata-rata skor (1–4)"
+          angka={keSkor(st.indeks)}
+          desimal={2}
+          delta={hasil.delta}
+          deltaSkalaSkor
+        />
+        <Stat label="Median skor (1–4)" angka={keSkor(st.median)} desimal={2} />
         <Stat label="Simpangan baku" angka={st.sd} desimal={2} />
         <Stat
           label="Setuju + Sangat Setuju"
@@ -69,7 +76,7 @@ export default function StatistikPanel({ selectedKey, laporan, onOpenDetail }) {
   );
 }
 
-function Stat({ label, angka, desimal = 0, suffix = '', kosong = null, delta, note }) {
+function Stat({ label, angka, desimal = 0, suffix = '', kosong = null, delta, deltaSkalaSkor = false, note }) {
   const isi = angka == null
     ? (kosong || '—')
     : <CountUp value={angka} desimal={desimal} suffix={suffix} />;
@@ -78,7 +85,7 @@ function Stat({ label, angka, desimal = 0, suffix = '', kosong = null, delta, no
     <div className="spanel__stat">
       <span className="spanel__stat-value">{isi}</span>
       <span className="spanel__stat-label">{label}</span>
-      {delta != null && <Delta value={delta} compact />}
+      {delta != null && <Delta value={delta} compact skalaSkor={deltaSkalaSkor} />}
       {note && <span className="spanel__stat-note">{note}</span>}
     </div>
   );

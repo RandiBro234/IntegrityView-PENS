@@ -7,7 +7,7 @@ import './IvyWidget.css';
 
 const SAPAAN = 'Hai, saya Ivy. Tanya apa saja soal survei Zona Integritas atau cara pakai IntegrityView.';
 
-const SARAN = ['Cara isi survei?', 'Apa itu indeks ZI?', 'Di mana lihat laporan saya?'];
+const SARAN = ['Cara isi survei?', 'Apa itu skor ZI?', 'Di mana lihat laporan saya?'];
 
 const CONTOH = [
   [
@@ -16,7 +16,7 @@ const CONTOH = [
   ],
   [
     /indeks|zi|skor|nilai/i,
-    'Indeks ZI adalah skor 0-100 hasil jawaban survei: rata-rata butir (skala 1-4) dibagi 4 lalu dikali 100. Semakin tinggi, semakin baik persepsi integritas unit tersebut.',
+    'Rata-rata skor ZI memakai skala 1–4: 1 = Sangat Tidak Setuju, 4 = Sangat Setuju. Angka 3,2 misalnya berarti responden cenderung Setuju. Angka ini berbeda dari "Setuju + Sangat Setuju", yang menghitung persentase jawaban orang.',
   ],
   [
     /lapor|wbs|pengaduan|adu|dugaan/i,
@@ -32,7 +32,7 @@ const CONTOH = [
   ],
 ];
 
-const CADANGAN = 'Untuk prototipe ini saya baru bisa menjawab soal cara isi survei, indeks ZI, dashboard, pelaporan WBS, dan privasi data. Untuk pertanyaan lain, hubungi pengelola Zona Integritas PENS.';
+const CADANGAN = 'Untuk prototipe ini saya baru bisa menjawab soal cara isi survei, skor ZI, dashboard, pelaporan WBS, dan privasi data. Untuk pertanyaan lain, hubungi pengelola Zona Integritas PENS.';
 
 const jawab = (teks) => {
   const cocok = CONTOH.find(([pola]) => pola.test(teks));

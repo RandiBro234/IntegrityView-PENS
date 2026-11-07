@@ -3,6 +3,7 @@ import { BlobDecor } from '../components/cards/StatCard';
 import { ROLES, loginAs, formatAngka } from '../data/mock';
 import { getReportData } from '../data/surveyData';
 import { useReportFilters } from '../data/useReportFilters';
+import { keSkor } from '../lib/formatSkor';
 import './AuthPage.css';
 
 const UNIT_OPTIONS = [
@@ -97,8 +98,8 @@ export default function AuthPage({ onSuccess, onBack }) {
 
           <div className="auth__brand-stats">
             <div className="auth__brand-stat">
-              <span className="auth__brand-stat-num">{formatAngka(ringkasan.rataSkor)}%</span>
-              <span className="auth__brand-stat-label">Skor ZI periode ini</span>
+              <span className="auth__brand-stat-num">{formatAngka(keSkor(ringkasan.rataSkor), 2)}</span>
+              <span className="auth__brand-stat-label">Rata-rata skor ZI periode ini (1–4)</span>
             </div>
             <div className="auth__brand-stat">
               <span className="auth__brand-stat-num">{ringkasan.responden.total.toLocaleString('id-ID')}</span>

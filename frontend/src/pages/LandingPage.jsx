@@ -8,12 +8,13 @@ import Reveal from '../components/motion/Reveal';
 import CountUp from '../components/motion/CountUp';
 import { kategoriPerGrup } from '../data/reportCategories';
 import { formatDeltaAngka } from '../lib/formatDelta';
+import { keSkor } from '../lib/formatSkor';
 import './LandingPage.css';
 
 const ALUR = [
   { n: 1, judul: 'Isi Survei lewat Google Form', desc: 'Dosen dan tenaga kependidikan mengisi survei lewat Google Form dari Pusat Survei. Laporan pelanggaran tetap lewat kanal WBS.' },
   { n: 2, judul: 'Data Masuk ke Sistem', desc: 'Respons terverifikasi Unit Penjaminan Mutu dan tercatat di basis data survei.' },
-  { n: 3, judul: 'Dianalisis Tim SPI', desc: 'Satuan Pengawasan Internal menghitung skor indeks dan menelaah temuan.' },
+  { n: 3, judul: 'Dianalisis Tim SPI', desc: 'Satuan Pengawasan Internal menghitung rata-rata skor dan menelaah temuan.' },
   { n: 4, judul: 'Ditindaklanjuti & Dipublikasi', desc: 'Hasil tampil di dashboard publik sebagai agregat dan rekomendasi diteruskan ke unit terkait.' }
 ];
 
@@ -188,11 +189,11 @@ export default function LandingPage({ onEnterDashboard, session }) {
 
                 <Reveal className="landing__bento landing__bento--a" variant="scale-in" delay={280}>
                   <BlobDecor color="#0B1B33" />
-                  <p className="label-eyebrow">Skor ZI {laporan.periode.label}</p>
+                  <p className="label-eyebrow">Rata-rata Skor ZI (1–4) {laporan.periode.label}</p>
                   <div className="landing__bento-value">
-                    <CountUp value={ringkasan.rataSkor} desimal={1} suffix="%" langsung />
+                    <CountUp value={keSkor(ringkasan.rataSkor)} desimal={2} suffix=" / 4" langsung />
                   </div>
-                  <Delta value={ringkasan.delta} />
+                  <Delta value={ringkasan.delta} skalaSkor />
                 </Reveal>
 
                 <Reveal className="landing__bento landing__bento--b" variant="scale-in" delay={350}>
@@ -257,11 +258,11 @@ export default function LandingPage({ onEnterDashboard, session }) {
               <BlobDecor color="#0B1B33" />
               <p className="label-eyebrow">{k.kategori}</p>
               <div className="landing__stat-num">
-                <CountUp value={k.skor} desimal={1} />
-                <span className="landing__stat-unit">%</span>
+                <CountUp value={keSkor(k.skor)} desimal={2} />
+                <span className="landing__stat-unit">/4</span>
               </div>
               <p className="landing__stat-label">
-                <Delta value={k.delta} />
+                <Delta value={k.delta} skalaSkor />
               </p>
             </Reveal>
           ))}
@@ -279,7 +280,7 @@ export default function LandingPage({ onEnterDashboard, session }) {
                       {naik.info.nama}
                     </span>
                   </div>
-                  <span className="landing__rentang-skor">{formatDeltaAngka(naik.delta)} poin</span>
+                  <span className="landing__rentang-skor">{formatDeltaAngka(naik.delta / 25, 2)} poin</span>
                 </div>
 
                 <div className="landing__rentang-row">
@@ -289,7 +290,7 @@ export default function LandingPage({ onEnterDashboard, session }) {
                       {turun.info.nama}
                     </span>
                   </div>
-                  <span className="landing__rentang-skor">{formatDeltaAngka(turun.delta)} poin</span>
+                  <span className="landing__rentang-skor">{formatDeltaAngka(turun.delta / 25, 2)} poin</span>
                 </div>
 
                 <div className="landing__rentang-selisih">
