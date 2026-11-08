@@ -132,13 +132,22 @@ const PERTANYAAN = [
 const hasil = [];
 for (const [tanya, harapan] of PERTANYAAN) {
   const mulai = Date.now();
-  const r = await jawabChat({ pertanyaan: tanya }, deps);
+  let r;
+  /* Tier gratis Gemini membatasi permintaan per menit. Beri jeda antar
+     pertanyaan, dan ulangi sekali bila kena 429. */
+  for (let coba = 0; coba < 3; coba++) {
+    r = await jawabChat({ pertanyaan: tanya }, deps);
+    if (r.status !== 503) break;
+    await new Promise((ok) => setTimeout(ok, 15000));
+  }
   const detik = ((Date.now() - mulai) / 1000).toFixed(1);
   const jawaban = String(r.body.jawaban ?? r.body.error ?? '');
   hasil.push({ tanya, harapan, status: r.status, jawaban, dasar: r.body.dasar ?? [], detik });
   console.log(`\n  [${r.status}] ${detik}s  ${tanya || '(kosong)'}`);
   console.log(`  ${jawaban.replace(/\n/g, '\n  ')}`);
   if (Array.isArray(r.body.dasar) && r.body.dasar.length) console.log(`  dasar: ${r.body.dasar.join(', ')}`);
+  /* Jeda antar pertanyaan supaya tidak menabrak batas per menit tier gratis. */
+  await new Promise((ok) => setTimeout(ok, 4000));
 }
 
 /* ---------------------------------------------------------------------------
