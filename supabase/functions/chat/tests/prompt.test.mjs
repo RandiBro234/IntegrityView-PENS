@@ -76,7 +76,8 @@ const KONFIG_DASAR = {
   stub: '',
   timeoutMs: 1000,
   maxToken: 400,
-  suhu: 0.1
+  suhu: 0.1,
+  reasoningEffort: ''
 };
 
 test('mode stub mengembalikan balasan tetap tanpa jaringan', async () => {
@@ -188,8 +189,7 @@ test('permintaan ke LLM berbentuk chat/completions dan balasannya dibaca', async
   }
 });
 
-test('status non-2xx menjadi LlmTidakTersedia tanpa membaca body', async () => {
-  const { createServer } = await import('node:http');
+test('status non-2xx menjadi LlmTidakTersedia tanpa membaca body', async () => {  const { createServer } = await import('node:http');
   const server = createServer((req, res) => {
     res.writeHead(429, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ error: 'kuota habis' }));
@@ -221,6 +221,34 @@ test('balasan tanpa choices dianggap gagal, bukan teks kosong', async () => {
       () => tanyaLlm({ system: 'a', user: 'b' }, { ...KONFIG_DASAR, baseUrl: `http://127.0.0.1:${port}/v1` }),
       LlmTidakTersedia
     );
+  } finally {
+    server.close();
+  }
+});
+
+test('reasoning_effort hanya dikirim bila diisi', async () => {
+  const { createServer } = await import('node:http');
+  const ditangkap = [];
+
+  const server = createServer((req, res) => {
+    let body = '';
+    req.on('data', (c) => (body += c));
+    req.on('end', () => {
+      ditangkap.push(JSON.parse(body));
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ choices: [{ message: { content: 'ok' } }] }));
+    });
+  });
+  await new Promise((ok) => server.listen(0, '127.0.0.1', ok));
+  const port = server.address().port;
+  const dasar = { ...KONFIG_DASAR, baseUrl: `http://127.0.0.1:${port}/v1` };
+
+  try {
+    await tanyaLlm({ system: 'a', user: 'b' }, { ...dasar, reasoningEffort: '' });
+    await tanyaLlm({ system: 'a', user: 'b' }, { ...dasar, reasoningEffort: 'none' });
+
+    assert.equal('reasoning_effort' in ditangkap[0], false, 'parameter kosong tetap dikirim');
+    assert.equal(ditangkap[1].reasoning_effort, 'none');
   } finally {
     server.close();
   }

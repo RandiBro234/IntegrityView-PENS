@@ -29,6 +29,7 @@ export interface KonfigLlm {
   timeoutMs: number;
   maxToken: number;
   suhu: number;
+  reasoningEffort: string;
 }
 
 export function konfigLlm(): KonfigLlm {
@@ -39,7 +40,8 @@ export function konfigLlm(): KonfigLlm {
     stub: env('LLM_STUB').toLowerCase(),
     timeoutMs: Number(env('LLM_TIMEOUT_MS') || 20000),
     maxToken: Number(env('LLM_MAX_TOKEN') || 400),
-    suhu: Number(env('LLM_SUHU') || 0.1)
+    suhu: Number(env('LLM_SUHU') || 0.1),
+    reasoningEffort: env('LLM_REASONING_EFFORT')
   };
 }
 
@@ -72,7 +74,11 @@ export async function tanyaLlm(pesan: { system: string; user: string }, konfig =
           { role: 'user', content: pesan.user }
         ],
         temperature: konfig.suhu,
-        max_tokens: konfig.maxToken
+        max_tokens: konfig.maxToken,
+        /* Hanya dikirim bila diisi. Gemini butuh "none"/"low" untuk mematikan
+           proses berpikir; tanpa ini sebagian jatah token habis untuk thinking
+           dan jawaban bisa terpotong. */
+        ...(konfig.reasoningEffort ? { reasoning_effort: konfig.reasoningEffort } : {})
       }),
       signal: AbortSignal.timeout(konfig.timeoutMs)
     });
