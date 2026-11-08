@@ -48,6 +48,9 @@
 .report-filters__popover label { display: grid; gap: 5px; color: var(--text-secondary); font-size: 12px; font-weight: 700; }
 .report-filters__popover select { width: 100%; padding: 0 8px; }
 .report-filters__spacer { flex: 1; min-width: 0; }
+/* Varian ringkas: hanya pemilih periode, untuk ditempel di kepala panel. */
+.report-filters--ringkas { height: auto; gap: 0; }
+.report-filters--ringkas .report-filters__periode { width: auto; min-width: 150px; height: 32px; font-size: 11.5px; }
 .report-filters select:focus-visible, .report-filters__toggle:focus-visible { outline: 2px solid var(--orange-500); outline-offset: 1px; }
 @media (max-width: 720px) {
   .report-filters { gap: 5px; }

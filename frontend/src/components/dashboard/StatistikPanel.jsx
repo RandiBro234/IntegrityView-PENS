@@ -3,6 +3,7 @@ import './StatistikPanel.css';
 import RecommendationList from '../instrumen/RecommendationList';
 import RecommendationPanel from '../instrumen/RecommendationPanel';
 import Delta from './Delta';
+import InfoTip from './InfoTip';
 import CountUp from '../motion/CountUp';
 import { formatAngka } from '../../data/mock';
 import { keSkor } from '../../lib/formatSkor';
@@ -39,22 +40,39 @@ export default function StatistikPanel({ selectedKey, laporan, onOpenDetail }) {
       </div>
 
       <div className="spanel__grid">
-        <Stat label="Responden (n)" angka={st.n} desimal={0} />
+        <Stat
+          label="Responden (n)"
+          angka={st.n}
+          desimal={0}
+          tip="Jumlah responden unik yang menjawab instrumen ini pada periode terpilih."
+        />
         <Stat
           label="Rata-rata skor (1–4)"
           angka={keSkor(st.indeks)}
           desimal={2}
           delta={hasil.delta}
           deltaSkalaSkor
+          tip="Rata-rata seluruh jawaban butir pada skala asli 1–4. 1 = Sangat Tidak Setuju, 4 = Sangat Setuju. Dihitung dari total nilai jawaban dibagi jumlah butir × n."
         />
-        <Stat label="Median skor (1–4)" angka={keSkor(st.median)} desimal={2} />
-        <Stat label="Simpangan baku" angka={st.sd} desimal={2} />
+        <Stat
+          label="Median skor (1–4)"
+          angka={keSkor(st.median)}
+          desimal={2}
+          tip="Nilai tengah skor responden setelah diurutkan: 50% responden di bawah, 50% di atas nilai ini."
+        />
+        <Stat
+          label="Simpangan baku"
+          angka={keSkor(st.sd)}
+          desimal={2}
+          tip="Ukuran sebaran skor responden pada skala 1–4. Makin besar, makin beragam jawaban antar responden."
+        />
         <Stat
           label="Setuju + Sangat Setuju"
           angka={st.setuju}
           desimal={1}
           suffix="%"
           delta={sebelumnya ? st.setuju - sebelumnya.setuju : null}
+          tip="Persentase jawaban bernilai 3 (Setuju) atau 4 (Sangat Setuju) dari seluruh jawaban butir × responden. Dihitung per jawaban, bukan per orang."
         />
         <Stat
           label="Cronbach's alpha"
@@ -62,6 +80,7 @@ export default function StatistikPanel({ selectedKey, laporan, onOpenDetail }) {
           desimal={2}
           kosong="—"
           note={st.alphaCatatan}
+          tip="Konsistensi internal butir (0–1). Nilai ≥ 0,7 umumnya dianggap cukup andal; makin tinggi makin konsisten."
         />
       </div>
 
@@ -76,13 +95,14 @@ export default function StatistikPanel({ selectedKey, laporan, onOpenDetail }) {
   );
 }
 
-function Stat({ label, angka, desimal = 0, suffix = '', kosong = null, delta, deltaSkalaSkor = false, note }) {
+function Stat({ label, angka, desimal = 0, suffix = '', kosong = null, delta, deltaSkalaSkor = false, note, tip }) {
   const isi = angka == null
     ? (kosong || '—')
     : <CountUp value={angka} desimal={desimal} suffix={suffix} />;
 
   return (
     <div className="spanel__stat">
+      {tip && <InfoTip label={label} teks={tip} />}
       <span className="spanel__stat-value">{isi}</span>
       <span className="spanel__stat-label">{label}</span>
       {delta != null && <Delta value={delta} compact skalaSkor={deltaSkalaSkor} />}

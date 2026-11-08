@@ -16,13 +16,12 @@
 
 .idp {
   display: grid;
-  grid-template-rows: auto 40px auto minmax(0, 1fr);
+  grid-template-rows: auto auto minmax(0, 1fr);
   gap: 12px;
   height: 100%;
   min-height: 0;
 }
 .idp > * { min-height: 0; }
-.idp > .report-filters { margin: 0; }
 
 /* === Header === */
 .idp__header {
@@ -88,10 +87,10 @@
 .idp__isi:hover { background: var(--gray-50); border-color: var(--orange-500); }
 .idp__isi:focus-visible { outline: 2px solid var(--orange-500); outline-offset: 2px; }
 
-/* === 4 kartu kecil === */
+/* === 3 kartu kecil === */
 .idp__cards {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: var(--gap-grid);
   max-height: 84px;
 }
@@ -499,7 +498,7 @@
 .idp__butir-head,
 .idp__butir-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 64px 58px 132px;
+  grid-template-columns: minmax(0, 1fr) 64px 132px;
   gap: 10px;
   align-items: center;
 }
@@ -513,8 +512,7 @@
   color: var(--text-secondary);
   flex-shrink: 0;
 }
-.idp__butir-head .idp__butir-rata,
-.idp__butir-head .idp__butir-setuju { text-align: right; }
+.idp__butir-head .idp__butir-rata { text-align: right; }
 .idp__butir-body {
   flex: 1;
   min-height: 0;
@@ -536,8 +534,7 @@
   line-clamp: 2;
   overflow: hidden;
 }
-.idp__butir-rata,
-.idp__butir-setuju {
+.idp__butir-rata {
   text-align: right;
   font-variant-numeric: tabular-nums;
   font-weight: 700;

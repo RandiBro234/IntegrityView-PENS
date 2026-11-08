@@ -58,7 +58,7 @@ export default function InstrumentDetailPage({ slug, onBack }) {
       <div className="idp idp--loading" role="status" aria-label="Memuat detail instrumen">
         <div className="skeleton" style={{ height: 48 }} />
         <div className="idp__cards">
-          <div className="skeleton" /><div className="skeleton" /><div className="skeleton" /><div className="skeleton" />
+          <div className="skeleton" /><div className="skeleton" /><div className="skeleton" />
         </div>
         <div className="skeleton" style={{ flex: 1 }} />
       </div>
@@ -86,6 +86,7 @@ export default function InstrumentDetailPage({ slug, onBack }) {
         </nav>
 
         <div className="idp__header-right">
+          <ReportFilters ringkas filter={filter} onChange={setFilter} />
           {surveyUrl && (
             <a
               className="btn btn-outline-navy idp__isi"
@@ -103,16 +104,9 @@ export default function InstrumentDetailPage({ slug, onBack }) {
         </div>
       </header>
 
-      <ReportFilters filter={filter} onChange={setFilter} memakaiSimulasi={laporan.memakaiSimulasi} />
-
       <div className="idp__cards">
         <MiniCard label="Jumlah Responden (n)" value={st.n.toLocaleString('id-ID')} />
         <MiniCard label="Rata-rata Skor (1–4)" value={formatAngka(keSkor(st.indeks), 2)} delta={hasil.delta} deltaSkalaSkor />
-        <MiniCard
-          label="Setuju + Sangat Setuju"
-          value={formatAngka(st.setuju) + '%'}
-          delta={hasil.pembanding ? st.setuju - hasil.pembanding.setuju : null}
-        />
         <MiniCard
           label="Cronbach's Alpha"
           value={st.alpha == null ? '—' : formatAngka(st.alpha, 2)}
@@ -162,7 +156,6 @@ export default function InstrumentDetailPage({ slug, onBack }) {
                 <div className="idp__butir-head">
                   <span>Butir</span>
                   <span className="idp__butir-rata">Rata-rata</span>
-                  <span className="idp__butir-setuju">S+SS</span>
                   <span className="idp__butir-bar">Distribusi 1-4</span>
                 </div>
                 <div className="idp__butir-body">
@@ -170,7 +163,6 @@ export default function InstrumentDetailPage({ slug, onBack }) {
                     <div key={b.label} className="idp__butir-row">
                       <span className="idp__butir-teks" title={b.teks}>{b.teks}</span>
                       <span className="idp__butir-rata">{formatAngka(b.rata, 2)}</span>
-                      <span className="idp__butir-setuju">{formatAngka(b.persenSetuju)}%</span>
                       <span className="idp__butir-bar">
                         {b.distribusiPersen.map((pct, i) => (
                           <span

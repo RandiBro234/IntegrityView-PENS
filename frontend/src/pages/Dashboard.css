@@ -20,7 +20,7 @@
 
 .dashboard__grid {
   display: grid;
-  grid-template-rows: 40px auto minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
   gap: var(--gap);
   width: 100%;
   max-width: 1600px;
@@ -55,11 +55,21 @@
 }
 .dashboard__box--left .sebaran,
 .dashboard__box--left .heatmap { flex: 1; min-height: 0; }
+/* Panel kanan membiarkan tooltip info keluar kotak; isi internal tetap diklip sendiri. */
+.dashboard__box--right { overflow: visible; }
 
 .dashboard__box-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: var(--gap-sm);
+  flex-wrap: nowrap;
+  flex-shrink: 0;
+  min-width: 0;
+}
+.dashboard__box-tools {
+  display: flex;
+  align-items: center;
   gap: var(--gap-sm);
   flex-shrink: 0;
   min-width: 0;
@@ -69,7 +79,11 @@
   font-size: clamp(1rem, 1.1vw, 1.2rem);
   letter-spacing: -0.02em;
   line-height: 1.25;
+  flex: 1 1 auto;
   min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Segmented control tab Sebaran / Perubahan. */
@@ -131,6 +145,7 @@
 
 /* === Loading skeleton === */
 .dashboard__loading {
+  grid-row: 1 / -1;
   display: flex;
   flex-direction: column;
   gap: var(--gap);
@@ -190,4 +205,69 @@
   .dashboard__box { padding: 16px; min-height: 360px; }
   .dashboard__box-head { flex-wrap: wrap; }
   .dashboard__loading-cards { grid-template-columns: 1fr; }
+}
+
+/* === Tombol ekspor di topbar === */
+.dashboard__ekspor { padding: 8px 16px; font-size: 13px; flex-shrink: 0; }
+
+/* === Modal pratinjau ringkasan dashboard === */
+.dashmodal__overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  padding: 20px;
+  background: rgba(11, 27, 51, 0.5);
+  backdrop-filter: blur(3px);
+  display: grid;
+  place-items: center;
+  animation: dashmodal-fade 150ms ease both;
+}
+@keyframes dashmodal-fade { from { opacity: 0; } to { opacity: 1; } }
+.dashmodal {
+  background: var(--white);
+  border-radius: var(--radius-card);
+  box-shadow: 0 24px 48px rgba(11, 27, 51, 0.25);
+  width: 100%;
+  max-width: 900px;
+  max-height: 92dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.dashmodal__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px 12px;
+  border-bottom: 1px solid var(--border-soft);
+  flex-shrink: 0;
+}
+.dashmodal__head h3 { font-family: var(--font-display); font-size: 1.05rem; }
+.dashmodal__close {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--text-secondary);
+}
+.dashmodal__close:hover { background: var(--gray-50); color: var(--text-primary); }
+.dashmodal__preview {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  background: #E9EDF4;
+  padding: 20px;
+}
+.dashmodal__scale { width: 794px; margin: 0 auto; }
+.dashmodal__foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 24px;
+  border-top: 1px solid var(--border-soft);
+  background: var(--white);
+  flex-shrink: 0;
 }

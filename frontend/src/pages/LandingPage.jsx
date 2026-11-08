@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { BlobDecor } from '../components/cards/StatCard';
 import { KONTAK, formatAngka, labelPartisipan } from '../data/mock';
-import { getReportData } from '../data/surveyData';
+import { getReportData, SURVEI_INFO } from '../data/surveyData';
 import { useReportFilters } from '../data/useReportFilters';
 import Delta from '../components/dashboard/Delta';
 import Reveal from '../components/motion/Reveal';
@@ -32,6 +32,7 @@ const ALUR_GRADIENTS = [
 
 const SECTION_NAV = [
   { id: 'tentang', label: 'Tentang' },
+  { id: 'publik', label: 'Publik' },
   { id: 'instrumen', label: 'Instrumen' },
   { id: 'lapor', label: 'Lapor' },
   { id: 'alur', label: 'Alur' }
@@ -55,6 +56,8 @@ function gradientLangkah(i) {
     descColor: ke.descColor
   };
 }
+
+const SURVEI_PUBLIK = SURVEI_INFO.filter((s) => ['pengaduan', 'pens-joss', '5r'].includes(s.key));
 
 export default function LandingPage({ onEnterDashboard, session }) {
   const [scrollY, setScrollY] = useState(0);
@@ -242,6 +245,47 @@ export default function LandingPage({ onEnterDashboard, session }) {
             </p>
           </div>
         </Reveal>
+      </section>
+
+      <section className="landing__publik landing__section-anchor" id="publik">
+        <Reveal className="landing__section-head">
+          <div>
+            <p className="label-eyebrow">Terbuka untuk Umum</p>
+            <h2 className="landing__section-title">Survei tanpa perlu akun.</h2>
+            <p className="landing__publik-lead">
+              Pengaduan Masyarakat, Survei Layanan PENS JOSS, dan 5R terbuka untuk siapa saja.
+              Klik kartu untuk membuka formulir di tab baru, langsung tanpa login.
+            </p>
+          </div>
+        </Reveal>
+        <div className="landing__publik-grid">
+          {SURVEI_PUBLIK.map((s, i) => (
+            <Reveal
+              as="a"
+              key={s.key}
+              href={s.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="landing__publik-card"
+              delay={i * 70}
+              aria-label={`Isi ${s.namaPanjang} tanpa login di tab baru`}
+            >
+              <span className="landing__publik-badge">Tanpa login</span>
+              <span className="landing__publik-kategori">{s.kategori}</span>
+              <span className="landing__publik-name">{s.namaPanjang}</span>
+              <span className="landing__publik-desc">{s.deskripsi}</span>
+              <span className="landing__publik-foot">
+                <span>{s.jumlahButir} butir</span>
+                <span className="landing__publik-open">
+                  Isi survei
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M5 12h14M13 6l6 6-6 6" />
+                  </svg>
+                </span>
+              </span>
+            </Reveal>
+          ))}
+        </div>
       </section>
 
       <section className="landing__stats">
