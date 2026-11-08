@@ -62,7 +62,7 @@ export default function ChartCard({ title, subtitle, labels, dates, series, benc
         <div className="chart-card__legend">
           <span className="chart-card__legend-item">
             <span className="chart-card__legend-dot chart-card__legend-dot--main" />
-            Skor ZI aktual
+            Indeks Persepsi Integritas
           </span>
           {benchmark != null && (
             <span className="chart-card__legend-item">

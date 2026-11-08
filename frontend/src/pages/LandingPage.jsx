@@ -168,12 +168,11 @@ export default function LandingPage({ onEnterDashboard, session }) {
         <section className="landing__hero">
           <div className="landing__hero-inner">
             <div className="landing__hero-text">
-              <Reveal as="p" className="label-eyebrow" delay={0}>Zona Integritas PENS</Reveal>
               <Reveal as="h1" className="landing__hero-title" delay={70}>
-                Capaian integritas kampus, terbuka untuk diperiksa siapa saja.
+                Persepsi integritas kampus terbuka untuk diperiksa siapa saja.
               </Reveal>
               <Reveal as="p" className="landing__hero-lead" delay={140}>
-                Platform ini menyatukan {ringkasan.totalInstrumen} instrumen survei, dashboard analitik publik, dan kanal pelaporan WBS dalam satu alamat. Pimpinan dan assessor membaca data tanpa menunggu laporan manual.
+                Platform ini menyatukan {ringkasan.totalInstrumen} instrumen survei, dashboard analitik publik, dan kanal pelaporan WBS dalam satu alamat. Pimpinan dan penilai dapat membaca data kapan saja secara terbuka.
               </Reveal>
               <Reveal className="landing__hero-cta" delay={210}>
                 <button type="button" className="btn btn-primary" onClick={onEnterDashboard}>
@@ -192,7 +191,7 @@ export default function LandingPage({ onEnterDashboard, session }) {
 
                 <Reveal className="landing__bento landing__bento--a" variant="scale-in" delay={280}>
                   <BlobDecor color="#0B1B33" />
-                  <p className="label-eyebrow">Rata-rata Skor ZI (1–4) {laporan.periode.label}</p>
+                  <p className="label-eyebrow">Indeks Persepsi Integritas (1–4) {laporan.periode.label}</p>
                   <div className="landing__bento-value">
                     <CountUp value={keSkor(ringkasan.rataSkor)} desimal={2} suffix=" / 4" langsung />
                   </div>
@@ -236,12 +235,12 @@ export default function LandingPage({ onEnterDashboard, session }) {
           </div>
           <div>
             <p className="label-eyebrow">Tentang</p>
-            <h2 className="landing__section-title">Zona Integritas adalah komitmen, bukan slogan.</h2>
+            <h2 className="landing__section-title">Membaca integritas kampus dari data, bukan asumsi.</h2>
             <p className="landing__about-text">
-              Zona Integritas (ZI) adalah program nasional Kementerian PANRB untuk membangun birokrasi yang bersih, bebas korupsi, dan berorientasi layanan. PENS sebagai perguruan tinggi negeri wajib membuktikan capaiannya lewat survei terstandar dan kanal pelaporan WBS yang transparan.
+              IntegrityView mengumpulkan persepsi sivitas terhadap layanan kampus lewat survei terstandar, menyajikan hasilnya sebagai agregat, dan membuka kanal pelaporan WBS yang transparan. Zona Integritas menjadi konteks programnya, tetapi angka di platform ini murni hasil survei, bukan penilaian Zona Integritas resmi.
             </p>
             <p className="landing__about-text">
-              IntegrityView dikelola oleh <strong>{KONTAK.unit}</strong> untuk menyatukan pengisian survei, pemantauan skor, dan tindak lanjut laporan dalam satu platform terbuka.
+              Platform dikelola oleh <strong>{KONTAK.unit}</strong> untuk menyatukan pengisian survei, pemantauan hasil, dan tindak lanjut laporan dalam satu tempat terbuka.
             </p>
           </div>
         </Reveal>

@@ -57,7 +57,7 @@ export default function RingkasanDashboardTemplate({ laporan, tanggalCetak }) {
               <span className="rt__card-value">{r.responden.total.toLocaleString('id-ID')}</span>
             </div>
             <div className="rt__card">
-              <span className="rt__card-label">Skor ZI (0–100)</span>
+              <span className="rt__card-label">Indeks Persepsi Integritas (0–100)</span>
               <span className="rt__card-value">{r.rataSkor == null ? '—' : formatAngka(r.rataSkor, 1)}</span>
               <Delta value={r.delta} />
             </div>
