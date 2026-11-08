@@ -29,7 +29,6 @@ export interface KonteksSatuInstrumen {
   ringkasan: {
     n: number;
     skor: number;
-    indeks: number;
     median_skor: number;
     sd_skor: number;
     interval_kepercayaan_95: { bawah: number; atas: number } | null;
@@ -141,7 +140,6 @@ export function rakitKonteksSatu(
     ringkasan: {
       n: agregat.n,
       skor: bulat(keSkor(agregat.indeks), 2),
-      indeks: bulat(agregat.indeks, 1),
       median_skor: bulat(keSkor(agregat.median), 2),
       sd_skor: bulat(keSkor(agregat.sd), 2),
       interval_kepercayaan_95: agregat.ci

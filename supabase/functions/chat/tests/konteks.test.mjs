@@ -94,6 +94,12 @@ test('konteks satu instrumen memuat field wajib dan berbicara skala 1-4', () => 
   for (const b of konteks.butir) {
     assert.ok(b.skor >= 1 && b.skor <= 4, `${b.kode} skor ${b.skor}`);
   }
+
+  /* Indeks 0-100 TIDAK dikirim ke model. Kalau dikirim, model menyebut
+     "indeks 90,1" padahal dashboard menampilkan "3,61 dari 4" — dua angka
+     berbeda untuk hal yang sama membingungkan pengguna. */
+  assert.equal('indeks' in konteks.ringkasan, false, 'indeks 0-100 bocor ke konteks');
+  assert.ok(!JSON.stringify(konteks).includes(String(Math.round(agregat.indeks))), 'indeks 0-100 muncul di konteks');
 });
 
 test('konteks satu instrumen tidak memuat PII', () => {
