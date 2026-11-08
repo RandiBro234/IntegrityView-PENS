@@ -78,7 +78,7 @@ test('alias nama dari database dikenali', () => {
    Bentuk konteks satu instrumen
    --------------------------------------------------------------------------- */
 
-test('konteks satu instrumen memuat field wajib dan berbicara skala 1-4', () => {
+test('konteks satu instrumen memuat field wajib dan dua skala', () => {
   const agregat = agregatDari('spip');
   const konteks = rakitKonteksSatu(agregat, instrumenDari('spip'), AMBANG);
 
@@ -88,18 +88,15 @@ test('konteks satu instrumen memuat field wajib dan berbicara skala 1-4', () => 
   assert.equal(konteks.butir.length, 9);
   assert.equal(konteks.butir[0].kode, 'SPIP1');
 
-  /* Skor 1-4, bukan indeks 0-100. */
-  assert.ok(konteks.ringkasan.skor > 1 && konteks.ringkasan.skor <= 4, `skor ${konteks.ringkasan.skor}`);
-  assert.ok(Math.abs(konteks.ringkasan.skor - agregat.indeks / 25) < 0.01);
+  /* Skor ZI 0-100 (kartu utama dashboard) dan skor rata-rata 1-4 (detail). */
+  assert.ok(konteks.ringkasan.skor_zi > 0 && konteks.ringkasan.skor_zi <= 100, `skor_zi ${konteks.ringkasan.skor_zi}`);
+  assert.ok(konteks.ringkasan.skor_rata > 1 && konteks.ringkasan.skor_rata <= 4, `skor_rata ${konteks.ringkasan.skor_rata}`);
+  assert.ok(Math.abs(konteks.ringkasan.skor_zi - agregat.indeks) < 0.1);
+  assert.ok(Math.abs(konteks.ringkasan.skor_rata - agregat.indeks / 25) < 0.01);
+
   for (const b of konteks.butir) {
     assert.ok(b.skor >= 1 && b.skor <= 4, `${b.kode} skor ${b.skor}`);
   }
-
-  /* Indeks 0-100 TIDAK dikirim ke model. Kalau dikirim, model menyebut
-     "indeks 90,1" padahal dashboard menampilkan "3,61 dari 4" — dua angka
-     berbeda untuk hal yang sama membingungkan pengguna. */
-  assert.equal('indeks' in konteks.ringkasan, false, 'indeks 0-100 bocor ke konteks');
-  assert.ok(!JSON.stringify(konteks).includes(String(Math.round(agregat.indeks))), 'indeks 0-100 muncul di konteks');
 });
 
 test('konteks satu instrumen tidak memuat PII', () => {

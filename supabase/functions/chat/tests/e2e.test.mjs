@@ -41,7 +41,7 @@ test('data asli terbaca dari Supabase tanpa kolom email', { skip: lewati }, () =
   }
 });
 
-test('konteks dari data asli memakai skala 1-4 dan bebas PII', { skip: lewati }, async () => {
+test('konteks dari data asli memakai dua skala dan bebas PII', { skip: lewati }, async () => {
   const { rakitKonteksSatu } = await import(pathToFileURL(resolve(AKAR, 'lib/konteks.ts')).href);
   const { data, deps } = sudahSiap;
   const satu = data.perInstrumen[0];
@@ -49,7 +49,8 @@ test('konteks dari data asli memakai skala 1-4 dan bebas PII', { skip: lewati },
   const konteks = rakitKonteksSatu(satu.agregat, satu.instrumen, deps.registri.ambang, satu.rekomendasi);
   const teks = JSON.stringify(konteks);
 
-  assert.ok(konteks.ringkasan.skor >= 1 && konteks.ringkasan.skor <= 4);
+  assert.ok(konteks.ringkasan.skor_zi > 0 && konteks.ringkasan.skor_zi <= 100, 'skor ZI harus 0-100');
+  assert.ok(konteks.ringkasan.skor_rata >= 1 && konteks.ringkasan.skor_rata <= 4, 'skor rata-rata harus 1-4');
   assert.doesNotMatch(teks, /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/, 'ada email di konteks');
   assert.doesNotMatch(teks, /email_responden/);
 });
