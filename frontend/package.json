@@ -10,7 +10,7 @@
     "preview": "vite preview",
     "gen:instrumen": "node ../scripts/gen-instrumen.mjs",
     "gen:fixture": "node ../scripts/gen-fixture.mjs",
-    "test:chatbot": "node --test ../supabase/functions/chat/tests/golden.test.mjs"
+    "test:chatbot": "node --test ../supabase/functions/chat/tests/*.test.mjs"
   },
   "dependencies": {
     "html2canvas": "^1.4.1",
