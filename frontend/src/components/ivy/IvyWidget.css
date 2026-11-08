@@ -148,6 +148,10 @@
 
 .ivy__balon--ketik { color: var(--text-secondary); font-style: italic; }
 
+/* Balon untuk pesan galat (429/503). Hanya membedakan warna, tanpa mengubah
+   ukuran atau posisi panel. */
+.ivy__balon--galat { color: var(--text-secondary); }
+
 .ivy__saran {
   display: flex;
   flex-wrap: wrap;

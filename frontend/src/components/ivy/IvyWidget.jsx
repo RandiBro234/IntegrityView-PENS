@@ -1,9 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import './IvyWidget.css';
+import { chatSiap, tanyaChat, ChatError } from '../../data/chatApi';
 
-/* PROTOTIPE. Jawaban di bawah ini hardcoded untuk mockup UI.
-   Alur sungguhan (LLM + pengetahuan proyek) belum ada; ganti `jawab()`
-   dengan panggilan API dan biarkan sisa komponen apa adanya. */
+/* Panel obrolan "Tanya Ivy".
+
+   Bila Edge Function `chat` tersedia (lihat chatApi.js), pertanyaan dikirim ke
+   sana dan jawabannya berasal dari data dashboard. Bila belum tersedia,
+   komponen memakai jawaban contoh di bawah supaya aplikasi tetap berfungsi
+   tanpa backend — pola yang sama dengan mock.js. */
 
 const SAPAAN = 'Hai, saya Ivy. Tanya apa saja soal survei Zona Integritas atau cara pakai IntegrityView.';
 
@@ -34,10 +38,22 @@ const CONTOH = [
 
 const CADANGAN = 'Untuk prototipe ini saya baru bisa menjawab soal cara isi survei, skor ZI, dashboard, pelaporan WBS, dan privasi data. Untuk pertanyaan lain, hubungi pengelola Zona Integritas PENS.';
 
-const jawab = (teks) => {
+/* Jawaban contoh: dipakai hanya bila Edge Function belum tersedia. */
+const jawabContoh = (teks) => {
   const cocok = CONTOH.find(([pola]) => pola.test(teks));
   return cocok ? cocok[1] : CADANGAN;
 };
+
+/* Balasan yang ditampilkan bila layanan gagal. Dipisah per status supaya
+   pengguna tahu apakah harus menunggu (429) atau memang sedang gangguan (503). */
+function pesanGalat(err) {
+  if (err instanceof ChatError) {
+    if (err.status === 429) return 'Terlalu sering bertanya. Coba lagi beberapa saat lagi.';
+    if (err.status === 503) return 'Asisten sedang tidak tersedia. Coba lagi nanti.';
+    return err.message;
+  }
+  return 'Asisten sedang tidak tersedia. Coba lagi nanti.';
+}
 
 /* Silang digambar sebagai SVG, bukan karakter "×", supaya tepat di tengah
    lingkaran tanpa terpengaruh metrik baseline font. */
@@ -49,7 +65,7 @@ function IkonSilang() {
   );
 }
 
-export default function IvyWidget() {
+export default function IvyWidget({ instrumen = null }) {
   const [buka, setBuka] = useState(false);
   const [pesan, setPesan] = useState([{ dari: 'ivy', teks: SAPAAN }]);
   const [input, setInput] = useState('');
@@ -72,16 +88,31 @@ export default function IvyWidget() {
     bodyRef.current?.scrollTo({ top: bodyRef.current.scrollHeight, behavior: 'smooth' });
   }, [pesan, mengetik]);
 
-  const kirim = (teks) => {
+  const kirim = async (teks) => {
     const isi = teks.trim();
     if (!isi || mengetik) return;
     setPesan((lama) => [...lama, { dari: 'user', teks: isi }]);
     setInput('');
     setMengetik(true);
-    timer.current = window.setTimeout(() => {
-      setPesan((lama) => [...lama, { dari: 'ivy', teks: jawab(isi) }]);
+
+    if (!chatSiap) {
+      /* Tanpa backend: tetap beri jawaban contoh setelah jeda singkat supaya
+         ritmenya terasa sama dengan jawaban sungguhan. */
+      timer.current = window.setTimeout(() => {
+        setPesan((lama) => [...lama, { dari: 'ivy', teks: jawabContoh(isi) }]);
+        setMengetik(false);
+      }, 650);
+      return;
+    }
+
+    try {
+      const { jawaban } = await tanyaChat(isi, { instrumen });
+      setPesan((lama) => [...lama, { dari: 'ivy', teks: jawaban }]);
+    } catch (err) {
+      setPesan((lama) => [...lama, { dari: 'ivy', teks: pesanGalat(err), galat: true }]);
+    } finally {
       setMengetik(false);
-    }, 650);
+    }
   };
 
   return (
@@ -101,7 +132,12 @@ export default function IvyWidget() {
 
           <div className="ivy__body" ref={bodyRef} aria-live="polite">
             {pesan.map((p, i) => (
-              <p key={i} className={`ivy__balon ivy__balon--${p.dari}`}>{p.teks}</p>
+              <p
+                key={i}
+                className={`ivy__balon ivy__balon--${p.dari}${p.galat ? ' ivy__balon--galat' : ''}`.trim()}
+              >
+                {p.teks}
+              </p>
             ))}
             {mengetik && <p className="ivy__balon ivy__balon--ivy ivy__balon--ketik">Ivy sedang menulis...</p>}
             {pesan.length === 1 && (
@@ -130,7 +166,11 @@ export default function IvyWidget() {
               Kirim
             </button>
           </form>
-          <p className="ivy__catatan">Prototipe &mdash; jawaban masih contoh</p>
+          <p className="ivy__catatan">
+            {chatSiap
+              ? 'Jawaban dibuat AI dari data dashboard. Periksa angka di grafik bila perlu.'
+              : 'Prototipe — jawaban masih contoh'}
+          </p>
         </section>
       )}
 

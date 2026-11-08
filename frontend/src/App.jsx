@@ -168,7 +168,7 @@ export default function App() {
         {renderHalaman()}
       </div>
       {/* Di luar wadah transisi: state percakapan tidak ikut reset saat pindah halaman. */}
-      <IvyWidget />
+      <IvyWidget instrumen={page === 'instrumen-detail' ? instrumenSlug : null} />
     </>
   );
 }
