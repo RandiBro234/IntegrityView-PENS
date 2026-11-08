@@ -1,0 +1,3160 @@
+{
+  "_catatan": "Dihasilkan scripts/gen-fixture.mjs dari frontend/src/data/survey/statistics.js. Jangan diedit tangan.",
+  "kasus": [
+    {
+      "slug": "spip",
+      "periode": "2026-ganjil",
+      "n": 58,
+      "benih": 20260101,
+      "records": [
+        {
+          "items": [
+            3,
+            2,
+            3,
+            2,
+            2,
+            2,
+            2,
+            2,
+            3
+          ],
+          "terbuka": "Perlu sosialisasi rutin agar semua unit paham prosedurnya",
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "terbuka": "SOP belum jelas untuk beberapa alur layanan",
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            4,
+            4,
+            4,
+            4,
+            3,
+            4
+          ],
+          "terbuka": "Waktu layanan sering melebihi estimasi",
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            3,
+            2,
+            3,
+            3,
+            2,
+            3,
+            3,
+            2
+          ],
+          "terbuka": "Waktu layanan sering melebihi estimasi",
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            2,
+            3,
+            3,
+            3,
+            3,
+            2,
+            3,
+            2,
+            3
+          ],
+          "terbuka": "Waktu layanan sering melebihi estimasi",
+          "kelompok": null
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "terbuka": "Komunikasi antar unit perlu diperbaiki",
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "terbuka": "SOP belum jelas untuk beberapa alur layanan",
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "terbuka": "SOP belum jelas untuk beberapa alur layanan",
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            4,
+            4,
+            4,
+            4,
+            3,
+            3,
+            3,
+            3
+          ],
+          "terbuka": null,
+          "kelompok": null
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "terbuka": "SOP belum jelas untuk beberapa alur layanan",
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            3,
+            4,
+            4,
+            4,
+            3,
+            4,
+            4
+          ],
+          "terbuka": null,
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            2,
+            2,
+            1,
+            2,
+            2,
+            2,
+            1,
+            3,
+            2
+          ],
+          "terbuka": "Komunikasi antar unit perlu diperbaiki",
+          "kelompok": null
+        },
+        {
+          "items": [
+            2,
+            2,
+            3,
+            3,
+            3,
+            2,
+            1,
+            2,
+            2
+          ],
+          "terbuka": "Perlu sosialisasi rutin agar semua unit paham prosedurnya",
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            2,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "terbuka": "Komunikasi antar unit perlu diperbaiki",
+          "kelompok": null
+        },
+        {
+          "items": [
+            3,
+            1,
+            3,
+            2,
+            1,
+            2,
+            2,
+            3,
+            3
+          ],
+          "terbuka": null,
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            4,
+            3,
+            3,
+            4,
+            4,
+            3,
+            3,
+            3
+          ],
+          "terbuka": "Sarana dan fasilitas pendukung masih kurang",
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            4,
+            3,
+            3,
+            4
+          ],
+          "terbuka": "Komunikasi antar unit perlu diperbaiki",
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            3,
+            3,
+            4,
+            4,
+            4,
+            3,
+            3
+          ],
+          "terbuka": "Waktu layanan sering melebihi estimasi",
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            2,
+            3,
+            3,
+            3,
+            2,
+            3,
+            3,
+            3
+          ],
+          "terbuka": "Antrean layanan terlalu panjang pada jam sibuk",
+          "kelompok": null
+        },
+        {
+          "items": [
+            2,
+            2,
+            2,
+            1,
+            3,
+            3,
+            2,
+            3,
+            2
+          ],
+          "terbuka": "Antrean layanan terlalu panjang pada jam sibuk",
+          "kelompok": null
+        },
+        {
+          "items": [
+            2,
+            3,
+            3,
+            3,
+            3,
+            3,
+            2,
+            3,
+            3
+          ],
+          "terbuka": "Antrean layanan terlalu panjang pada jam sibuk",
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            2,
+            2,
+            3,
+            2,
+            3,
+            2,
+            2,
+            3,
+            3
+          ],
+          "terbuka": "Komunikasi antar unit perlu diperbaiki",
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            2,
+            3,
+            3,
+            3,
+            3,
+            2,
+            2
+          ],
+          "terbuka": "Waktu layanan sering melebihi estimasi",
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "terbuka": "Sudah ada dugaan mark up pada pengadaan kecil",
+          "kelompok": null
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "terbuka": "Perlu sosialisasi rutin agar semua unit paham prosedurnya",
+          "kelompok": null
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            4,
+            4,
+            3,
+            3
+          ],
+          "terbuka": "Komunikasi antar unit perlu diperbaiki",
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "terbuka": "Waktu layanan sering melebihi estimasi",
+          "kelompok": null
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "terbuka": "Sarana dan fasilitas pendukung masih kurang",
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            2,
+            2,
+            3,
+            2,
+            2,
+            2,
+            2
+          ],
+          "terbuka": "Perlu sosialisasi rutin agar semua unit paham prosedurnya",
+          "kelompok": null
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "terbuka": null,
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            2,
+            2,
+            3,
+            2,
+            2,
+            3,
+            2,
+            3
+          ],
+          "terbuka": "Perlu sosialisasi rutin agar semua unit paham prosedurnya",
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "terbuka": "Komunikasi antar unit perlu diperbaiki",
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            2,
+            3,
+            3,
+            3
+          ],
+          "terbuka": "Sudah ada dugaan mark up pada pengadaan kecil",
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            3,
+            4,
+            4
+          ],
+          "terbuka": "Perlu sosialisasi rutin agar semua unit paham prosedurnya",
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            4,
+            3,
+            3,
+            4,
+            3,
+            3,
+            3,
+            3
+          ],
+          "terbuka": "Komunikasi antar unit perlu diperbaiki",
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            3,
+            4,
+            4,
+            4,
+            4,
+            3,
+            4
+          ],
+          "terbuka": null,
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "terbuka": null,
+          "kelompok": null
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "terbuka": "Sarana dan fasilitas pendukung masih kurang",
+          "kelompok": null
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "terbuka": "Perlu pelatihan berkala untuk petugas",
+          "kelompok": null
+        },
+        {
+          "items": [
+            4,
+            4,
+            3,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "terbuka": "Antrean layanan terlalu panjang pada jam sibuk",
+          "kelompok": null
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "terbuka": "Perlu sosialisasi rutin agar semua unit paham prosedurnya",
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            4,
+            3,
+            3,
+            3
+          ],
+          "terbuka": "Komunikasi antar unit perlu diperbaiki",
+          "kelompok": null
+        },
+        {
+          "items": [
+            3,
+            4,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "terbuka": "Komunikasi antar unit perlu diperbaiki",
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            2,
+            1,
+            2,
+            2,
+            1,
+            2,
+            2,
+            2,
+            1
+          ],
+          "terbuka": "Perlu sosialisasi rutin agar semua unit paham prosedurnya",
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            2,
+            2,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "terbuka": "Sarana dan fasilitas pendukung masih kurang",
+          "kelompok": null
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "terbuka": "Proses digitalisasi perlu dipercepat",
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            2,
+            2
+          ],
+          "terbuka": "Proses digitalisasi perlu dipercepat",
+          "kelompok": null
+        },
+        {
+          "items": [
+            3,
+            4,
+            3,
+            3,
+            3,
+            4,
+            3,
+            3,
+            3
+          ],
+          "terbuka": null,
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            3,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "terbuka": "Sudah ada dugaan mark up pada pengadaan kecil",
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            3,
+            3,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "terbuka": "Proses digitalisasi perlu dipercepat",
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "terbuka": "SOP belum jelas untuk beberapa alur layanan",
+          "kelompok": null
+        },
+        {
+          "items": [
+            2,
+            3,
+            2,
+            2,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "terbuka": "Perlu pelatihan berkala untuk petugas",
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            3,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "terbuka": null,
+          "kelompok": null
+        },
+        {
+          "items": [
+            3,
+            3,
+            2,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "terbuka": "SOP belum jelas untuk beberapa alur layanan",
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            4,
+            4,
+            3,
+            4
+          ],
+          "terbuka": "SOP belum jelas untuk beberapa alur layanan",
+          "kelompok": null
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "terbuka": "SOP belum jelas untuk beberapa alur layanan",
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "terbuka": "Perlu pelatihan berkala untuk petugas",
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            4,
+            3,
+            3,
+            4,
+            4,
+            4,
+            3,
+            4
+          ],
+          "terbuka": "Perlu sosialisasi rutin agar semua unit paham prosedurnya",
+          "kelompok": "Tenaga Kependidikan"
+        }
+      ],
+      "agregat": {
+        "slug": "spip",
+        "periode": "2026-ganjil",
+        "sumber": "simulated",
+        "jumlahButir": 9,
+        "n": 58,
+        "indeks": 76.67624521072797,
+        "skorRata": 76.67624521072797,
+        "median": 75,
+        "sd": 13.696915517227056,
+        "se": 1.7984931177480665,
+        "ci": {
+          "bawah": 73.15119869994176,
+          "atas": 80.20129172151418
+        },
+        "alpha": 0.942704121620781,
+        "alphaCatatan": null,
+        "setuju": 84.86590038314176,
+        "distribusi": [
+          9,
+          70,
+          320,
+          123
+        ],
+        "distribusiPersen": [
+          2,
+          13,
+          61,
+          24
+        ],
+        "butir": [
+          {
+            "label": "Etika & integritas",
+            "teks": "Etika & integritas",
+            "rata": 3.0517241379310347,
+            "distribusi": [
+              0,
+              8,
+              39,
+              11
+            ],
+            "distribusiPersen": [
+              0,
+              14,
+              67,
+              19
+            ],
+            "persenSetuju": 86.20689655172413,
+            "persenNegatif": 13.793103448275861
+          },
+          {
+            "label": "Pemahaman tugas & kewenangan",
+            "teks": "Pemahaman tugas & kewenangan",
+            "rata": 3.086206896551724,
+            "distribusi": [
+              2,
+              7,
+              33,
+              16
+            ],
+            "distribusiPersen": [
+              3,
+              12,
+              57,
+              28
+            ],
+            "persenSetuju": 84.48275862068965,
+            "persenNegatif": 15.517241379310345
+          },
+          {
+            "label": "Penilaian risiko",
+            "teks": "Penilaian risiko",
+            "rata": 2.9482758620689653,
+            "distribusi": [
+              1,
+              9,
+              40,
+              8
+            ],
+            "distribusiPersen": [
+              2,
+              15,
+              69,
+              14
+            ],
+            "persenSetuju": 82.75862068965517,
+            "persenNegatif": 17.24137931034483
+          },
+          {
+            "label": "Pemeriksaan & persetujuan",
+            "teks": "Pemeriksaan & persetujuan",
+            "rata": 3.0172413793103448,
+            "distribusi": [
+              1,
+              9,
+              36,
+              12
+            ],
+            "distribusiPersen": [
+              2,
+              15,
+              62,
+              21
+            ],
+            "persenSetuju": 82.75862068965517,
+            "persenNegatif": 17.24137931034483
+          },
+          {
+            "label": "Perbaikan kesalahan",
+            "teks": "Perbaikan kesalahan",
+            "rata": 3.1724137931034484,
+            "distribusi": [
+              2,
+              3,
+              36,
+              17
+            ],
+            "distribusiPersen": [
+              4,
+              5,
+              62,
+              29
+            ],
+            "persenSetuju": 91.37931034482759,
+            "persenNegatif": 8.620689655172415
+          },
+          {
+            "label": "Ketersediaan informasi",
+            "teks": "Ketersediaan informasi",
+            "rata": 3.1379310344827585,
+            "distribusi": [
+              0,
+              12,
+              26,
+              20
+            ],
+            "distribusiPersen": [
+              0,
+              21,
+              45,
+              34
+            ],
+            "persenSetuju": 79.3103448275862,
+            "persenNegatif": 20.689655172413794
+          },
+          {
+            "label": "Evaluasi & tindak lanjut",
+            "teks": "Evaluasi & tindak lanjut",
+            "rata": 3.0517241379310347,
+            "distribusi": [
+              2,
+              7,
+              35,
+              14
+            ],
+            "distribusiPersen": [
+              4,
+              12,
+              60,
+              24
+            ],
+            "persenSetuju": 84.48275862068965,
+            "persenNegatif": 15.517241379310345
+          },
+          {
+            "label": "Penghargaan prestasi",
+            "teks": "Penghargaan prestasi",
+            "rata": 3.0344827586206895,
+            "distribusi": [
+              0,
+              8,
+              40,
+              10
+            ],
+            "distribusiPersen": [
+              0,
+              14,
+              69,
+              17
+            ],
+            "persenSetuju": 86.20689655172413,
+            "persenNegatif": 13.793103448275861
+          },
+          {
+            "label": "Reward & punishment",
+            "teks": "Reward & punishment",
+            "rata": 3.103448275862069,
+            "distribusi": [
+              1,
+              7,
+              35,
+              15
+            ],
+            "distribusiPersen": [
+              2,
+              12,
+              60,
+              26
+            ],
+            "persenSetuju": 86.20689655172413,
+            "persenNegatif": 13.793103448275861
+          }
+        ],
+        "butirTerendah": {
+          "label": "Penilaian risiko",
+          "teks": "Penilaian risiko",
+          "rata": 2.9482758620689653,
+          "distribusi": [
+            1,
+            9,
+            40,
+            8
+          ],
+          "distribusiPersen": [
+            2,
+            15,
+            69,
+            14
+          ],
+          "persenSetuju": 82.75862068965517,
+          "persenNegatif": 17.24137931034483
+        },
+        "kualitas": {
+          "seragam": 32.758620689655174,
+          "duplikat": 1,
+          "dibuang": 3,
+          "terbuka": 50,
+          "tertahan": 3,
+          "tema": [
+            {
+              "tema": "Komunikasi antar unit",
+              "jumlah": 10
+            },
+            {
+              "tema": "Sosialisasi",
+              "jumlah": 9
+            },
+            {
+              "tema": "Kejelasan SOP",
+              "jumlah": 8
+            }
+          ],
+          "n": 58
+        },
+        "kelompok": {
+          "dosen": 17,
+          "tendik": 21
+        }
+      },
+      "recordsBanding": [
+        {
+          "items": [
+            2,
+            2,
+            2,
+            3,
+            2,
+            2,
+            2,
+            1,
+            2
+          ],
+          "terbuka": "SOP belum jelas untuk beberapa alur layanan",
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            3,
+            3,
+            4,
+            3,
+            4,
+            4,
+            4,
+            4
+          ],
+          "terbuka": null,
+          "kelompok": null
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "terbuka": "Sudah ada dugaan mark up pada pengadaan kecil",
+          "kelompok": null
+        },
+        {
+          "items": [
+            3,
+            2,
+            2,
+            3,
+            3,
+            2,
+            3,
+            3,
+            2
+          ],
+          "terbuka": "Komunikasi antar unit perlu diperbaiki",
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            2,
+            3,
+            2,
+            2,
+            2,
+            3,
+            3,
+            3
+          ],
+          "terbuka": null,
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "terbuka": "Perlu pelatihan berkala untuk petugas",
+          "kelompok": null
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "terbuka": "Perlu sosialisasi rutin agar semua unit paham prosedurnya",
+          "kelompok": null
+        },
+        {
+          "items": [
+            2,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            2,
+            3
+          ],
+          "terbuka": "Sarana dan fasilitas pendukung masih kurang",
+          "kelompok": null
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            4
+          ],
+          "terbuka": "Perlu sosialisasi rutin agar semua unit paham prosedurnya",
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "terbuka": null,
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "terbuka": "Antrean layanan terlalu panjang pada jam sibuk",
+          "kelompok": null
+        },
+        {
+          "items": [
+            2,
+            3,
+            2,
+            2,
+            2,
+            3,
+            2,
+            2,
+            3
+          ],
+          "terbuka": "Perlu sosialisasi rutin agar semua unit paham prosedurnya",
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "terbuka": "SOP belum jelas untuk beberapa alur layanan",
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            3,
+            4,
+            4,
+            4,
+            3,
+            4
+          ],
+          "terbuka": "Perlu sosialisasi rutin agar semua unit paham prosedurnya",
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            4
+          ],
+          "terbuka": "SOP belum jelas untuk beberapa alur layanan",
+          "kelompok": null
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            3,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "terbuka": "Perlu sosialisasi rutin agar semua unit paham prosedurnya",
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            3,
+            4,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "terbuka": "Perlu pelatihan berkala untuk petugas",
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            4,
+            3,
+            3,
+            3,
+            4
+          ],
+          "terbuka": "Sarana dan fasilitas pendukung masih kurang",
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "terbuka": "Perlu pelatihan berkala untuk petugas",
+          "kelompok": null
+        },
+        {
+          "items": [
+            3,
+            2,
+            2,
+            3,
+            1,
+            2,
+            3,
+            1,
+            2
+          ],
+          "terbuka": "Sudah ada dugaan mark up pada pengadaan kecil",
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            2,
+            3,
+            2,
+            2,
+            3,
+            2,
+            2
+          ],
+          "terbuka": "Waktu layanan sering melebihi estimasi",
+          "kelompok": null
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "terbuka": "Komunikasi antar unit perlu diperbaiki",
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "terbuka": "Proses digitalisasi perlu dipercepat",
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "terbuka": "Waktu layanan sering melebihi estimasi",
+          "kelompok": null
+        },
+        {
+          "items": [
+            3,
+            2,
+            2,
+            3,
+            2,
+            1,
+            2,
+            3,
+            2
+          ],
+          "terbuka": "Perlu sosialisasi rutin agar semua unit paham prosedurnya",
+          "kelompok": null
+        },
+        {
+          "items": [
+            3,
+            2,
+            3,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2
+          ],
+          "terbuka": "SOP belum jelas untuk beberapa alur layanan",
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "terbuka": "Sudah ada dugaan mark up pada pengadaan kecil",
+          "kelompok": null
+        },
+        {
+          "items": [
+            2,
+            2,
+            3,
+            3,
+            3,
+            2,
+            2,
+            3,
+            2
+          ],
+          "terbuka": "Komunikasi antar unit perlu diperbaiki",
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            4,
+            3,
+            3,
+            3,
+            3,
+            4
+          ],
+          "terbuka": "Perlu pelatihan berkala untuk petugas",
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "terbuka": "Sudah ada dugaan mark up pada pengadaan kecil",
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            3
+          ],
+          "terbuka": "Sudah ada dugaan mark up pada pengadaan kecil",
+          "kelompok": null
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            2,
+            2,
+            3,
+            2,
+            2,
+            3
+          ],
+          "terbuka": null,
+          "kelompok": null
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "terbuka": "Sarana dan fasilitas pendukung masih kurang",
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            2,
+            3,
+            3,
+            3,
+            2,
+            2
+          ],
+          "terbuka": "Perlu pelatihan berkala untuk petugas",
+          "kelompok": "Tenaga Kependidikan"
+        }
+      ],
+      "agregatBanding": {
+        "slug": "spip",
+        "periode": "2025-genap",
+        "sumber": "simulated",
+        "jumlahButir": 9,
+        "n": 34,
+        "indeks": 77.2875816993464,
+        "skorRata": 77.2875816993464,
+        "median": 75,
+        "sd": 17.020247567838915,
+        "se": 2.918948376659601,
+        "ci": {
+          "bawah": 71.5664428810936,
+          "atas": 83.00872051759922
+        },
+        "alpha": 0.9652929446396352,
+        "alphaCatatan": null,
+        "setuju": 77.77777777777779,
+        "distribusi": [
+          4,
+          64,
+          138,
+          100
+        ],
+        "distribusiPersen": [
+          1,
+          21,
+          45,
+          33
+        ],
+        "butir": [
+          {
+            "label": "Etika & integritas",
+            "teks": "Etika & integritas",
+            "rata": 3.176470588235294,
+            "distribusi": [
+              0,
+              5,
+              18,
+              11
+            ],
+            "distribusiPersen": [
+              0,
+              15,
+              53,
+              32
+            ],
+            "persenSetuju": 85.29411764705883,
+            "persenNegatif": 14.705882352941178
+          },
+          {
+            "label": "Pemahaman tugas & kewenangan",
+            "teks": "Pemahaman tugas & kewenangan",
+            "rata": 3.0588235294117645,
+            "distribusi": [
+              0,
+              8,
+              16,
+              10
+            ],
+            "distribusiPersen": [
+              0,
+              24,
+              47,
+              29
+            ],
+            "persenSetuju": 76.47058823529412,
+            "persenNegatif": 23.52941176470588
+          },
+          {
+            "label": "Penilaian risiko",
+            "teks": "Penilaian risiko",
+            "rata": 3.1176470588235294,
+            "distribusi": [
+              0,
+              7,
+              16,
+              11
+            ],
+            "distribusiPersen": [
+              0,
+              21,
+              47,
+              32
+            ],
+            "persenSetuju": 79.41176470588235,
+            "persenNegatif": 20.588235294117645
+          },
+          {
+            "label": "Pemeriksaan & persetujuan",
+            "teks": "Pemeriksaan & persetujuan",
+            "rata": 3.1176470588235294,
+            "distribusi": [
+              0,
+              6,
+              18,
+              10
+            ],
+            "distribusiPersen": [
+              0,
+              18,
+              53,
+              29
+            ],
+            "persenSetuju": 82.35294117647058,
+            "persenNegatif": 17.647058823529413
+          },
+          {
+            "label": "Perbaikan kesalahan",
+            "teks": "Perbaikan kesalahan",
+            "rata": 3.0294117647058822,
+            "distribusi": [
+              1,
+              8,
+              14,
+              11
+            ],
+            "distribusiPersen": [
+              3,
+              24,
+              41,
+              32
+            ],
+            "persenSetuju": 73.52941176470588,
+            "persenNegatif": 26.47058823529412
+          },
+          {
+            "label": "Ketersediaan informasi",
+            "teks": "Ketersediaan informasi",
+            "rata": 3.0294117647058822,
+            "distribusi": [
+              1,
+              8,
+              14,
+              11
+            ],
+            "distribusiPersen": [
+              3,
+              24,
+              41,
+              32
+            ],
+            "persenSetuju": 73.52941176470588,
+            "persenNegatif": 26.47058823529412
+          },
+          {
+            "label": "Evaluasi & tindak lanjut",
+            "teks": "Evaluasi & tindak lanjut",
+            "rata": 3.1176470588235294,
+            "distribusi": [
+              0,
+              7,
+              16,
+              11
+            ],
+            "distribusiPersen": [
+              0,
+              21,
+              47,
+              32
+            ],
+            "persenSetuju": 79.41176470588235,
+            "persenNegatif": 20.588235294117645
+          },
+          {
+            "label": "Penghargaan prestasi",
+            "teks": "Penghargaan prestasi",
+            "rata": 2.9705882352941178,
+            "distribusi": [
+              2,
+              7,
+              15,
+              10
+            ],
+            "distribusiPersen": [
+              6,
+              21,
+              44,
+              29
+            ],
+            "persenSetuju": 73.52941176470588,
+            "persenNegatif": 26.47058823529412
+          },
+          {
+            "label": "Reward & punishment",
+            "teks": "Reward & punishment",
+            "rata": 3.2058823529411766,
+            "distribusi": [
+              0,
+              8,
+              11,
+              15
+            ],
+            "distribusiPersen": [
+              0,
+              24,
+              32,
+              44
+            ],
+            "persenSetuju": 76.47058823529412,
+            "persenNegatif": 23.52941176470588
+          }
+        ],
+        "butirTerendah": {
+          "label": "Penghargaan prestasi",
+          "teks": "Penghargaan prestasi",
+          "rata": 2.9705882352941178,
+          "distribusi": [
+            2,
+            7,
+            15,
+            10
+          ],
+          "distribusiPersen": [
+            6,
+            21,
+            44,
+            29
+          ],
+          "persenSetuju": 73.52941176470588,
+          "persenNegatif": 26.47058823529412
+        },
+        "kualitas": {
+          "seragam": 38.23529411764706,
+          "duplikat": 0,
+          "dibuang": 0,
+          "terbuka": 30,
+          "tertahan": 5,
+          "tema": [
+            {
+              "tema": "Sosialisasi",
+              "jumlah": 6
+            },
+            {
+              "tema": "Pelatihan",
+              "jumlah": 5
+            },
+            {
+              "tema": "Kejelasan SOP",
+              "jumlah": 4
+            }
+          ],
+          "n": 34
+        },
+        "kelompok": {
+          "dosen": 9,
+          "tendik": 11
+        }
+      },
+      "rekomendasi": [
+        {
+          "prioritas": "Pantau",
+          "judul": "Perkuat aspek Etika & integritas",
+          "dasar": "rata-rata 3,05, terendah dari 9 butir"
+        },
+        {
+          "prioritas": "Pantau",
+          "judul": "Perkuat aspek Pemahaman tugas & kewenangan",
+          "dasar": "rata-rata 3,09, terendah dari 9 butir; 15,5% menjawab 1-2"
+        },
+        {
+          "prioritas": "Pantau",
+          "judul": "Perkuat aspek Penilaian risiko",
+          "dasar": "rata-rata 2,95, terendah dari 9 butir; 17,2% menjawab 1-2"
+        },
+        {
+          "prioritas": "Pantau",
+          "judul": "Perkuat aspek Pemeriksaan & persetujuan",
+          "dasar": "rata-rata 3,02, terendah dari 9 butir; 17,2% menjawab 1-2"
+        },
+        {
+          "prioritas": "Pantau",
+          "judul": "Perkuat aspek Perbaikan kesalahan",
+          "dasar": "rata-rata 3,17, terendah dari 9 butir"
+        },
+        {
+          "prioritas": "Pantau",
+          "judul": "Perkuat aspek Ketersediaan informasi",
+          "dasar": "rata-rata 3,14, terendah dari 9 butir; 20,7% menjawab 1-2"
+        },
+        {
+          "prioritas": "Pantau",
+          "judul": "Perkuat aspek Evaluasi & tindak lanjut",
+          "dasar": "rata-rata 3,05, terendah dari 9 butir; 15,5% menjawab 1-2"
+        },
+        {
+          "prioritas": "Pantau",
+          "judul": "Perkuat aspek Penghargaan prestasi",
+          "dasar": "rata-rata 3,03, terendah dari 9 butir"
+        },
+        {
+          "prioritas": "Pantau",
+          "judul": "Perkuat aspek Reward & punishment",
+          "dasar": "rata-rata 3,10, terendah dari 9 butir"
+        }
+      ]
+    },
+    {
+      "slug": "spak",
+      "periode": "2026-ganjil",
+      "n": 42,
+      "benih": 20260202,
+      "records": [
+        {
+          "items": [
+            3,
+            3,
+            3,
+            2,
+            3,
+            3
+          ],
+          "terbuka": "Sudah ada dugaan mark up pada pengadaan kecil",
+          "kelompok": null
+        },
+        {
+          "items": [
+            3,
+            4,
+            4,
+            3,
+            4,
+            4
+          ],
+          "terbuka": "Waktu layanan sering melebihi estimasi",
+          "kelompok": null
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            3,
+            4,
+            4
+          ],
+          "terbuka": null,
+          "kelompok": null
+        },
+        {
+          "items": [
+            3,
+            4,
+            3,
+            3,
+            3,
+            4
+          ],
+          "terbuka": null,
+          "kelompok": null
+        },
+        {
+          "items": [
+            4,
+            3,
+            4,
+            3,
+            3,
+            4
+          ],
+          "terbuka": "Perlu sosialisasi rutin agar semua unit paham prosedurnya",
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            2,
+            2,
+            2,
+            2,
+            2,
+            3
+          ],
+          "terbuka": null,
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            3,
+            4,
+            3,
+            3,
+            3
+          ],
+          "terbuka": "Proses digitalisasi perlu dipercepat",
+          "kelompok": null
+        },
+        {
+          "items": [
+            4,
+            4,
+            3,
+            4,
+            4,
+            4
+          ],
+          "terbuka": "Antrean layanan terlalu panjang pada jam sibuk",
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            2,
+            2,
+            2,
+            3,
+            2
+          ],
+          "terbuka": null,
+          "kelompok": null
+        },
+        {
+          "items": [
+            3,
+            3,
+            4,
+            4,
+            4,
+            3
+          ],
+          "terbuka": "Sudah ada dugaan mark up pada pengadaan kecil",
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "terbuka": "SOP belum jelas untuk beberapa alur layanan",
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            2,
+            2,
+            3,
+            3,
+            3,
+            3
+          ],
+          "terbuka": "Proses digitalisasi perlu dipercepat",
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "terbuka": null,
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "terbuka": null,
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "terbuka": null,
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            2,
+            2,
+            3,
+            2,
+            2,
+            3
+          ],
+          "terbuka": null,
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            3,
+            2,
+            2,
+            3,
+            3
+          ],
+          "terbuka": "SOP belum jelas untuk beberapa alur layanan",
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "terbuka": "Antrean layanan terlalu panjang pada jam sibuk",
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            2,
+            2,
+            3,
+            3,
+            2
+          ],
+          "terbuka": "Sarana dan fasilitas pendukung masih kurang",
+          "kelompok": null
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "terbuka": "Perlu pelatihan berkala untuk petugas",
+          "kelompok": null
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "terbuka": "SOP belum jelas untuk beberapa alur layanan",
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            4,
+            4,
+            4,
+            3,
+            4
+          ],
+          "terbuka": "Antrean layanan terlalu panjang pada jam sibuk",
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            3,
+            4,
+            4,
+            3,
+            4
+          ],
+          "terbuka": null,
+          "kelompok": null
+        },
+        {
+          "items": [
+            3,
+            2,
+            3,
+            2,
+            2,
+            3
+          ],
+          "terbuka": "Perlu sosialisasi rutin agar semua unit paham prosedurnya",
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "terbuka": null,
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "terbuka": null,
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "terbuka": "Sudah ada dugaan mark up pada pengadaan kecil",
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "terbuka": "Komunikasi antar unit perlu diperbaiki",
+          "kelompok": null
+        },
+        {
+          "items": [
+            3,
+            3,
+            2,
+            3,
+            3,
+            2
+          ],
+          "terbuka": "Waktu layanan sering melebihi estimasi",
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "terbuka": "Sarana dan fasilitas pendukung masih kurang",
+          "kelompok": null
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "terbuka": "Sudah ada dugaan mark up pada pengadaan kecil",
+          "kelompok": null
+        },
+        {
+          "items": [
+            3,
+            3,
+            4,
+            4,
+            3,
+            3
+          ],
+          "terbuka": "Antrean layanan terlalu panjang pada jam sibuk",
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "terbuka": "Sudah ada dugaan mark up pada pengadaan kecil",
+          "kelompok": null
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "terbuka": "Antrean layanan terlalu panjang pada jam sibuk",
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "terbuka": "Perlu pelatihan berkala untuk petugas",
+          "kelompok": null
+        },
+        {
+          "items": [
+            3,
+            2,
+            2,
+            2,
+            2,
+            3
+          ],
+          "terbuka": "Perlu pelatihan berkala untuk petugas",
+          "kelompok": null
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "terbuka": "Proses digitalisasi perlu dipercepat",
+          "kelompok": null
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "terbuka": "Waktu layanan sering melebihi estimasi",
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            2,
+            2,
+            3,
+            2,
+            3,
+            3
+          ],
+          "terbuka": null,
+          "kelompok": null
+        },
+        {
+          "items": [
+            3,
+            2,
+            2,
+            3,
+            2,
+            2
+          ],
+          "terbuka": null,
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "terbuka": "Proses digitalisasi perlu dipercepat",
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "terbuka": "SOP belum jelas untuk beberapa alur layanan",
+          "kelompok": "Dosen"
+        }
+      ],
+      "agregat": {
+        "slug": "spak",
+        "periode": "2026-ganjil",
+        "sumber": "simulated",
+        "jumlahButir": 6,
+        "n": 42,
+        "indeks": 79.86111111111111,
+        "skorRata": 79.86111111111111,
+        "median": 75,
+        "sd": 14.693015719396842,
+        "se": 2.2671815465486085,
+        "ci": {
+          "bawah": 75.41743527987585,
+          "atas": 84.30478694234638
+        },
+        "alpha": 0.9347592583944332,
+        "alphaCatatan": null,
+        "setuju": 85.31746031746032,
+        "distribusi": [
+          0,
+          37,
+          129,
+          86
+        ],
+        "distribusiPersen": [
+          0,
+          15,
+          51,
+          34
+        ],
+        "butir": [
+          {
+            "label": "Layanan jujur & transparan",
+            "teks": "Layanan di institusi ini diberikan secara jujur, transparan, dan sesuai ketentuan yang berlaku.",
+            "rata": 3.1904761904761907,
+            "distribusi": [
+              0,
+              4,
+              26,
+              12
+            ],
+            "distribusiPersen": [
+              0,
+              9,
+              62,
+              29
+            ],
+            "persenSetuju": 90.47619047619048,
+            "persenNegatif": 9.523809523809524
+          },
+          {
+            "label": "Layanan adil",
+            "teks": "Layanan diberikan secara adil kepada semua pihak, tanpa membeda-bedakan berdasarkan jabatan, kedekatan personal, atau unit kerja.",
+            "rata": 3.119047619047619,
+            "distribusi": [
+              0,
+              9,
+              19,
+              14
+            ],
+            "distribusiPersen": [
+              0,
+              22,
+              45,
+              33
+            ],
+            "persenSetuju": 78.57142857142857,
+            "persenNegatif": 21.428571428571427
+          },
+          {
+            "label": "Bebas manipulasi",
+            "teks": "Proses layanan bebas dari manipulasi data, penyalahgunaan prosedur, atau keberpihakan kepada pihak tertentu.",
+            "rata": 3.238095238095238,
+            "distribusi": [
+              0,
+              7,
+              18,
+              17
+            ],
+            "distribusiPersen": [
+              0,
+              17,
+              43,
+              40
+            ],
+            "persenSetuju": 83.33333333333334,
+            "persenNegatif": 16.666666666666664
+          },
+          {
+            "label": "Bebas pungutan",
+            "teks": "Tidak ada permintaan atau ekspektasi pemberian uang, hadiah, atau fasilitas di luar ketentuan sebagai syarat atau kelancaran layanan.",
+            "rata": 3.142857142857143,
+            "distribusi": [
+              0,
+              8,
+              20,
+              14
+            ],
+            "distribusiPersen": [
+              0,
+              19,
+              48,
+              33
+            ],
+            "persenSetuju": 80.95238095238095,
+            "persenNegatif": 19.047619047619047
+          },
+          {
+            "label": "Tanpa perantara",
+            "teks": "Layanan dapat diakses langsung sesuai prosedur tanpa perlu menggunakan perantara agar urusan lebih mudah atau cepat.",
+            "rata": 3.1904761904761907,
+            "distribusi": [
+              0,
+              5,
+              24,
+              13
+            ],
+            "distribusiPersen": [
+              0,
+              12,
+              57,
+              31
+            ],
+            "persenSetuju": 88.09523809523809,
+            "persenNegatif": 11.904761904761903
+          },
+          {
+            "label": "Layanan bebas korupsi",
+            "teks": "Secara keseluruhan, layanan di institusi ini telah dilaksanakan dengan integritas dan bebas dari praktik korupsi.",
+            "rata": 3.2857142857142856,
+            "distribusi": [
+              0,
+              4,
+              22,
+              16
+            ],
+            "distribusiPersen": [
+              0,
+              10,
+              52,
+              38
+            ],
+            "persenSetuju": 90.47619047619048,
+            "persenNegatif": 9.523809523809524
+          }
+        ],
+        "butirTerendah": {
+          "label": "Layanan adil",
+          "teks": "Layanan diberikan secara adil kepada semua pihak, tanpa membeda-bedakan berdasarkan jabatan, kedekatan personal, atau unit kerja.",
+          "rata": 3.119047619047619,
+          "distribusi": [
+            0,
+            9,
+            19,
+            14
+          ],
+          "distribusiPersen": [
+            0,
+            22,
+            45,
+            33
+          ],
+          "persenSetuju": 78.57142857142857,
+          "persenNegatif": 21.428571428571427
+        },
+        "kualitas": {
+          "seragam": 45.23809523809524,
+          "duplikat": 1,
+          "dibuang": 3,
+          "terbuka": 29,
+          "tertahan": 5,
+          "tema": [
+            {
+              "tema": "Antrean layanan",
+              "jumlah": 5
+            },
+            {
+              "tema": "Digitalisasi",
+              "jumlah": 4
+            },
+            {
+              "tema": "Kejelasan SOP",
+              "jumlah": 4
+            }
+          ],
+          "n": 42
+        },
+        "kelompok": {
+          "dosen": 13,
+          "tendik": 12
+        }
+      },
+      "recordsBanding": [
+        {
+          "items": [
+            2,
+            2,
+            3,
+            2,
+            2,
+            3
+          ],
+          "terbuka": null,
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            2,
+            2,
+            2,
+            3,
+            2,
+            2
+          ],
+          "terbuka": null,
+          "kelompok": null
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "terbuka": "Perlu sosialisasi rutin agar semua unit paham prosedurnya",
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            1,
+            2,
+            2,
+            2,
+            2,
+            1
+          ],
+          "terbuka": "Antrean layanan terlalu panjang pada jam sibuk",
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            4,
+            4,
+            4,
+            3,
+            3
+          ],
+          "terbuka": null,
+          "kelompok": null
+        },
+        {
+          "items": [
+            3,
+            2,
+            2,
+            2,
+            2,
+            3
+          ],
+          "terbuka": "SOP belum jelas untuk beberapa alur layanan",
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            2,
+            2,
+            3,
+            3,
+            3,
+            2
+          ],
+          "terbuka": "Perlu pelatihan berkala untuk petugas",
+          "kelompok": null
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            4,
+            4,
+            4
+          ],
+          "terbuka": "Proses digitalisasi perlu dipercepat",
+          "kelompok": null
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            4,
+            3
+          ],
+          "terbuka": "Waktu layanan sering melebihi estimasi",
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "terbuka": "Waktu layanan sering melebihi estimasi",
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "terbuka": "Perlu pelatihan berkala untuk petugas",
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            2,
+            2,
+            2,
+            1,
+            2,
+            1
+          ],
+          "terbuka": "Antrean layanan terlalu panjang pada jam sibuk",
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "terbuka": "Sarana dan fasilitas pendukung masih kurang",
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            4,
+            3,
+            3
+          ],
+          "terbuka": "Sudah ada dugaan mark up pada pengadaan kecil",
+          "kelompok": null
+        },
+        {
+          "items": [
+            2,
+            3,
+            2,
+            3,
+            2,
+            2
+          ],
+          "terbuka": "Perlu sosialisasi rutin agar semua unit paham prosedurnya",
+          "kelompok": null
+        },
+        {
+          "items": [
+            3,
+            2,
+            2,
+            2,
+            2,
+            3
+          ],
+          "terbuka": "Proses digitalisasi perlu dipercepat",
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            2,
+            1,
+            3,
+            2,
+            2,
+            3
+          ],
+          "terbuka": null,
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            3,
+            4
+          ],
+          "terbuka": null,
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "terbuka": "Komunikasi antar unit perlu diperbaiki",
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            2,
+            3
+          ],
+          "terbuka": "Sudah ada dugaan mark up pada pengadaan kecil",
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            4,
+            3,
+            3
+          ],
+          "terbuka": "Proses digitalisasi perlu dipercepat",
+          "kelompok": null
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            4,
+            4,
+            3
+          ],
+          "terbuka": "SOP belum jelas untuk beberapa alur layanan",
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            3,
+            4,
+            3,
+            3,
+            4
+          ],
+          "terbuka": "Sudah ada dugaan mark up pada pengadaan kecil",
+          "kelompok": null
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "terbuka": "Proses digitalisasi perlu dipercepat",
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            3
+          ],
+          "terbuka": null,
+          "kelompok": "Dosen"
+        }
+      ],
+      "agregatBanding": {
+        "slug": "spak",
+        "periode": "2025-genap",
+        "sumber": "simulated",
+        "jumlahButir": 6,
+        "n": 25,
+        "indeks": 72.33333333333334,
+        "skorRata": 72.33333333333334,
+        "median": 75,
+        "sd": 16.176829566228815,
+        "se": 3.235365913245763,
+        "ci": {
+          "bawah": 65.99201614337164,
+          "atas": 78.67465052329504
+        },
+        "alpha": 0.9237505528527201,
+        "alphaCatatan": "n kecil, interpretasi hati-hati",
+        "setuju": 72.66666666666667,
+        "distribusi": [
+          5,
+          36,
+          79,
+          30
+        ],
+        "distribusiPersen": [
+          3,
+          24,
+          53,
+          20
+        ],
+        "butir": [
+          {
+            "label": "Layanan jujur & transparan",
+            "teks": "Layanan di institusi ini diberikan secara jujur, transparan, dan sesuai ketentuan yang berlaku.",
+            "rata": 2.84,
+            "distribusi": [
+              1,
+              6,
+              14,
+              4
+            ],
+            "distribusiPersen": [
+              4,
+              24,
+              56,
+              16
+            ],
+            "persenSetuju": 72,
+            "persenNegatif": 28.000000000000004
+          },
+          {
+            "label": "Layanan adil",
+            "teks": "Layanan diberikan secara adil kepada semua pihak, tanpa membeda-bedakan berdasarkan jabatan, kedekatan personal, atau unit kerja.",
+            "rata": 2.8,
+            "distribusi": [
+              1,
+              7,
+              13,
+              4
+            ],
+            "distribusiPersen": [
+              4,
+              28,
+              52,
+              16
+            ],
+            "persenSetuju": 68,
+            "persenNegatif": 32
+          },
+          {
+            "label": "Bebas manipulasi",
+            "teks": "Proses layanan bebas dari manipulasi data, penyalahgunaan prosedur, atau keberpihakan kepada pihak tertentu.",
+            "rata": 2.96,
+            "distribusi": [
+              0,
+              6,
+              14,
+              5
+            ],
+            "distribusiPersen": [
+              0,
+              24,
+              56,
+              20
+            ],
+            "persenSetuju": 76,
+            "persenNegatif": 24
+          },
+          {
+            "label": "Bebas pungutan",
+            "teks": "Tidak ada permintaan atau ekspektasi pemberian uang, hadiah, atau fasilitas di luar ketentuan sebagai syarat atau kelancaran layanan.",
+            "rata": 3.04,
+            "distribusi": [
+              1,
+              5,
+              11,
+              8
+            ],
+            "distribusiPersen": [
+              4,
+              20,
+              44,
+              32
+            ],
+            "persenSetuju": 76,
+            "persenNegatif": 24
+          },
+          {
+            "label": "Tanpa perantara",
+            "teks": "Layanan dapat diakses langsung sesuai prosedur tanpa perlu menggunakan perantara agar urusan lebih mudah atau cepat.",
+            "rata": 2.84,
+            "distribusi": [
+              0,
+              9,
+              11,
+              5
+            ],
+            "distribusiPersen": [
+              0,
+              36,
+              44,
+              20
+            ],
+            "persenSetuju": 64,
+            "persenNegatif": 36
+          },
+          {
+            "label": "Layanan bebas korupsi",
+            "teks": "Secara keseluruhan, layanan di institusi ini telah dilaksanakan dengan integritas dan bebas dari praktik korupsi.",
+            "rata": 2.88,
+            "distribusi": [
+              2,
+              3,
+              16,
+              4
+            ],
+            "distribusiPersen": [
+              8,
+              12,
+              64,
+              16
+            ],
+            "persenSetuju": 80,
+            "persenNegatif": 20
+          }
+        ],
+        "butirTerendah": {
+          "label": "Layanan adil",
+          "teks": "Layanan diberikan secara adil kepada semua pihak, tanpa membeda-bedakan berdasarkan jabatan, kedekatan personal, atau unit kerja.",
+          "rata": 2.8,
+          "distribusi": [
+            1,
+            7,
+            13,
+            4
+          ],
+          "distribusiPersen": [
+            4,
+            28,
+            52,
+            16
+          ],
+          "persenSetuju": 68,
+          "persenNegatif": 32
+        },
+        "kualitas": {
+          "seragam": 24,
+          "duplikat": 0,
+          "dibuang": 0,
+          "terbuka": 19,
+          "tertahan": 3,
+          "tema": [
+            {
+              "tema": "Digitalisasi",
+              "jumlah": 4
+            },
+            {
+              "tema": "Sosialisasi",
+              "jumlah": 2
+            },
+            {
+              "tema": "Antrean layanan",
+              "jumlah": 2
+            }
+          ],
+          "n": 25
+        },
+        "kelompok": {
+          "dosen": 12,
+          "tendik": 5
+        }
+      },
+      "rekomendasi": [
+        {
+          "prioritas": "Sedang",
+          "judul": "Perbandingan belum dapat diandalkan",
+          "dasar": "n 42 dan 25; minimum 30 per semester"
+        },
+        {
+          "prioritas": "Pantau",
+          "judul": "Perkuat aspek Layanan adil",
+          "dasar": "rata-rata 3,12, terendah dari 6 butir; 21,4% menjawab 1-2"
+        },
+        {
+          "prioritas": "Pantau",
+          "judul": "Perkuat aspek Bebas manipulasi",
+          "dasar": "rata-rata 3,24, terendah dari 6 butir; 16,7% menjawab 1-2"
+        },
+        {
+          "prioritas": "Pantau",
+          "judul": "Perkuat aspek Bebas pungutan",
+          "dasar": "rata-rata 3,14, terendah dari 6 butir; 19,0% menjawab 1-2"
+        }
+      ]
+    }
+  ]
+}
