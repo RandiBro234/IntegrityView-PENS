@@ -118,7 +118,6 @@ export default function SurveiPage({ onNavigate, onOpenInstrument }) {
                 <article key={d.key} className="scard">
                   <div className="scard__top">
                     <span className="scard__kategori">{d.kategori}</span>
-                    {d.requiresGoogleLogin && <span className="scard__tag">Perlu akun Google</span>}
                   </div>
                   <h3 className="scard__name">{d.namaPanjang}</h3>
                   <p className="scard__desc">{d.deskripsi}</p>

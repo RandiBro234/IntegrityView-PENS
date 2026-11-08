@@ -60,11 +60,6 @@ export default function ReportTemplate({ info, st, rekomendasi, periode, tanggal
               <Delta value={hasil.delta} skalaSkor />
             </div>
             <div className="rt__card">
-              <span className="rt__card-label">Setuju + Sangat Setuju</span>
-              <span className="rt__card-value">{formatAngka(st.setuju)}%</span>
-              <Delta value={hasil.pembanding ? st.setuju - hasil.pembanding.setuju : null} />
-            </div>
-            <div className="rt__card">
               <span className="rt__card-label">Cronbach's Alpha</span>
               <span className="rt__card-value">
                 {st.alpha == null ? '—' : formatAngka(st.alpha, 2)}
@@ -82,7 +77,6 @@ export default function ReportTemplate({ info, st, rekomendasi, periode, tanggal
               <tr>
                 <th>Butir</th>
                 <th className="rt__num rt__num--center">Rata-rata</th>
-                <th className="rt__num rt__num--center">Setuju + SS</th>
               </tr>
             </thead>
             <tbody>
@@ -90,7 +84,6 @@ export default function ReportTemplate({ info, st, rekomendasi, periode, tanggal
                 <tr key={b.label}>
                   <td>{b.teks}</td>
                   <td className="rt__num rt__num--center">{formatAngka(b.rata, 2)}</td>
-                  <td className="rt__num rt__num--center">{formatAngka(b.persenSetuju)}%</td>
                 </tr>
               ))}
             </tbody>
@@ -171,7 +164,7 @@ export default function ReportTemplate({ info, st, rekomendasi, periode, tanggal
                   <tr>
                     <th>Butir</th>
                     <th className="rt__num--center">Skor {laporan.periode.label}</th>
-                    <th className="rt__num--center">Skor pembanding</th>
+                    <th className="rt__num--center">Skor {laporan.periodePembanding.label}</th>
                     <th className="rt__num--center">Selisih skor</th>
                   </tr>
                 </thead>

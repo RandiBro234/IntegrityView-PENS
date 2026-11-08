@@ -81,6 +81,7 @@
 }
 
 .spanel__stat {
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -91,6 +92,18 @@
   border-radius: 10px;
   border: 1px solid var(--border-soft);
 }
+/* Info di pojok tiap kartu metrik; tooltip-nya tetap dari InfoTip. */
+.spanel__stat > .info-tip {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 15px;
+  height: 15px;
+  font-size: 9px;
+  z-index: 2;
+}
+.spanel__stat-value,
+.spanel__stat-label { padding-right: 14px; }
 .spanel__stat-value {
   font-family: var(--font-display);
   font-size: clamp(0.95rem, 1.1vw, 1.1rem);

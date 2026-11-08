@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import './SebaranJawabanChart.css';
 import { formatAngka } from '../../data/mock';
 import { SKALA } from '../../data/surveyData';
@@ -25,10 +25,14 @@ export default function SebaranJawabanChart({ data, selectedKey, onSelect, onOpe
   const [barWidth, setBarWidth] = useState(0);
   const innerRef = useRef(null);
 
-  useEffect(() => {
+  /* Ukur lebar batang sebelum paint agar label persen langsung muncul tanpa
+     harus memicu resize/zoom dulu. */
+  useLayoutEffect(() => {
     const bar = innerRef.current?.querySelector('.sebaran__bar');
     if (!bar) return;
-    const ro = new ResizeObserver(() => setBarWidth(bar.getBoundingClientRect().width));
+    const ukur = () => setBarWidth(bar.getBoundingClientRect().width);
+    ukur();
+    const ro = new ResizeObserver(ukur);
     ro.observe(bar);
     return () => ro.disconnect();
   }, [data]);
@@ -76,7 +80,7 @@ export default function SebaranJawabanChart({ data, selectedKey, onSelect, onOpe
                     style={{ width: pct + '%', backgroundColor: SKALA[i].warna }}
                     onMouseMove={(e) => showTip(e, item, i)}
                   >
-                    {barWidth * pct / 100 >= 40 && (
+                    {pct >= 25 && barWidth * pct / 100 >= 20 && (
                       <span className="sebaran__seg-label">{formatAngka(pct, 0)}%</span>
                     )}
                   </span>

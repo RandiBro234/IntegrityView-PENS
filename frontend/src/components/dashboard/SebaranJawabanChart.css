@@ -15,7 +15,7 @@
   min-width: 0;
   font-size: 11.5px;
   color: var(--text-secondary);
-  padding-bottom: 6px;
+  padding: 0 8px 6px;
   border-bottom: 1px solid var(--border-soft);
 }
 .sebaran__legend-item {
@@ -47,14 +47,14 @@
 }
 
 /* Grid identik untuk semua baris:
-   nama 120px | batang 1fr | persentase 64px | selisih 72px | aksi 28px, gap 16px. */
+   nama 104px | batang 1fr | persentase 64px | selisih 72px | aksi 28px, gap 12px. */
 .sebaran__row {
   display: grid;
-  grid-template-columns: 120px minmax(0, 1fr) 64px 72px 28px;
-  gap: 16px;
+  grid-template-columns: 104px minmax(0, 1fr) 64px 72px 28px;
+  gap: 12px;
   align-items: center;
   min-height: 0;
-  padding: 3px 0;
+  padding: 3px 8px;
   border-radius: 8px;
   border: 0;
   background: none;
@@ -65,11 +65,10 @@
 .sebaran__row:hover { background: var(--bg-page); }
 .sebaran__row { transition: background 0.12s ease, transform var(--dur-fast) var(--ease-out); }
 .sebaran__row:hover { transform: translateY(-2px); }
-/* Highlight memakai outline agar ukuran baris tidak berubah. */
+/* Highlight memakai inset shadow agar garis mengikuti radius baris dengan presisi. */
 .sebaran__row.is-selected {
-  outline: 2px solid var(--navy-900);
-  outline-offset: -2px;
   background: var(--bg-page);
+  box-shadow: inset 0 0 0 2px var(--navy-900);
 }
 .sebaran__row:focus-visible {
   outline: 2px solid var(--orange-500);
@@ -89,11 +88,11 @@
 
 .sebaran__bar {
   display: flex;
-  height: 18px;
+  height: 24px;
   width: 100%;
   min-width: 0;
   overflow: hidden;
-  border-radius: 4px;
+  border-radius: 5px;
   background: var(--gray-50);
   transform-origin: left center;
 }
@@ -129,7 +128,7 @@ html.js .sebaran__seg-label {
 .sebaran__seg:hover { filter: brightness(1.1); }
 
 .sebaran__seg-label {
-  font-size: 11px;
+  font-size: 11.5px;
   font-weight: 800;
   color: #fff;
   font-variant-numeric: tabular-nums;
@@ -209,12 +208,12 @@ html.js .sebaran__seg-label {
 
 /* Layar sempit: gap mengecil, label legenda berganti singkatan bertooltip. */
 @media (max-width: 1100px) {
-  .sebaran__row { gap: 10px; grid-template-columns: 108px minmax(0, 1fr) 60px 64px 24px; }
+  .sebaran__row { gap: 8px; grid-template-columns: 96px minmax(0, 1fr) 60px 64px 24px; }
   .sebaran__legend-full { display: none; }
   .sebaran__legend-short { display: inline; }
   .sebaran__legend { justify-content: flex-start; gap: 14px; }
 }
 @media (max-width: 700px) {
-  .sebaran__row { gap: 6px; grid-template-columns: 84px minmax(0, 1fr) 52px 56px 22px; }
+  .sebaran__row { gap: 6px; grid-template-columns: 76px minmax(0, 1fr) 52px 56px 22px; }
   .sebaran__seg-label { display: none; }
 }

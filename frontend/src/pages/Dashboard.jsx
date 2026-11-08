@@ -6,9 +6,11 @@ import SebaranJawabanChart from '../components/dashboard/SebaranJawabanChart';
 import StatistikPanel from '../components/dashboard/StatistikPanel';
 import PeriodHeatmap from '../components/dashboard/PeriodHeatmap';
 import ReportFilters from '../components/dashboard/ReportFilters';
+import RingkasanDashboardTemplate from '../components/dashboard/RingkasanDashboardTemplate';
 import { getReportData } from '../data/surveyData';
 import { useReportFilters } from '../data/useReportFilters';
 import { getUser } from '../data/mock';
+import { unduhLaporanPdf, namaFileLaporan } from '../lib/reportPdf';
 import './Dashboard.css';
 
 export default function Dashboard({ onBackToLanding, onNavigate, onOpenInstrument }) {
@@ -16,6 +18,14 @@ export default function Dashboard({ onBackToLanding, onNavigate, onOpenInstrumen
   const { filter, setFilter, siap } = useReportFilters();
   const [selectedKey, setSelectedKey] = useState(null);
   const [tab, setTab] = useState('sebaran');
+  const [ekspor, setEkspor] = useState(false);
+  const [mengunduh, setMengunduh] = useState(false);
+  const reportRef = useRef(null);
+  const [tanggalCetak] = useState(() => {
+    const d = new Date();
+    const bulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+    return `${d.getDate()} ${bulan[d.getMonth()]} ${d.getFullYear()}`;
+  });
 
   /* Indikator tab bergeser memakai transform, bukan left/width. */
   const tabRef = useRef(null);
@@ -46,17 +56,36 @@ export default function Dashboard({ onBackToLanding, onNavigate, onOpenInstrumen
     if (onNavigate) onNavigate(key);
   };
 
+  const handleUnduh = async () => {
+    if (!reportRef.current || mengunduh) return;
+    setMengunduh(true);
+    try {
+      await unduhLaporanPdf(reportRef.current, namaFileLaporan('Ringkasan-ZI', laporan.periode.label));
+      setEkspor(false);
+    } finally {
+      setMengunduh(false);
+    }
+  };
+
   return (
     <div className="app-shell dashboard-shell">
       <Sidebar active="dashboard" onNavigate={handleMenu} user={user} />
 
       <div className="app-main">
-        <Topbar user={user} onProfil={() => handleMenu('profil')} onNavigate={handleMenu} />
+        <Topbar user={user} onProfil={() => handleMenu('profil')} onNavigate={handleMenu}>
+          <ReportFilters ringkas filter={filter} onChange={setFilter} />
+          <button
+            type="button"
+            className="btn btn-primary dashboard__ekspor"
+            onClick={() => setEkspor(true)}
+            disabled={!siap || ringkasan.totalInstrumen === 0}
+          >
+            Ekspor
+          </button>
+        </Topbar>
 
         <main className="app-content dashboard-page">
           <div className="dashboard__grid">
-            <ReportFilters filter={filter} onChange={setFilter} memakaiSimulasi={laporan.memakaiSimulasi} />
-
             {!siap ? (
               <div className="dashboard__loading" role="status" aria-label="Memuat data survei">
                 <div className="dashboard__loading-cards">
@@ -84,7 +113,8 @@ export default function Dashboard({ onBackToLanding, onNavigate, onOpenInstrumen
                       <h2 className="dashboard__box-title" id="sebaran-title">
                         {tab === 'sebaran' ? 'Sebaran Jawaban per Instrumen' : 'Perubahan Skor per Semester'}
                       </h2>
-                      <div className="dashboard__tabs" role="group" aria-label="Tampilan grafik" ref={tabRef}>
+                      <div className="dashboard__box-tools">
+                        <div className="dashboard__tabs" role="group" aria-label="Tampilan grafik" ref={tabRef}>
                         <span
                           className="dashboard__tab-pil"
                           aria-hidden="true"
@@ -108,6 +138,7 @@ export default function Dashboard({ onBackToLanding, onNavigate, onOpenInstrumen
                         >
                           Perubahan
                         </button>
+                        </div>
                       </div>
                     </div>
 
@@ -144,6 +175,36 @@ export default function Dashboard({ onBackToLanding, onNavigate, onOpenInstrumen
           </div>
         </main>
       </div>
+
+      {ekspor && (
+        <div className="dashmodal__overlay" onClick={() => !mengunduh && setEkspor(false)} role="presentation">
+          <div
+            className="dashmodal"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Pratinjau Ringkasan Dashboard"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="dashmodal__head">
+              <h3>Pratinjau Ringkasan Dashboard</h3>
+              <button type="button" className="dashmodal__close" onClick={() => setEkspor(false)} disabled={mengunduh} aria-label="Tutup">×</button>
+            </div>
+            <div className="dashmodal__preview">
+              <div className="dashmodal__scale" ref={reportRef}>
+                <RingkasanDashboardTemplate laporan={laporan} tanggalCetak={tanggalCetak} />
+              </div>
+            </div>
+            <div className="dashmodal__foot">
+              <button type="button" className="btn btn-outline-navy" onClick={() => setEkspor(false)} disabled={mengunduh}>
+                Batal
+              </button>
+              <button type="button" className="btn btn-primary" onClick={handleUnduh} disabled={mengunduh}>
+                {mengunduh ? 'Menyiapkan…' : 'Unduh PDF'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

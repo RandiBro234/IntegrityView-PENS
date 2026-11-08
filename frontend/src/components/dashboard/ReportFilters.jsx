@@ -7,7 +7,7 @@ import './ReportFilters.css';
 
 const CATATAN_DASAR = 'Responden tiap semester berbeda, sehingga selisih skor membandingkan kelompok responden yang berbeda, bukan perubahan pada orang yang sama.';
 
-export default function ReportFilters({ filter, onChange, memakaiSimulasi = false }) {
+export default function ReportFilters({ filter, onChange, memakaiSimulasi = false, ringkas = false }) {
   const [terbuka, setTerbuka] = useState(false);
   const menuRef = useRef(null);
   const periodeAwal = filter.periode === PERIODE_AWAL;
@@ -43,6 +43,24 @@ export default function ReportFilters({ filter, onChange, memakaiSimulasi = fals
       document.removeEventListener('keydown', tutupEscape);
     };
   }, [terbuka]);
+
+  if (ringkas) {
+    return (
+      <div className="report-filters report-filters--ringkas" role="group" aria-label="Periode laporan">
+        <select
+          aria-label="Periode"
+          className="report-filters__periode"
+          value={filter.periode}
+          onChange={pilih('periode')}
+          title={periodeTerpilih ? `${periodeTerpilih.label} - ${periodeTerpilih.rentang}` : undefined}
+        >
+          {PERIODE.map((p) => (
+            <option key={p.key} value={p.key}>Periode: {p.label}</option>
+          ))}
+        </select>
+      </div>
+    );
+  }
 
   return (
     <div className="report-filters" role="group" aria-label="Filter laporan">
