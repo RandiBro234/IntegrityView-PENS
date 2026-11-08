@@ -1,0 +1,577 @@
+{
+  "_catatan": "Dihasilkan scripts/gen-instrumen.mjs dari frontend/src/data/instrumentConfig.js. Jangan diedit tangan.",
+  "_sumber": "frontend/src/data/instrumentConfig.js",
+  "instrumen": [
+    {
+      "slug": "spip",
+      "nama": "SPIP",
+      "nama_panjang": "Survei Penilaian Internal SPIP",
+      "kategori": "Integritas & Korupsi",
+      "kelompok": "Internal",
+      "jumlah_butir": 9,
+      "punya_agregat": true,
+      "butir": [
+        {
+          "kode": "SPIP1",
+          "nomor": 1,
+          "label": "Etika & integritas",
+          "teks": "Etika & integritas"
+        },
+        {
+          "kode": "SPIP2",
+          "nomor": 2,
+          "label": "Pemahaman tugas & kewenangan",
+          "teks": "Pemahaman tugas & kewenangan"
+        },
+        {
+          "kode": "SPIP3",
+          "nomor": 3,
+          "label": "Penilaian risiko",
+          "teks": "Penilaian risiko"
+        },
+        {
+          "kode": "SPIP4",
+          "nomor": 4,
+          "label": "Pemeriksaan & persetujuan",
+          "teks": "Pemeriksaan & persetujuan"
+        },
+        {
+          "kode": "SPIP5",
+          "nomor": 5,
+          "label": "Perbaikan kesalahan",
+          "teks": "Perbaikan kesalahan"
+        },
+        {
+          "kode": "SPIP6",
+          "nomor": 6,
+          "label": "Ketersediaan informasi",
+          "teks": "Ketersediaan informasi"
+        },
+        {
+          "kode": "SPIP7",
+          "nomor": 7,
+          "label": "Evaluasi & tindak lanjut",
+          "teks": "Evaluasi & tindak lanjut"
+        },
+        {
+          "kode": "SPIP8",
+          "nomor": 8,
+          "label": "Penghargaan prestasi",
+          "teks": "Penghargaan prestasi"
+        },
+        {
+          "kode": "SPIP9",
+          "nomor": 9,
+          "label": "Reward & punishment",
+          "teks": "Reward & punishment"
+        }
+      ]
+    },
+    {
+      "slug": "spak",
+      "nama": "SPAK",
+      "nama_panjang": "Survei Persepsi Anti Korupsi",
+      "kategori": "Integritas & Korupsi",
+      "kelompok": "Layanan",
+      "jumlah_butir": 6,
+      "punya_agregat": true,
+      "butir": [
+        {
+          "kode": "SPAK1",
+          "nomor": 1,
+          "label": "Layanan jujur & transparan",
+          "teks": "Layanan di institusi ini diberikan secara jujur, transparan, dan sesuai ketentuan yang berlaku."
+        },
+        {
+          "kode": "SPAK2",
+          "nomor": 2,
+          "label": "Layanan adil",
+          "teks": "Layanan diberikan secara adil kepada semua pihak, tanpa membeda-bedakan berdasarkan jabatan, kedekatan personal, atau unit kerja."
+        },
+        {
+          "kode": "SPAK3",
+          "nomor": 3,
+          "label": "Bebas manipulasi",
+          "teks": "Proses layanan bebas dari manipulasi data, penyalahgunaan prosedur, atau keberpihakan kepada pihak tertentu."
+        },
+        {
+          "kode": "SPAK4",
+          "nomor": 4,
+          "label": "Bebas pungutan",
+          "teks": "Tidak ada permintaan atau ekspektasi pemberian uang, hadiah, atau fasilitas di luar ketentuan sebagai syarat atau kelancaran layanan."
+        },
+        {
+          "kode": "SPAK5",
+          "nomor": 5,
+          "label": "Tanpa perantara",
+          "teks": "Layanan dapat diakses langsung sesuai prosedur tanpa perlu menggunakan perantara agar urusan lebih mudah atau cepat."
+        },
+        {
+          "kode": "SPAK6",
+          "nomor": 6,
+          "label": "Layanan bebas korupsi",
+          "teks": "Secara keseluruhan, layanan di institusi ini telah dilaksanakan dengan integritas dan bebas dari praktik korupsi."
+        }
+      ]
+    },
+    {
+      "slug": "spkp",
+      "nama": "SPKP",
+      "nama_panjang": "Survei Persepsi Kualitas Pelayanan",
+      "kategori": "Pelayanan Publik",
+      "kelompok": "Layanan",
+      "jumlah_butir": 8,
+      "punya_agregat": true,
+      "butir": [
+        {
+          "kode": "SPKP1",
+          "nomor": 1,
+          "label": "Prosedur jelas",
+          "teks": "Prosedur jelas"
+        },
+        {
+          "kode": "SPKP2",
+          "nomor": 2,
+          "label": "Persyaratan transparan",
+          "teks": "Persyaratan transparan"
+        },
+        {
+          "kode": "SPKP3",
+          "nomor": 3,
+          "label": "Informasi tarif",
+          "teks": "Informasi tarif"
+        },
+        {
+          "kode": "SPKP4",
+          "nomor": 4,
+          "label": "Ketepatan waktu",
+          "teks": "Ketepatan waktu"
+        },
+        {
+          "kode": "SPKP5",
+          "nomor": 5,
+          "label": "Responsivitas petugas",
+          "teks": "Responsivitas petugas"
+        },
+        {
+          "kode": "SPKP6",
+          "nomor": 6,
+          "label": "Kualitas output",
+          "teks": "Kualitas output"
+        },
+        {
+          "kode": "SPKP7",
+          "nomor": 7,
+          "label": "Sarana & sistem informasi",
+          "teks": "Sarana & sistem informasi"
+        },
+        {
+          "kode": "SPKP8",
+          "nomor": 8,
+          "label": "Mekanisme keluhan",
+          "teks": "Mekanisme keluhan"
+        }
+      ]
+    },
+    {
+      "slug": "gratifikasi",
+      "nama": "Gratifikasi",
+      "nama_panjang": "Survei Pemahaman Gratifikasi",
+      "kategori": "Integritas & Korupsi",
+      "kelompok": "Internal",
+      "jumlah_butir": 5,
+      "punya_agregat": true,
+      "butir": [
+        {
+          "kode": "GRAT1",
+          "nomor": 1,
+          "label": "Pemahaman gratifikasi",
+          "teks": "Saya memahami bahwa pemberian uang, barang, atau fasilitas dari pihak yang terkait dengan pekerjaan saya dapat termasuk kategori gratifikasi."
+        },
+        {
+          "kode": "GRAT2",
+          "nomor": 2,
+          "label": "Identifikasi pemberian yang ditolak",
+          "teks": "Saya dapat mengidentifikasi situasi di mana pemberian dari mahasiswa, orang tua/wali, mitra, atau penyedia jasa harus ditolak atau dilaporkan."
+        },
+        {
+          "kode": "GRAT3",
+          "nomor": 3,
+          "label": "Saluran pelaporan",
+          "teks": "Saya mengetahui saluran atau mekanisme resmi untuk melaporkan penerimaan gratifikasi di institusi ini."
+        },
+        {
+          "kode": "GRAT4",
+          "nomor": 4,
+          "label": "Komitmen menolak",
+          "teks": "Saya melihat adanya komitmen nyata di lingkungan kerja saya untuk menolak pemberian yang dapat memengaruhi objektivitas dalam pelaksanaan tugas."
+        },
+        {
+          "kode": "GRAT5",
+          "nomor": 5,
+          "label": "Sosialisasi informasi",
+          "teks": "Informasi mengenai gratifikasi, cara menolak, dan cara melaporkannya telah disampaikan secara jelas kepada saya."
+        }
+      ]
+    },
+    {
+      "slug": "benturan",
+      "nama": "Benturan",
+      "nama_panjang": "Survei Benturan Kepentingan",
+      "kategori": "Integritas & Korupsi",
+      "kelompok": "Internal",
+      "jumlah_butir": 6,
+      "punya_agregat": true,
+      "butir": [
+        {
+          "kode": "BENT1",
+          "nomor": 1,
+          "label": "Pemahaman benturan kepentingan",
+          "teks": "Pemahaman benturan kepentingan"
+        },
+        {
+          "kode": "BENT2",
+          "nomor": 2,
+          "label": "Pengenalan potensi",
+          "teks": "Pengenalan potensi"
+        },
+        {
+          "kode": "BENT3",
+          "nomor": 3,
+          "label": "Pencegahan dini",
+          "teks": "Pencegahan dini"
+        },
+        {
+          "kode": "BENT4",
+          "nomor": 4,
+          "label": "Kanal pelaporan",
+          "teks": "Kanal pelaporan"
+        },
+        {
+          "kode": "BENT5",
+          "nomor": 5,
+          "label": "Tata kelola penanganan",
+          "teks": "Tata kelola penanganan"
+        },
+        {
+          "kode": "BENT6",
+          "nomor": 6,
+          "label": "Penanganan objektif",
+          "teks": "Penanganan objektif"
+        }
+      ]
+    },
+    {
+      "slug": "wbs",
+      "nama": "WBS",
+      "nama_panjang": "Whistleblowing System (WBS)",
+      "kategori": "Pelaporan",
+      "kelompok": "Internal",
+      "jumlah_butir": 6,
+      "punya_agregat": true,
+      "butir": [
+        {
+          "kode": "WBS1",
+          "nomor": 1,
+          "label": "Pengetahuan saluran WBS",
+          "teks": "Pengetahuan saluran WBS"
+        },
+        {
+          "kode": "WBS2",
+          "nomor": 2,
+          "label": "Klasifikasi pelanggaran",
+          "teks": "Klasifikasi pelanggaran"
+        },
+        {
+          "kode": "WBS3",
+          "nomor": 3,
+          "label": "Kemudahan akses",
+          "teks": "Kemudahan akses"
+        },
+        {
+          "kode": "WBS4",
+          "nomor": 4,
+          "label": "Perlindungan pelapor",
+          "teks": "Perlindungan pelapor"
+        },
+        {
+          "kode": "WBS5",
+          "nomor": 5,
+          "label": "Kerahasiaan identitas",
+          "teks": "Kerahasiaan identitas"
+        },
+        {
+          "kode": "WBS6",
+          "nomor": 6,
+          "label": "Keyakinan tindak lanjut",
+          "teks": "Keyakinan tindak lanjut"
+        }
+      ]
+    },
+    {
+      "slug": "pengaduan",
+      "nama": "Pengaduan",
+      "nama_panjang": "Pengaduan Masyarakat",
+      "kategori": "Pelayanan Publik",
+      "kelompok": "Layanan",
+      "jumlah_butir": 6,
+      "punya_agregat": false,
+      "butir": [
+        {
+          "kode": "PGD1",
+          "nomor": 1,
+          "label": "Kanal tersedia",
+          "teks": "Kanal tersedia"
+        },
+        {
+          "kode": "PGD2",
+          "nomor": 2,
+          "label": "Panduan alur",
+          "teks": "Panduan alur"
+        },
+        {
+          "kode": "PGD3",
+          "nomor": 3,
+          "label": "Respons & distribusi",
+          "teks": "Respons & distribusi"
+        },
+        {
+          "kode": "PGD4",
+          "nomor": 4,
+          "label": "Penyelesaian komprehensif",
+          "teks": "Penyelesaian komprehensif"
+        },
+        {
+          "kode": "PGD5",
+          "nomor": 5,
+          "label": "Pelacakan progres",
+          "teks": "Pelacakan progres"
+        },
+        {
+          "kode": "PGD6",
+          "nomor": 6,
+          "label": "Tindak lanjut kredibel",
+          "teks": "Tindak lanjut kredibel"
+        }
+      ]
+    },
+    {
+      "slug": "budaya-zi",
+      "nama": "Budaya ZI",
+      "nama_panjang": "Survei Budaya Zona Integritas",
+      "kategori": "Budaya & 5R",
+      "kelompok": "Internal",
+      "jumlah_butir": 7,
+      "punya_agregat": true,
+      "butir": [
+        {
+          "kode": "BZI1",
+          "nomor": 1,
+          "label": "Urgensi ZI",
+          "teks": "Urgensi ZI"
+        },
+        {
+          "kode": "BZI2",
+          "nomor": 2,
+          "label": "Komitmen pimpinan",
+          "teks": "Komitmen pimpinan"
+        },
+        {
+          "kode": "BZI3",
+          "nomor": 3,
+          "label": "Keteladanan pimpinan",
+          "teks": "Keteladanan pimpinan"
+        },
+        {
+          "kode": "BZI4",
+          "nomor": 4,
+          "label": "Kepatuhan kode etik",
+          "teks": "Kepatuhan kode etik"
+        },
+        {
+          "kode": "BZI5",
+          "nomor": 5,
+          "label": "Budaya anti-manipulasi",
+          "teks": "Budaya anti-manipulasi"
+        },
+        {
+          "kode": "BZI6",
+          "nomor": 6,
+          "label": "Proaktif melaporkan",
+          "teks": "Proaktif melaporkan"
+        },
+        {
+          "kode": "BZI7",
+          "nomor": 7,
+          "label": "Implementasi nyata",
+          "teks": "Implementasi nyata"
+        }
+      ]
+    },
+    {
+      "slug": "pens-joss",
+      "nama": "PENS JOSS",
+      "nama_panjang": "Survei Layanan PENS JOSS",
+      "kategori": "Pelayanan Publik",
+      "kelompok": "Internal",
+      "jumlah_butir": 6,
+      "punya_agregat": true,
+      "butir": [
+        {
+          "kode": "JOSS1",
+          "nomor": 1,
+          "label": "Pemahaman filosofi",
+          "teks": "Pemahaman filosofi"
+        },
+        {
+          "kode": "JOSS2",
+          "nomor": 2,
+          "label": "Sosialisasi nilai",
+          "teks": "Sosialisasi nilai"
+        },
+        {
+          "kode": "JOSS3",
+          "nomor": 3,
+          "label": "Penerapan berkesinambungan",
+          "teks": "Penerapan berkesinambungan"
+        },
+        {
+          "kode": "JOSS4",
+          "nomor": 4,
+          "label": "Tercermin di kerja & layanan",
+          "teks": "Tercermin di kerja & layanan"
+        },
+        {
+          "kode": "JOSS5",
+          "nomor": 5,
+          "label": "Keteladanan pimpinan",
+          "teks": "Keteladanan pimpinan"
+        },
+        {
+          "kode": "JOSS6",
+          "nomor": 6,
+          "label": "Identitas budaya",
+          "teks": "Identitas budaya"
+        }
+      ]
+    },
+    {
+      "slug": "5r",
+      "nama": "5R",
+      "nama_panjang": "Survei Implementasi 5R",
+      "kategori": "Budaya & 5R",
+      "kelompok": "Internal",
+      "jumlah_butir": 7,
+      "punya_agregat": true,
+      "butir": [
+        {
+          "kode": "LR1",
+          "nomor": 1,
+          "label": "Pemahaman 5R",
+          "teks": "Pemahaman 5R"
+        },
+        {
+          "kode": "LR2",
+          "nomor": 2,
+          "label": "Penataan area",
+          "teks": "Penataan area"
+        },
+        {
+          "kode": "LR3",
+          "nomor": 3,
+          "label": "Penempatan ergonomis",
+          "teks": "Penempatan ergonomis"
+        },
+        {
+          "kode": "LR4",
+          "nomor": 4,
+          "label": "Kebersihan",
+          "teks": "Kebersihan"
+        },
+        {
+          "kode": "LR5",
+          "nomor": 5,
+          "label": "Pemeliharaan infrastruktur",
+          "teks": "Pemeliharaan infrastruktur"
+        },
+        {
+          "kode": "LR6",
+          "nomor": 6,
+          "label": "Disiplin mandiri",
+          "teks": "Disiplin mandiri"
+        },
+        {
+          "kode": "LR7",
+          "nomor": 7,
+          "label": "5R jadi kebiasaan",
+          "teks": "5R jadi kebiasaan"
+        }
+      ]
+    }
+  ],
+  "alias": {
+    "spip": "spip",
+    "surveipenilaianinternalspip": "spip",
+    "penerapanspip": "spip",
+    "spak": "spak",
+    "surveipersepsiantikorupsi": "spak",
+    "spkp": "spkp",
+    "surveipersepsikualitaspelayanan": "spkp",
+    "gratifikasi": "gratifikasi",
+    "pengendaliangratifikasi": "gratifikasi",
+    "surveipemahamangratifikasi": "gratifikasi",
+    "benturan": "benturan",
+    "penangananbenturankepentingan": "benturan",
+    "surveibenturankepentingan": "benturan",
+    "wbs": "wbs",
+    "whistleblowingsystem": "wbs",
+    "whistleblowingsystemwbs": "wbs",
+    "pengaduan": "pengaduan",
+    "pengaduanmasyarakat": "pengaduan",
+    "budayazi": "budaya-zi",
+    "budaya": "budaya-zi",
+    "budayaintegritaszi": "budaya-zi",
+    "surveibudayazonaintegritas": "budaya-zi",
+    "pensjoss": "pens-joss",
+    "budayakerjapensjoss": "pens-joss",
+    "surveilayananpensjoss": "pens-joss",
+    "5r": "5r",
+    "implementasi5r": "5r",
+    "surveiimplementasi5r": "5r"
+  },
+  "ambang": {
+    "rataRataTinggi": 2.75,
+    "rataRataPantau": 3.19,
+    "negatifTinggi": 30,
+    "negatifPantau": 15,
+    "perubahanBermakna": 2,
+    "respondenMinimum": 30,
+    "deltaStabil": 0.5
+  },
+  "skala": [
+    {
+      "nilai": 1,
+      "label": "Sangat Tidak Setuju",
+      "singkat": "STS",
+      "warna": "#C25E1E"
+    },
+    {
+      "nilai": 2,
+      "label": "Tidak Setuju",
+      "singkat": "TS",
+      "warna": "#F5843C"
+    },
+    {
+      "nilai": 3,
+      "label": "Setuju",
+      "singkat": "S",
+      "warna": "#7FA8D9"
+    },
+    {
+      "nilai": 4,
+      "label": "Sangat Setuju",
+      "singkat": "SS",
+      "warna": "#0B1B33"
+    }
+  ]
+}
