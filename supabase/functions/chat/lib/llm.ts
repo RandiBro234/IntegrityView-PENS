@@ -39,7 +39,7 @@ export function konfigLlm(): KonfigLlm {
     apiKey: env('LLM_API_KEY'),
     stub: env('LLM_STUB').toLowerCase(),
     timeoutMs: Number(env('LLM_TIMEOUT_MS') || 20000),
-    maxToken: Number(env('LLM_MAX_TOKEN') || 400),
+    maxToken: Number(env('LLM_MAX_TOKEN') || 300),
     suhu: Number(env('LLM_SUHU') || 0.1),
     reasoningEffort: env('LLM_REASONING_EFFORT')
   };

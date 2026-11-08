@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import './IvyWidget.css';
 import { chatSiap, tanyaChat, ChatError } from '../../data/chatApi';
+import { getInstrumen } from '../../data/instrumentConfig';
 
 /* Panel obrolan "Tanya Ivy".
 
@@ -11,7 +12,26 @@ import { chatSiap, tanyaChat, ChatError } from '../../data/chatApi';
 
 const SAPAAN = 'Hai, saya Ivy. Tanya apa saja soal survei Zona Integritas atau cara pakai IntegrityView.';
 
-const SARAN = ['Cara isi survei?', 'Apa itu skor ZI?', 'Di mana lihat laporan saya?'];
+/* Saran pertanyaan yang bisa langsung diklik. Muncul lagi setiap kali Ivy
+   selesai menjawab, supaya pengguna tidak perlu mengetik dari nol. */
+const SARAN_UMUM = [
+  'Instrumen mana skornya paling rendah?',
+  'Apakah surveinya sudah reliabel?',
+  'Butir mana yang paling lemah?',
+  'Cara isi survei?'
+];
+
+function saranUntuk(instrumen) {
+  const info = instrumen ? getInstrumen(instrumen) : null;
+  if (!info) return SARAN_UMUM;
+  const nama = info.nama;
+  return [
+    `Apa rekomendasi untuk ${nama}?`,
+    `Butir mana di ${nama} yang paling lemah?`,
+    `Berapa skor ${nama} per butir?`,
+    `Apakah ${nama} sudah reliabel?`
+  ];
+}
 
 const CONTOH = [
   [
@@ -140,9 +160,11 @@ export default function IvyWidget({ instrumen = null }) {
               </p>
             ))}
             {mengetik && <p className="ivy__balon ivy__balon--ivy ivy__balon--ketik">Ivy sedang menulis...</p>}
-            {pesan.length === 1 && (
+            {/* Saran selalu tersedia setelah Ivy selesai menjawab, bukan hanya
+                di awal sesi — pengguna sering bingung mau tanya apa lagi. */}
+            {!mengetik && (
               <div className="ivy__saran">
-                {SARAN.map((s) => (
+                {saranUntuk(instrumen).map((s) => (
                   <button type="button" key={s} className="ivy__chip" onClick={() => kirim(s)}>{s}</button>
                 ))}
               </div>

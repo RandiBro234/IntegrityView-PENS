@@ -13,6 +13,7 @@ import { PayloadError } from '../../_shared/errors.ts';
 import { pilihInstrumen, rakitKonteksSatu, rakitKonteksSemua, type Konteks } from './konteks.ts';
 import { susunPesan } from './prompt.ts';
 import { LlmTidakTersedia } from './llm.ts';
+import { rapikanJawaban } from './format.ts';
 import { validasiChat } from './validasi.ts';
 import type { Registri } from './tipe.ts';
 import type { HasilKumpulan } from './sumber.ts';
@@ -119,6 +120,9 @@ export async function jawabChat(body: unknown, deps: Ketergantungan): Promise<Ha
     }
     throw err;
   }
+
+  /* 4b. Rapikan penanda markdown yang lolos dari aturan prompt. */
+  jawaban = rapikanJawaban(jawaban);
 
   /* 5. Kode butir yang disebut jawaban */
   return { status: 200, body: { jawaban, dasar: cariDasar(jawaban, kodeDariKonteks(konteks)) } };

@@ -129,6 +129,10 @@
   font-size: 14px;
   line-height: 1.6;
   border-radius: 16px;
+  /* Jawaban model bisa terdiri dari beberapa paragraf; simpan pemisah barisnya
+     supaya tidak menumpuk jadi satu blok panjang. */
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 .ivy__balon--ivy {
