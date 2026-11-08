@@ -1,0 +1,3666 @@
+{
+  "_catatan": "Dihasilkan scripts/gen-fixture.mjs --dari-db dari Supabase (tanpa email/komentar mentah). Jangan diedit tangan.",
+  "_sumber": "supabase:survey_responses",
+  "kasus": [
+    {
+      "slug": "spak",
+      "periode": "2026-ganjil",
+      "n": 165,
+      "records": [
+        {
+          "items": [
+            3,
+            3,
+            4,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            3,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            2,
+            3,
+            3,
+            2,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            3,
+            3,
+            4,
+            3,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            3,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            4,
+            3,
+            4,
+            3,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            3,
+            3,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            2,
+            2,
+            2,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            3,
+            3,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            3,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            2,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            4,
+            3,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            2,
+            2,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            4,
+            3,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            3,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            3,
+            4,
+            4,
+            3,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            3,
+            4,
+            4,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            4,
+            3,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            4,
+            3,
+            3,
+            3,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            4,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            4,
+            3,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            4,
+            3,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            3,
+            3,
+            4,
+            3,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            3,
+            3,
+            4,
+            3,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            3,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            3,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            3,
+            4,
+            4,
+            3,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            4,
+            3,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            4,
+            3,
+            3,
+            4,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            2,
+            3,
+            2,
+            2,
+            2,
+            2
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            2,
+            2,
+            2,
+            2,
+            2,
+            2
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            4,
+            3,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            2,
+            2,
+            2,
+            4,
+            3,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            3,
+            3,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            2,
+            2
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            2,
+            3,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            4,
+            4,
+            4,
+            3,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            3,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            2,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            4,
+            4,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            3,
+            4,
+            4,
+            3,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            3,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            2,
+            3,
+            2,
+            2,
+            2
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            3,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            2,
+            2,
+            1,
+            1,
+            2,
+            1
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            4,
+            3,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            4,
+            3,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            3,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            2,
+            3,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            3,
+            4,
+            4,
+            3,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            3,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            3,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            4,
+            3,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            4,
+            3,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            3,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            3,
+            4,
+            3,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            3,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            3,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        }
+      ],
+      "agregat": {
+        "slug": "spak",
+        "periode": "2026-ganjil",
+        "sumber": "real",
+        "jumlahButir": 6,
+        "n": 165,
+        "indeks": 90.12626262626262,
+        "skorRata": 90.12626262626262,
+        "median": 95.83333333333334,
+        "sd": 12.365675999523317,
+        "se": 0.9626665709472387,
+        "ci": {
+          "bawah": 88.23943614720602,
+          "atas": 92.01308910531921
+        },
+        "alpha": 0.9358765430026778,
+        "alphaCatatan": null,
+        "setuju": 96.26262626262626,
+        "distribusi": [
+          3,
+          34,
+          314,
+          639
+        ],
+        "distribusiPersen": [
+          0,
+          3,
+          32,
+          65
+        ],
+        "butir": [
+          {
+            "label": "Layanan jujur & transparan",
+            "teks": "Layanan di institusi ini diberikan secara jujur, transparan, dan sesuai ketentuan yang berlaku.",
+            "rata": 3.6,
+            "distribusi": [
+              0,
+              5,
+              56,
+              104
+            ],
+            "distribusiPersen": [
+              0,
+              3,
+              34,
+              63
+            ],
+            "persenSetuju": 96.96969696969697,
+            "persenNegatif": 3.0303030303030303
+          },
+          {
+            "label": "Layanan adil",
+            "teks": "Layanan diberikan secara adil kepada semua pihak, tanpa membeda-bedakan berdasarkan jabatan, kedekatan personal, atau unit kerja.",
+            "rata": 3.5090909090909093,
+            "distribusi": [
+              0,
+              10,
+              61,
+              94
+            ],
+            "distribusiPersen": [
+              0,
+              6,
+              37,
+              57
+            ],
+            "persenSetuju": 93.93939393939394,
+            "persenNegatif": 6.0606060606060606
+          },
+          {
+            "label": "Bebas manipulasi",
+            "teks": "Proses layanan bebas dari manipulasi data, penyalahgunaan prosedur, atau keberpihakan kepada pihak tertentu.",
+            "rata": 3.56969696969697,
+            "distribusi": [
+              1,
+              6,
+              56,
+              102
+            ],
+            "distribusiPersen": [
+              0,
+              4,
+              34,
+              62
+            ],
+            "persenSetuju": 95.75757575757575,
+            "persenNegatif": 4.242424242424243
+          },
+          {
+            "label": "Bebas pungutan",
+            "teks": "Tidak ada permintaan atau ekspektasi pemberian uang, hadiah, atau fasilitas di luar ketentuan sebagai syarat atau kelancaran layanan.",
+            "rata": 3.727272727272727,
+            "distribusi": [
+              1,
+              3,
+              36,
+              125
+            ],
+            "distribusiPersen": [
+              0,
+              2,
+              22,
+              76
+            ],
+            "persenSetuju": 97.57575757575758,
+            "persenNegatif": 2.4242424242424243
+          },
+          {
+            "label": "Tanpa perantara",
+            "teks": "Layanan dapat diakses langsung sesuai prosedur tanpa perlu menggunakan perantara agar urusan lebih mudah atau cepat.",
+            "rata": 3.5757575757575757,
+            "distribusi": [
+              0,
+              6,
+              58,
+              101
+            ],
+            "distribusiPersen": [
+              0,
+              4,
+              35,
+              61
+            ],
+            "persenSetuju": 96.36363636363636,
+            "persenNegatif": 3.6363636363636362
+          },
+          {
+            "label": "Layanan bebas korupsi",
+            "teks": "Secara keseluruhan, layanan di institusi ini telah dilaksanakan dengan integritas dan bebas dari praktik korupsi.",
+            "rata": 3.6484848484848484,
+            "distribusi": [
+              1,
+              4,
+              47,
+              113
+            ],
+            "distribusiPersen": [
+              1,
+              2,
+              29,
+              68
+            ],
+            "persenSetuju": 96.96969696969697,
+            "persenNegatif": 3.0303030303030303
+          }
+        ],
+        "butirTerendah": {
+          "label": "Layanan adil",
+          "teks": "Layanan diberikan secara adil kepada semua pihak, tanpa membeda-bedakan berdasarkan jabatan, kedekatan personal, atau unit kerja.",
+          "rata": 3.5090909090909093,
+          "distribusi": [
+            0,
+            10,
+            61,
+            94
+          ],
+          "distribusiPersen": [
+            0,
+            6,
+            37,
+            57
+          ],
+          "persenSetuju": 93.93939393939394,
+          "persenNegatif": 6.0606060606060606
+        },
+        "kualitas": {
+          "seragam": 61.81818181818181,
+          "duplikat": 0,
+          "dibuang": 0,
+          "terbuka": 0,
+          "tertahan": 0,
+          "tema": [],
+          "n": 165
+        },
+        "kelompok": {
+          "dosen": 92,
+          "tendik": 73
+        }
+      },
+      "sumber": "real"
+    },
+    {
+      "slug": "gratifikasi",
+      "periode": "2026-ganjil",
+      "n": 149,
+      "records": [
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            2,
+            3,
+            2
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            2
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            3,
+            4,
+            2
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            2,
+            4,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            3,
+            2,
+            3,
+            2
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            3,
+            4,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            3,
+            4,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            2,
+            3,
+            2
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            3,
+            2,
+            2
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            3,
+            3,
+            4,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            4,
+            4,
+            4,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            2,
+            4,
+            2
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            3,
+            2,
+            3,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            2,
+            2,
+            2
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            4,
+            2,
+            3,
+            2
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            2,
+            3,
+            1
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            2,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            3,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            3,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            3,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            1,
+            4,
+            2
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            2,
+            3,
+            1
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            1,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            3,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            3,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            1,
+            4,
+            2
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            3,
+            4,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            3,
+            4,
+            2
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            2,
+            3,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            3,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            2,
+            4,
+            2
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            4,
+            3,
+            3,
+            2
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            3,
+            2,
+            3,
+            2
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            3,
+            4,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            3,
+            2,
+            4,
+            2
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            3,
+            3,
+            2
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            3,
+            4,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            2,
+            2,
+            2
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            3,
+            4,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            2,
+            3,
+            2
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            3,
+            4,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            1,
+            4,
+            4,
+            4,
+            2
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            2,
+            4,
+            2
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            3,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            2,
+            1,
+            2,
+            2
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            2,
+            2,
+            2
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            3,
+            2,
+            3,
+            2
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            3,
+            3,
+            4,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            3,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            1,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            2,
+            2,
+            2
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            2,
+            2
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            3,
+            4,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            3,
+            4,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            1,
+            3,
+            1
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            3,
+            4,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            2,
+            2,
+            2
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            3,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            3,
+            4,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            2,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            3,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            1,
+            4,
+            2
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            3,
+            4,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            3,
+            3,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            3,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            2,
+            3,
+            3,
+            3,
+            2
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            3,
+            4,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            3,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            3,
+            4,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            3,
+            2,
+            3,
+            2
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            3,
+            3,
+            4,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            3,
+            3,
+            4,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            3,
+            3,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            3,
+            2,
+            3,
+            2
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            3,
+            4,
+            3,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            3,
+            4,
+            3,
+            4,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            3,
+            2,
+            4,
+            2
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            3
+          ],
+          "kelompok": "Tenaga Kependidikan"
+        },
+        {
+          "items": [
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            3,
+            4,
+            3
+          ],
+          "kelompok": "Dosen"
+        },
+        {
+          "items": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "kelompok": "Dosen"
+        }
+      ],
+      "agregat": {
+        "slug": "gratifikasi",
+        "periode": "2026-ganjil",
+        "sumber": "real",
+        "jumlahButir": 5,
+        "n": 149,
+        "indeks": 86.64429530201342,
+        "skorRata": 86.64429530201342,
+        "median": 90,
+        "sd": 11.861289425316555,
+        "se": 0.9717146915734267,
+        "ci": {
+          "bawah": 84.7397345065295,
+          "atas": 88.54885609749734
+        },
+        "alpha": 0.7545124899274785,
+        "alphaCatatan": null,
+        "setuju": 89.39597315436242,
+        "distribusi": [
+          11,
+          68,
+          229,
+          437
+        ],
+        "distribusiPersen": [
+          1,
+          9,
+          31,
+          59
+        ],
+        "butir": [
+          {
+            "label": "Pemahaman gratifikasi",
+            "teks": "Saya memahami bahwa pemberian uang, barang, atau fasilitas dari pihak yang terkait dengan pekerjaan saya dapat termasuk kategori gratifikasi.",
+            "rata": 3.771812080536913,
+            "distribusi": [
+              2,
+              1,
+              26,
+              120
+            ],
+            "distribusiPersen": [
+              1,
+              1,
+              17,
+              81
+            ],
+            "persenSetuju": 97.98657718120806,
+            "persenNegatif": 2.013422818791946
+          },
+          {
+            "label": "Identifikasi pemberian yang ditolak",
+            "teks": "Saya dapat mengidentifikasi situasi di mana pemberian dari mahasiswa, orang tua/wali, mitra, atau penyedia jasa harus ditolak atau dilaporkan.",
+            "rata": 3.738255033557047,
+            "distribusi": [
+              0,
+              1,
+              37,
+              111
+            ],
+            "distribusiPersen": [
+              0,
+              1,
+              25,
+              74
+            ],
+            "persenSetuju": 99.32885906040269,
+            "persenNegatif": 0.6711409395973155
+          },
+          {
+            "label": "Saluran pelaporan",
+            "teks": "Saya mengetahui saluran atau mekanisme resmi untuk melaporkan penerimaan gratifikasi di institusi ini.",
+            "rata": 3.134228187919463,
+            "distribusi": [
+              5,
+              25,
+              64,
+              55
+            ],
+            "distribusiPersen": [
+              3,
+              17,
+              43,
+              37
+            ],
+            "persenSetuju": 79.86577181208054,
+            "persenNegatif": 20.13422818791946
+          },
+          {
+            "label": "Komitmen menolak",
+            "teks": "Saya melihat adanya komitmen nyata di lingkungan kerja saya untuk menolak pemberian yang dapat memengaruhi objektivitas dalam pelaksanaan tugas.",
+            "rata": 3.5369127516778525,
+            "distribusi": [
+              1,
+              9,
+              48,
+              91
+            ],
+            "distribusiPersen": [
+              1,
+              6,
+              32,
+              61
+            ],
+            "persenSetuju": 93.28859060402685,
+            "persenNegatif": 6.7114093959731544
+          },
+          {
+            "label": "Sosialisasi informasi",
+            "teks": "Informasi mengenai gratifikasi, cara menolak, dan cara melaporkannya telah disampaikan secara jelas kepada saya.",
+            "rata": 3.1476510067114094,
+            "distribusi": [
+              3,
+              32,
+              54,
+              60
+            ],
+            "distribusiPersen": [
+              2,
+              22,
+              36,
+              40
+            ],
+            "persenSetuju": 76.51006711409396,
+            "persenNegatif": 23.48993288590604
+          }
+        ],
+        "butirTerendah": {
+          "label": "Saluran pelaporan",
+          "teks": "Saya mengetahui saluran atau mekanisme resmi untuk melaporkan penerimaan gratifikasi di institusi ini.",
+          "rata": 3.134228187919463,
+          "distribusi": [
+            5,
+            25,
+            64,
+            55
+          ],
+          "distribusiPersen": [
+            3,
+            17,
+            43,
+            37
+          ],
+          "persenSetuju": 79.86577181208054,
+          "persenNegatif": 20.13422818791946
+        },
+        "kualitas": {
+          "seragam": 40.26845637583892,
+          "duplikat": 0,
+          "dibuang": 0,
+          "terbuka": 0,
+          "tertahan": 0,
+          "tema": [],
+          "n": 149
+        },
+        "kelompok": {
+          "dosen": 86,
+          "tendik": 63
+        }
+      },
+      "sumber": "real"
+    }
+  ]
+}

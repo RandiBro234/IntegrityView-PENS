@@ -23,6 +23,15 @@ const AKAR = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const REGISTRI = JSON.parse(await readFile(resolve(AKAR, 'lib/instrumen.json'), 'utf8'));
 const FIXTURE = JSON.parse(await readFile(resolve(AKAR, 'tests/fixtures/agregat.json'), 'utf8'));
 
+/* Fixture kedua (opsional): snapshot agregat dari survey_responses asli.
+   Tidak ada di repo sampai `node scripts/gen-fixture.mjs --dari-db` dijalankan. */
+let FIXTURE_DB = null;
+try {
+  FIXTURE_DB = JSON.parse(await readFile(resolve(AKAR, 'tests/fixtures/agregat-db.json'), 'utf8'));
+} catch {
+  /* dilewati */
+}
+
 const TOLERANSI = 1e-9;
 
 function instrumenDari(slug) {
@@ -129,3 +138,35 @@ test('rekomendasi sama dengan versi frontend', () => {
     });
   }
 });
+
+/* ---------------------------------------------------------------------------
+   Fixture dari data asli (opsional)
+   --------------------------------------------------------------------------- */
+
+test('fixture data asli bebas PII', { skip: FIXTURE_DB == null && 'belum ada agregat-db.json' }, () => {
+  const teks = JSON.stringify(FIXTURE_DB);
+  const pola = [
+    [/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/, 'alamat email'],
+    [/email_responden/, 'kolom email_responden'],
+    [/"terbuka"\s*:\s*"[^"]+"/, 'komentar terbuka'],
+    [/respondentId/, 'respondentId']
+  ];
+  for (const [re, nama] of pola) {
+    const cocok = teks.match(re);
+    assert.equal(cocok, null, `fixture memuat ${nama}: ${cocok?.[0]?.slice(0, 60)}`);
+  }
+});
+
+for (const kasus of FIXTURE_DB?.kasus ?? []) {
+  test(`agregat ${kasus.slug} (data asli) sama dengan versi frontend`, () => {
+    const instrumen = instrumenDari(kasus.slug);
+    assert.ok(instrumen, `instrumen ${kasus.slug} tidak ada di instrumen.json`);
+
+    const hasil = hitungAgregat(instrumen, kasus.periode, kasus.records, 'real', {
+      dibuang: kasus.agregat.kualitas.dibuang,
+      duplikat: kasus.agregat.kualitas.duplikat
+    });
+    assert.ok(hasil);
+    samaDalam({ ...hasil, sumber: kasus.agregat.sumber }, kasus.agregat);
+  });
+}

@@ -143,9 +143,12 @@ async function kasusDariDb() {
     if (!hasil.items.length || hasil.items.length !== info.butir.length) continue;
     const kunci = `${slug}|${periode}`;
     if (!perPeriode.has(kunci)) perPeriode.set(kunci, { slug, periode, records: [] });
+    /* `terbuka` sengaja TIDAK disimpan. Komentar mentah bisa memuat nama,
+       nomor, atau dugaan personal; fixture di-commit ke repo publik. Tema
+       komentar pun tidak dihitung di sini, sehingga kualitas.terbuka=0 dan
+       tema=[] pada fixture DB. Uji tema memakai fixture sintetis. */
     perPeriode.get(kunci).records.push({
       items: hasil.items,
-      terbuka: hasil.terbuka,
       kelompok: hasil.kelompok
     });
   }
