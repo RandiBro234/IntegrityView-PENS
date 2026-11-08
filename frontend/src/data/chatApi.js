@@ -62,7 +62,16 @@ export async function tanyaChat(pertanyaan, { instrumen = null } = {}) {
     });
 
     if (!res.ok) {
-      throw new ChatError(res.status, PESAN_STATUS[res.status] || 'Asisten sedang tidak tersedia. Coba lagi nanti.');
+      /* Pakai pesan dari server bila ada (mis. batas kuota penyedia menyebut
+         berapa detik harus menunggu), selain itu pakai pesan umum. */
+      let pesanServer = '';
+      try {
+        const isi = await res.json();
+        if (typeof isi?.error === 'string') pesanServer = isi.error.trim();
+      } catch {
+        /* body bukan JSON */
+      }
+      throw new ChatError(res.status, pesanServer || PESAN_STATUS[res.status] || 'Asisten sedang tidak tersedia. Coba lagi nanti.');
     }
 
     const data = await res.json();

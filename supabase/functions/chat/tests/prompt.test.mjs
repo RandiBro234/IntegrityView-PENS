@@ -15,7 +15,7 @@ import { dirname, resolve, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { ATURAN, susunPesan } from '../lib/prompt.ts';
-import { tanyaLlm, LlmTidakTersedia, konfigLlm } from '../lib/llm.ts';
+import { tanyaLlm, LlmTidakTersedia, LlmKuotaHabis, konfigLlm } from '../lib/llm.ts';
 
 const AKAR = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -84,7 +84,9 @@ const KONFIG_DASAR = {
   timeoutMs: 1000,
   maxToken: 400,
   suhu: 0.1,
-  reasoningEffort: ''
+  reasoningEffort: '',
+  maksCoba: 1,
+  maksTungguMs: 6000
 };
 
 test('mode stub mengembalikan balasan tetap tanpa jaringan', async () => {
@@ -97,6 +99,83 @@ test('stub gagal menjadi LlmTidakTersedia', async () => {
     () => tanyaLlm({ system: 'a', user: 'b' }, { ...KONFIG_DASAR, stub: 'gagal' }),
     LlmTidakTersedia
   );
+});
+
+test('status 429 dari penyedia menjadi LlmKuotaHabis, bukan gangguan', async () => {
+  const { createServer } = await import('node:http');
+  const server = createServer((req, res) => {
+    res.writeHead(429, { 'Content-Type': 'application/json', 'Retry-After': '45' });
+    res.end(JSON.stringify({ error: { message: 'rate limit' } }));
+  });
+  await new Promise((ok) => server.listen(0, '127.0.0.1', ok));
+  const port = server.address().port;
+
+  try {
+    await assert.rejects(
+      () =>
+        tanyaLlm(
+          { system: 'a', user: 'b' },
+          { ...KONFIG_DASAR, baseUrl: `http://127.0.0.1:${port}/v1`, maksCoba: 1 }
+        ),
+      (err) => err instanceof LlmKuotaHabis && err.tungguMs > 0
+    );
+  } finally {
+    server.close();
+  }
+});
+
+test('429 diulang sekali lalu berhasil bila jeda wajar', async () => {
+  const { createServer } = await import('node:http');
+  let panggilan = 0;
+  const server = createServer((req, res) => {
+    panggilan += 1;
+    if (panggilan === 1) {
+      res.writeHead(429, { 'Content-Type': 'application/json', 'Retry-After': '0' });
+      res.end('{}');
+      return;
+    }
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ choices: [{ message: { content: 'berhasil setelah ulang' } }] }));
+  });
+  await new Promise((ok) => server.listen(0, '127.0.0.1', ok));
+  const port = server.address().port;
+
+  try {
+    const hasil = await tanyaLlm(
+      { system: 'a', user: 'b' },
+      { ...KONFIG_DASAR, baseUrl: `http://127.0.0.1:${port}/v1`, maksCoba: 2 }
+    );
+    assert.equal(hasil, 'berhasil setelah ulang');
+    assert.equal(panggilan, 2);
+  } finally {
+    server.close();
+  }
+});
+
+test('429 dengan jeda terlalu panjang tidak diulang', async () => {
+  const { createServer } = await import('node:http');
+  let panggilan = 0;
+  const server = createServer((req, res) => {
+    panggilan += 1;
+    res.writeHead(429, { 'Content-Type': 'application/json', 'Retry-After': '120' });
+    res.end('{}');
+  });
+  await new Promise((ok) => server.listen(0, '127.0.0.1', ok));
+  const port = server.address().port;
+
+  try {
+    await assert.rejects(
+      () =>
+        tanyaLlm(
+          { system: 'a', user: 'b' },
+          { ...KONFIG_DASAR, baseUrl: `http://127.0.0.1:${port}/v1`, maksCoba: 3, maksTungguMs: 6000 }
+        ),
+      LlmKuotaHabis
+    );
+    assert.equal(panggilan, 1, 'seharusnya tidak mengulang saat jeda 120 detik');
+  } finally {
+    server.close();
+  }
 });
 
 test('konfigurasi tidak lengkap menjadi LlmTidakTersedia', async () => {
@@ -196,10 +275,11 @@ test('permintaan ke LLM berbentuk chat/completions dan balasannya dibaca', async
   }
 });
 
-test('status non-2xx menjadi LlmTidakTersedia tanpa membaca body', async () => {  const { createServer } = await import('node:http');
+test('status non-2xx menjadi LlmTidakTersedia tanpa membaca body', async () => {
+  const { createServer } = await import('node:http');
   const server = createServer((req, res) => {
-    res.writeHead(429, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ error: 'kuota habis' }));
+    res.writeHead(500, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'rusak internal' }));
   });
   await new Promise((ok) => server.listen(0, '127.0.0.1', ok));
   const port = server.address().port;
@@ -207,7 +287,7 @@ test('status non-2xx menjadi LlmTidakTersedia tanpa membaca body', async () => {
   try {
     await assert.rejects(
       () => tanyaLlm({ system: 'a', user: 'b' }, { ...KONFIG_DASAR, baseUrl: `http://127.0.0.1:${port}/v1` }),
-      (err) => err instanceof LlmTidakTersedia && err.message.includes('429')
+      (err) => err instanceof LlmTidakTersedia && err.message.includes('500')
     );
   } finally {
     server.close();

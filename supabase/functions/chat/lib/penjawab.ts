@@ -12,7 +12,7 @@
 import { PayloadError } from '../../_shared/errors.ts';
 import { pilihInstrumen, rakitKonteksSatu, rakitKonteksSemua, type Konteks } from './konteks.ts';
 import { susunPesan } from './prompt.ts';
-import { LlmTidakTersedia } from './llm.ts';
+import { LlmTidakTersedia, LlmKuotaHabis, LlmSibuk } from './llm.ts';
 import { rapikanJawaban } from './format.ts';
 import { validasiChat } from './validasi.ts';
 import type { Registri } from './tipe.ts';
@@ -60,7 +60,13 @@ export async function jawabChat(body: unknown, deps: Ketergantungan): Promise<Ha
   /* 2. Batas pemakaian */
   const boleh = await deps.cekBatas();
   if (!boleh) {
-    return { status: 429, body: { error: 'Terlalu banyak pertanyaan. Coba lagi nanti.' } };
+    return {
+      status: 429,
+      body: {
+        kode: 'batas_pemakaian',
+        error: 'Terlalu banyak pertanyaan dari jaringan ini. Coba lagi beberapa saat lagi.'
+      }
+    };
   }
 
   /* 3. Data + konteks */
@@ -111,6 +117,29 @@ export async function jawabChat(body: unknown, deps: Ketergantungan): Promise<Ha
   try {
     jawaban = await deps.tanyaLlm(susunPesan(konteks, masuk.pertanyaan));
   } catch (err) {
+    if (err instanceof LlmKuotaHabis) {
+      /* Bukan gangguan: penyedia sedang membatasi laju. Beri tahu pengguna
+         untuk menunggu, dan sebutkan perkiraan waktunya bila ada. */
+      const detik = Math.ceil(err.tungguMs / 1000);
+      console.warn(`chatbot: kuota penyedia penuh, tunggu ~${detik} detik`);
+      return {
+        status: 503,
+        body: {
+          kode: 'kuota_habis',
+          error: `Asisten sedang dibatasi penyedia. Coba lagi dalam ${detik} detik.`
+        }
+      };
+    }
+    if (err instanceof LlmSibuk) {
+      console.warn('chatbot: penyedia sibuk setelah beberapa percobaan');
+      return {
+        status: 503,
+        body: {
+          kode: 'penyedia_sibuk',
+          error: 'Asisten sedang sibuk. Coba lagi beberapa saat lagi.'
+        }
+      };
+    }
     if (err instanceof LlmTidakTersedia) {
       console.error('chatbot: LLM tidak tersedia:', err.message);
       return {

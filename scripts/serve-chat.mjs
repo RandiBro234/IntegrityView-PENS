@@ -120,7 +120,15 @@ const server = createServer(async (req, res) => {
 
   if (req.method === 'OPTIONS') return kirim(200, { ok: true });
   if (req.method === 'GET' && req.url === '/') {
-    return kirim(200, { status: 'ok', model: lokal.LLM_MODEL || '(tidak diisi)' });
+    const isi = hitungan.get('total');
+    const sekarang = Math.floor(Date.now() / 3_600_000);
+    const terpakai = isi && isi.jam === sekarang ? isi.jumlah : 0;
+    return kirim(200, {
+      status: 'ok',
+      model: lokal.LLM_MODEL || '(tidak diisi)',
+      terpakai,
+      batas: batasPerJam
+    });
   }
   if (req.method !== 'POST') return kirim(405, { error: 'Method not allowed' });
 
@@ -135,7 +143,11 @@ const server = createServer(async (req, res) => {
   }
 
   try {
+    const mulai = Date.now();
     const hasil = await jawabChat(body, deps);
+    const detik = ((Date.now() - mulai) / 1000).toFixed(1);
+    /* Log ringkas tanpa isi pertanyaan: cukup untuk tahu batas mana yang kena. */
+    console.log(`  ${String(hasil.status).padEnd(3)} ${detik}s  ${hasil.body.kode ?? 'ok'}`);
     return kirim(hasil.status, hasil.body);
   } catch (err) {
     console.error('galat tak terduga:', err instanceof Error ? err.message : err);

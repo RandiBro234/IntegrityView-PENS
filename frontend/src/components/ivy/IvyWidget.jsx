@@ -64,14 +64,11 @@ const jawabContoh = (teks) => {
   return cocok ? cocok[1] : CADANGAN;
 };
 
-/* Balasan yang ditampilkan bila layanan gagal. Dipisah per status supaya
-   pengguna tahu apakah harus menunggu (429) atau memang sedang gangguan (503). */
+/* Balasan yang ditampilkan bila layanan gagal. Pesannya sudah disiapkan
+   chatApi.js (termasuk perbedaan antara batas pemakaian, kuota penyedia, dan
+   gangguan), jadi di sini cukup meneruskannya. */
 function pesanGalat(err) {
-  if (err instanceof ChatError) {
-    if (err.status === 429) return 'Terlalu sering bertanya. Coba lagi beberapa saat lagi.';
-    if (err.status === 503) return 'Asisten sedang tidak tersedia. Coba lagi nanti.';
-    return err.message;
-  }
+  if (err instanceof ChatError && err.message) return err.message;
   return 'Asisten sedang tidak tersedia. Coba lagi nanti.';
 }
 
