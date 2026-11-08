@@ -13,12 +13,12 @@
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-soft);
   min-width: 0;
-  min-height: 76px;
-  padding: clamp(10px, 1vw, 16px) clamp(12px, 1.2vw, 20px);
+  min-height: 94px;
+  padding: clamp(12px, 1.1vw, 18px) clamp(14px, 1.3vw, 22px);
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 4px;
+  gap: 5px;
 }
 .rcard__top,
 .rcard__main {
@@ -57,7 +57,7 @@
 
 .rcard__num {
   font-family: var(--font-display);
-  font-size: clamp(1.75rem, 2.5vw, 2.75rem);
+  font-size: clamp(1.9rem, 2.7vw, 3rem);
   font-weight: 800;
   letter-spacing: -0.03em;
   line-height: 1;

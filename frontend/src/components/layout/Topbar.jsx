@@ -13,7 +13,7 @@ function formatJam(d) {
   return `${p(d.getHours())}.${p(d.getMinutes())}`;
 }
 
-export default function Topbar({ user, onSearch, onProfil, onNavigate, showSearch = true, compact = false }) {
+export default function Topbar({ user, onSearch, onProfil, onNavigate, showSearch = true, compact = false, children }) {
   const [now, setNow] = useState(() => new Date());
   const [query, setQuery] = useState('');
   const [bukaNotif, setBukaNotif] = useState(false);
@@ -75,6 +75,7 @@ export default function Topbar({ user, onSearch, onProfil, onNavigate, showSearc
       </div>
 
       <div className="topbar__right">
+        {children}
         <div className="topbar__clock" aria-label="Waktu saat ini">
           <span className="topbar__clock-time">{formatJam(now)}</span>
           <span className="topbar__clock-date">{formatTanggal(now)}</span>
