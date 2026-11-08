@@ -1,20 +1,41 @@
 /* Menghasilkan fixture untuk tes golden chatbot.
 
-   Fixture ini adalah "kebenaran" versi frontend: ia menyimpan sekumpulan baris
-   jawaban sintetis (deterministik) beserta agregat yang dihitung oleh
-   frontend/src/data/survey/statistics.js. Port Deno di
-   supabase/functions/chat/lib/statistik.ts harus menghasilkan angka yang sama.
+   Dua mode:
 
-   Jalankan dari root:  node scripts/gen-fixture.mjs
+   1. `node scripts/gen-fixture.mjs` (bawaan)
+      Data SINTETIS deterministik. Dipakai untuk menguji port rumus: angka di
+      sini adalah keluaran statistics.js versi frontend, jadi port Deno harus
+      menghasilkan angka yang persis sama. Tidak butuh kredensial dan bisa
+      dijalankan di CI mana pun.
+
+   2. `node scripts/gen-fixture.mjs --dari-db`
+      Data ASLI dari Supabase (tabel survey_responses), dibaca lewat REST API
+      memakai anon key. Hasil agregatnya disimpan sebagai fixture tambahan
+      (tests/fixtures/agregat-db.json) supaya port rumus juga teruji pada
+      bentuk data nyata, bukan hanya data buatan.
+
+      Butuh VITE_SUPABASE_URL + VITE_SUPABASE_ANON_KEY di frontend/.env.
+      Fixture hasil mode ini TIDAK memuat email, komentar mentah, atau ID baris:
+      yang disimpan hanya `items` hasil normalisasi dan agregatnya, karena
+      tes golden tidak membutuhkan PII.
+
+   Fixture tidak dipakai saat runtime. Edge Function chat membaca agregat
+   langsung dari database (lihat lib/sumber.ts); fixture hanya untuk tes.
 */
 
-import { writeFile, mkdir } from 'node:fs/promises';
+import { writeFile, mkdir, readFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const AKAR = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const SUMBER = resolve(AKAR, 'frontend/src/data/survey/statistics.js');
-const TUJUAN = resolve(AKAR, 'supabase/functions/chat/tests/fixtures/agregat.json');
+const DARI_DB = process.argv.includes('--dari-db');
+
+const TUJUAN = resolve(
+  AKAR,
+  DARI_DB
+    ? 'supabase/functions/chat/tests/fixtures/agregat-db.json'
+    : 'supabase/functions/chat/tests/fixtures/agregat.json'
+);
 
 /* Generator bilangan acak berbenih supaya fixture stabil antar-jalankan.
    Tanpa ini, setiap `npm run gen:fixture` akan menghasilkan fixture berbeda
@@ -62,47 +83,143 @@ function buatRecords(jumlah, butir, benih) {
   return rows;
 }
 
-const { hitungAgregat } = await import(pathToFileURL(SUMBER).href);
+const { hitungAgregat } = await import(pathToFileURL(resolve(AKAR, 'frontend/src/data/survey/statistics.js')).href);
 const cfg = await import(pathToFileURL(resolve(AKAR, 'frontend/src/data/instrumentConfig.js')).href);
 const rekom = await import(pathToFileURL(resolve(AKAR, 'frontend/src/data/survey/recommendations.js')).href);
+const norm = await import(pathToFileURL(resolve(AKAR, 'frontend/src/data/survey/normalize.js')).href);
 
-/* Dua instrumen dengan jumlah butir berbeda (9 dan 6) supaya port tidak hanya
-   teruji pada satu bentuk data. */
-const KASUS = [
-  { slug: 'spip', periode: '2026-ganjil', n: 58, benih: 20260101 },
-  { slug: 'spak', periode: '2026-ganjil', n: 42, benih: 20260202 }
-];
-
-const keluaran = { _catatan: 'Dihasilkan scripts/gen-fixture.mjs dari frontend/src/data/survey/statistics.js. Jangan diedit tangan.', kasus: [] };
-
-for (const k of KASUS) {
-  const instrumen = cfg.getInstrumen(k.slug);
-  const records = buatRecords(k.n, instrumen.butir.length, k.benih);
-  const agregat = hitungAgregat(k.slug, k.periode, records, 'simulated', { dibuang: 3, duplikat: 1 });
-  if (!agregat) throw new Error(`hitungAgregat mengembalikan null untuk ${k.slug}`);
-
-  /* Pembanding: periode sebelumnya dengan benih lain dan n lebih kecil, supaya
-     jalur perbandingan (delta + "n belum cukup") ikut teruji. */
-  const recordsBanding = buatRecords(Math.floor(k.n * 0.6), instrumen.butir.length, k.benih + 7);
-  const agregatBanding = hitungAgregat(k.slug, '2025-genap', recordsBanding, 'simulated', { dibuang: 0, duplikat: 0 });
-
-  const perubahanButir = agregat.butir.map((b, i) => ({
-    label: b.label,
-    delta: rekom.getDelta(b.rata * 20, (agregatBanding?.butir[i]?.rata ?? b.rata) * 20)
-  }));
-
-  const rekomendasi = rekom.rekomendasiUntuk(agregat, agregatBanding, perubahanButir);
-
-  keluaran.kasus.push({ ...k, records, agregat, recordsBanding, agregatBanding, rekomendasi });
+/* ---------------------------------------------------------------------
+   Mode 2: ambil data asli dari Supabase
+   --------------------------------------------------------------------- */
+async function muatEnv() {
+  const jalur = resolve(AKAR, 'frontend/.env');
+  try {
+    const isi = await readFile(jalur, 'utf8');
+    const env = {};
+    for (const baris of isi.split(/\r?\n/)) {
+      const bersih = baris.trim();
+      if (!bersih || bersih.startsWith('#') || !bersih.includes('=')) continue;
+      const i = bersih.indexOf('=');
+      env[bersih.slice(0, i).trim()] = bersih.slice(i + 1).trim().replace(/^["']|["']$/g, '');
+    }
+    return env;
+  } catch {
+    return {};
+  }
 }
+
+async function kasusDariDb() {
+  const env = { ...(await muatEnv()), ...process.env };
+  const url = (env.VITE_SUPABASE_URL || '').replace(/\/$/, '');
+  const key = env.VITE_SUPABASE_ANON_KEY || '';
+  if (!url || !key) {
+    console.error(
+      '\n  GAGAL: --dari-db butuh VITE_SUPABASE_URL dan VITE_SUPABASE_ANON_KEY.\n' +
+        '  Salin frontend/.env.example menjadi frontend/.env lalu isi keduanya.\n'
+    );
+    process.exit(1);
+  }
+
+  const headers = { apikey: key, Accept: 'application/json' };
+  if (key.startsWith('eyJ')) headers.Authorization = `Bearer ${key}`;
+
+  /* Hanya kolom yang dibutuhkan. Email sengaja tidak diambil. */
+  const kolom = 'select=nama_instrumen,data_jawaban,created_at&order=created_at.desc';
+  const res = await fetch(`${url}/rest/v1/survey_responses?${kolom}`, { headers });
+  if (!res.ok) {
+    console.error(`\n  GAGAL: HTTP ${res.status} saat membaca survey_responses.\n`);
+    process.exit(1);
+  }
+  const baris = await res.json();
+
+  const perPeriode = new Map();
+  for (const b of baris) {
+    const slug = cfg.slugDariNamaInstrumen(b.nama_instrumen);
+    if (!slug) continue;
+    const periode = norm.periodeDariTanggal(b.created_at);
+    if (!periode) continue;
+    const info = cfg.getInstrumen(slug);
+    const hasil = norm.normalizeAnswers(slug, b.data_jawaban);
+    if (!hasil.items.length || hasil.items.length !== info.butir.length) continue;
+    const kunci = `${slug}|${periode}`;
+    if (!perPeriode.has(kunci)) perPeriode.set(kunci, { slug, periode, records: [] });
+    perPeriode.get(kunci).records.push({
+      items: hasil.items,
+      terbuka: hasil.terbuka,
+      kelompok: hasil.kelompok
+    });
+  }
+
+  const kasus = [];
+  for (const { slug, periode, records } of perPeriode.values()) {
+    if (records.length < 2) continue;
+    const agregat = hitungAgregat(slug, periode, records, 'real');
+    if (!agregat) continue;
+    kasus.push({ slug, periode, n: records.length, records, agregat, sumber: 'real' });
+  }
+
+  if (!kasus.length) {
+    console.error('\n  GAGAL: tidak ada (instrumen, periode) valid di survey_responses.\n');
+    process.exit(1);
+  }
+  /* Batasi ke 6 kasus terbesar supaya fixture tidak membengkak. */
+  kasus.sort((a, b) => b.n - a.n);
+  return kasus.slice(0, 6);
+}
+
+/* ---------------------------------------------------------------------
+   Mode 1: data sintetis
+   --------------------------------------------------------------------- */
+function kasusSintetis() {
+  const KASUS = [
+    { slug: 'spip', periode: '2026-ganjil', n: 58, benih: 20260101 },
+    { slug: 'spak', periode: '2026-ganjil', n: 42, benih: 20260202 }
+  ];
+
+  return KASUS.map((k) => {
+    const instrumen = cfg.getInstrumen(k.slug);
+    const records = buatRecords(k.n, instrumen.butir.length, k.benih);
+    const agregat = hitungAgregat(k.slug, k.periode, records, 'simulated', { dibuang: 3, duplikat: 1 });
+    if (!agregat) throw new Error(`hitungAgregat mengembalikan null untuk ${k.slug}`);
+
+    /* Pembanding: periode sebelumnya dengan benih lain dan n lebih kecil, supaya
+       jalur perbandingan (delta + "n belum cukup") ikut teruji. */
+    const recordsBanding = buatRecords(Math.floor(k.n * 0.6), instrumen.butir.length, k.benih + 7);
+    const agregatBanding = hitungAgregat(k.slug, '2025-genap', recordsBanding, 'simulated', { dibuang: 0, duplikat: 0 });
+
+    const perubahanButir = agregat.butir.map((b, i) => ({
+      label: b.label,
+      delta: rekom.getDelta(b.rata * 20, (agregatBanding?.butir[i]?.rata ?? b.rata) * 20)
+    }));
+
+    return {
+      ...k,
+      records,
+      agregat,
+      recordsBanding,
+      agregatBanding,
+      rekomendasi: rekom.rekomendasiUntuk(agregat, agregatBanding, perubahanButir)
+    };
+  });
+}
+
+const kasus = DARI_DB ? await kasusDariDb() : kasusSintetis();
+
+const keluaran = {
+  _catatan: DARI_DB
+    ? 'Dihasilkan scripts/gen-fixture.mjs --dari-db dari Supabase (tanpa email/komentar mentah). Jangan diedit tangan.'
+    : 'Dihasilkan scripts/gen-fixture.mjs dari frontend/src/data/survey/statistics.js. Jangan diedit tangan.',
+  _sumber: DARI_DB ? 'supabase:survey_responses' : 'sintetis',
+  kasus
+};
 
 await mkdir(dirname(TUJUAN), { recursive: true });
 await writeFile(TUJUAN, `${JSON.stringify(keluaran, null, 2)}\n`, 'utf8');
 
 for (const k of keluaran.kasus) {
   console.log(
-    `  ${k.slug.padEnd(6)} n=${String(k.n).padStart(3)}  indeks=${k.agregat.indeks.toFixed(4)}  ` +
-      `alpha=${k.agregat.alpha == null ? '-' : k.agregat.alpha.toFixed(6)}  tema=${k.agregat.kualitas.tema.length}`
+    `  ${k.slug.padEnd(11)} ${k.periode.padEnd(12)} n=${String(k.n).padStart(3)}  ` +
+      `indeks=${k.agregat.indeks.toFixed(4)}  alpha=${k.agregat.alpha == null ? '-' : k.agregat.alpha.toFixed(6)}`
   );
 }
 console.log(`\n  -> ${TUJUAN}\n`);

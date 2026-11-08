@@ -1,5 +1,6 @@
 {
   "_catatan": "Dihasilkan scripts/gen-fixture.mjs dari frontend/src/data/survey/statistics.js. Jangan diedit tangan.",
+  "_sumber": "sintetis",
   "kasus": [
     {
       "slug": "spip",
