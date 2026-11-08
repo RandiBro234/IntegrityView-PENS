@@ -26,12 +26,17 @@ async function hashIp(ip: string): Promise<string> {
 }
 
 /* Fail-open: gangguan pada pencatat rate limit tidak boleh memblokir
-   laporan yang sah. */
+   laporan yang sah.
+
+   `jendelaMenit` opsional supaya chatbot bisa memakai jendela 60 menit
+   (20 pertanyaan/jam) tanpa mengubah perilaku `kirim-laporan` yang memakai
+   bawaan 10 menit. */
 export async function cekBatas(
   supabase: SupabaseClient,
   req: Request,
   aksi: string,
-  limit: number
+  limit: number,
+  jendelaMenit: number = JENDELA_MENIT
 ): Promise<boolean> {
   try {
     const p_ip_hash = await hashIp(ipDari(req));
@@ -39,7 +44,7 @@ export async function cekBatas(
       p_ip_hash,
       p_aksi: aksi,
       p_limit: limit,
-      p_window_menit: JENDELA_MENIT
+      p_window_menit: jendelaMenit
     });
     if (error) {
       console.error('rate limit:', error.message);
