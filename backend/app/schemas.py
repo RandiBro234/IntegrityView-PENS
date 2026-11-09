@@ -17,7 +17,6 @@ class WebhookResponse(BaseModel):
 
 class SurveiItem(BaseModel):
     nama_instrumen: str
-    email_responden: Optional[str] = None
     data_jawaban: dict[str, Any]
     timestamp: Optional[str] = None
 

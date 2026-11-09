@@ -7,23 +7,23 @@ import { rata } from './statistics.js';
 import { agregat, recordsUntuk } from './aggregates.js';
 import { store } from './store.js';
 
-/* Jumlah responden satu periode: email distinct lintas instrumen, baris tanpa
-   email dihitung satu per baris, ditambah baris simulasi bila dipakai. */
+/* Jumlah responden satu periode: hash responden distinct lintas instrumen,
+   baris tanpa hash dihitung satu per baris, ditambah baris simulasi. */
 function jumlahResponden(periodeKey, slugs) {
   const set = new Set(slugs);
-  const emailSet = new Set();
-  let tanpaEmail = 0;
+  const respondenSet = new Set();
+  let tanpaHash = 0;
   store.records.forEach((r) => {
     if (r.periode !== periodeKey || !set.has(r.slug)) return;
-    if (r.email) emailSet.add(r.email);
-    else tanpaEmail += 1;
+    if (r.respondenKey) respondenSet.add(r.respondenKey);
+    else tanpaHash += 1;
   });
   let simulasi = 0;
   slugs.forEach((slug) => {
     const { records, sumber } = recordsUntuk(slug, periodeKey);
     if (sumber === 'simulated') simulasi += records.length;
   });
-  return emailSet.size + tanpaEmail + simulasi;
+  return respondenSet.size + tanpaHash + simulasi;
 }
 
 /* ---------------------------------------------------------------------
@@ -112,7 +112,7 @@ export function getReportData(pilihan = DEFAULT_FILTER) {
     atas: Math.min(100, indeksRata + 1.96 * seGabungan)
   };
 
-  /* Responden: email distinct lintas instrumen + baris tanpa email + simulasi. */
+  /* Responden: hash distinct lintas instrumen + baris tanpa hash + simulasi. */
   const semuaSlug = daftar.map((i) => i.slug);
   const responden = jumlahResponden(periode.key, semuaSlug);
   const respondenBanding = periodePembanding

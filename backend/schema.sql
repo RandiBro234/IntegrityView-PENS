@@ -6,7 +6,7 @@
 CREATE TABLE IF NOT EXISTS survey_responses (
     id SERIAL PRIMARY KEY,
     nama_instrumen VARCHAR(50) NOT NULL,
-    email_responden VARCHAR(100),
+    responden_hash VARCHAR(64),
     data_jawaban JSONB NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -17,3 +17,6 @@ CREATE INDEX IF NOT EXISTS idx_survey_responses_instrumen
 
 CREATE INDEX IF NOT EXISTS idx_survey_responses_created_at
     ON survey_responses (created_at DESC);
+
+CREATE INDEX IF NOT EXISTS idx_survey_responses_responden_hash
+    ON survey_responses (responden_hash);

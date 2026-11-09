@@ -5,12 +5,15 @@
 //   supabase functions deploy webhook-survei --no-verify-jwt
 // Secret (samakan dengan yang dipakai Apps Script):
 //   supabase secrets set WEBHOOK_SECRET=ganti-dengan-string-acak
+// Secret hash email responden:
+//   supabase secrets set RESPONDENT_HASH_PEPPER=ganti-dengan-string-acak-panjang
 //
 // SUPABASE_URL dan SUPABASE_SERVICE_ROLE_KEY sudah otomatis tersedia di
 // environment Edge Function, jadi tidak perlu diset manual.
 
 import { CORS, json } from './lib/http.ts';
 import { ambilEmail } from './lib/email.ts';
+import { hashEmail, sanitasiDataJawaban } from './lib/privasi.ts';
 import { buatClient } from './lib/supabase.ts';
 import { PayloadError, validasiData } from './lib/validasi.ts';
 
@@ -48,14 +51,24 @@ Deno.serve(async (req: Request) => {
   }
 
   const email = ambilEmail(data);
+  const dataBersih = sanitasiDataJawaban(data);
+  let respondenHash: string | null = null;
+
+  try {
+    respondenHash = email ? await hashEmail(email) : null;
+  } catch (error) {
+    console.error('Gagal membuat hash responden:', error);
+    return json({ error: 'Konfigurasi privasi responden belum siap' }, 500);
+  }
+
   const supabase = buatClient();
 
   const { error } = await supabase
     .from('survey_responses')
     .insert({
       nama_instrumen: instrumen,
-      email_responden: email,
-      data_jawaban: data
+      responden_hash: respondenHash,
+      data_jawaban: dataBersih
     });
 
   if (error) {
