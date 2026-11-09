@@ -99,7 +99,7 @@ export default function AuthPage({ onSuccess, onBack }) {
           <div className="auth__brand-stats">
             <div className="auth__brand-stat">
               <span className="auth__brand-stat-num">{formatAngka(keSkor(ringkasan.rataSkor), 2)}</span>
-              <span className="auth__brand-stat-label">Rata-rata skor ZI periode ini (1–4)</span>
+              <span className="auth__brand-stat-label">Rata-rata Indeks Persepsi Integritas (1–4)</span>
             </div>
             <div className="auth__brand-stat">
               <span className="auth__brand-stat-num">{ringkasan.responden.total.toLocaleString('id-ID')}</span>
