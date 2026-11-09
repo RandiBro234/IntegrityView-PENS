@@ -143,6 +143,13 @@ export async function unggahLampiran(jenis, file) {
   return { path: tanda.path, nama: file.name, tipe, ukuran: file.size };
 }
 
+/* Signed URL sementara untuk membuka lampiran di bucket privat (admin). */
+export async function ambilUrlLampiran(path) {
+  const data = await panggilFunction('ambil-lampiran', { path });
+  if (!data?.url) throw new Error('Server tidak mengembalikan tautan lampiran.');
+  return data.url;
+}
+
 export async function lacakLaporan(kode) {
   if (!laporanApiSiap) {
     throw new Error('Supabase belum dikonfigurasi.');

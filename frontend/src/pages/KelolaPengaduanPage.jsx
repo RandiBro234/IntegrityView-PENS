@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Sidebar from '../components/layout/Sidebar';
 import Topbar from '../components/layout/Topbar';
 import {
@@ -8,6 +8,8 @@ import {
 import {
   opsiFilterKategori, labelKategori, kunciKategori, dialihkanKeSatisView
 } from '../data/reportCategories';
+import { ambilLampiranLokal } from '../lib/lampiranLokal';
+import { ambilUrlLampiran } from '../data/laporanApi';
 import './KelolaPengaduanPage.css';
 
 const STATUS_BADGE = { 'Baru': 'badge-status-baru', 'Diproses': 'badge-status-diproses', 'Selesai': 'badge-status-selesai' };
@@ -149,6 +151,128 @@ export default function KelolaPengaduanPage({ onNavigate }) {
   );
 }
 
+/* Lampiran bukti pelapor. File demo tersimpan di IndexedDB (lokal), jadi admin
+   di browser yang sama bisa membuka/mengunduhnya. Entri server hanya memuat
+   metadata path sampai alur baca admin Supabase tersedia. */
+function LampiranBukti({ kode, lampiran }) {
+  const adaLokal = Array.isArray(lampiran) && lampiran.some((l) => l && l.lokal);
+  /* Simpan hasil per kode; nilai lama otomatis dianggap kosong saat kode berganti. */
+  const [muatan, setMuatan] = useState({ kode: null, files: null, gagal: false });
+  const [sibuk, setSibuk] = useState('');
+  const [pesan, setPesan] = useState('');
+
+  useEffect(() => {
+    if (!adaLokal) return undefined;
+    let aktif = true;
+    ambilLampiranLokal(kode)
+      .then((files) => { if (aktif) setMuatan({ kode, files, gagal: false }); })
+      .catch(() => { if (aktif) setMuatan({ kode, files: null, gagal: true }); });
+    return () => { aktif = false; };
+  }, [kode, adaLokal]);
+
+  if (!Array.isArray(lampiran) || !lampiran.length) return null;
+  const berkas = muatan.kode === kode ? muatan.files : null;
+  const gagal = muatan.kode === kode ? muatan.gagal : false;
+
+  /* Lampiran demo tersimpan di IndexedDB; lampiran server hanya punya path dan
+     dibuka lewat signed URL berumur pendek dari Edge Function. */
+  const ambilUrl = async (l, file, unduh) => {
+    if (file?.blob) {
+      const url = URL.createObjectURL(file.blob);
+      if (unduh) {
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = file.nama || 'lampiran';
+        a.click();
+      } else {
+        window.open(url, '_blank', 'noopener');
+      }
+      window.setTimeout(() => URL.revokeObjectURL(url), 60000);
+      return;
+    }
+    if (!l.path) return;
+    setSibuk(l.path);
+    setPesan('');
+    try {
+      const url = await ambilUrlLampiran(l.path);
+      if (unduh) {
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = l.nama || 'lampiran';
+        a.click();
+      } else {
+        window.open(url, '_blank', 'noopener');
+      }
+    } catch (err) {
+      setPesan(err.message || 'Gagal membuka lampiran.');
+    } finally {
+      setSibuk('');
+    }
+  };
+
+  return (
+    <section className="kpo-sec">
+      <p className="kpo-sec__head">Lampiran bukti ({lampiran.length})</p>
+      {gagal && <p className="kpo-sec__text kpo-muted">Gagal membaca lampiran dari perangkat ini.</p>}
+      {pesan && <p className="kpo-error">{pesan}</p>}
+      <ul className="kpo-lampiran">
+        {lampiran.map((l, i) => {
+          const file = berkas?.find((f) => f.nama === l.nama) || null;
+          const tersedia = !!file?.blob || !!l.path;
+          const sedang = sibuk === l.path;
+          return (
+            <li key={l.path || `${l.nama}-${i}`} className="kpo-lampiran__item">
+              <span className="kpo-lampiran__ikon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M14 3v5h5" />
+                  <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Z" />
+                </svg>
+              </span>
+              <span className="kpo-lampiran__info">
+                <span className="kpo-lampiran__nama" title={l.nama}>{l.nama || 'Lampiran'}</span>
+                <span className="kpo-lampiran__meta">
+                  {jenisBerkas(l.nama)} · {formatUkuran(l.ukuran)}
+                </span>
+              </span>
+              {tersedia && (
+                <span className="kpo-lampiran__aksi">
+                  <button
+                    type="button"
+                    className="kpo-lampiran__btn"
+                    onClick={() => ambilUrl(l, file, false)}
+                    disabled={sedang}
+                  >
+                    {sedang ? 'Membuka…' : 'Buka'}
+                  </button>
+                  <button
+                    type="button"
+                    className="kpo-lampiran__btn"
+                    onClick={() => ambilUrl(l, file, true)}
+                    disabled={sedang}
+                  >
+                    Unduh
+                  </button>
+                </span>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  );
+}
+
+function formatUkuran(bytes) {
+  if (!bytes) return '-';
+  if (bytes >= 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  return `${Math.max(1, Math.round(bytes / 1024))} KB`;
+}
+
+function jenisBerkas(nama) {
+  const ext = String(nama || '').split('.').pop().toUpperCase();
+  return ext && ext.length <= 5 ? ext : 'Berkas';
+}
+
 function KpiCard({ label, value, tone = '', active, onClick }) {
   return (
     <button type="button" className={`kpo-kpi__card ${active ? 'is-active' : ''} ${tone ? 'kpo-kpi__card--' + tone : ''}`} onClick={onClick}>
@@ -210,6 +334,8 @@ function DetailPanel({ data, onClose, onSaved, adminNama }) {
             <p className="kpo-sec__head">Deskripsi laporan</p>
             <p className="kpo-sec__text">{data.deskripsi}</p>
           </section>
+
+          <LampiranBukti kode={data.id} lampiran={data.lampiran} />
 
           <div className="kpo-detail__split">
             <section className="kpo-sec">
