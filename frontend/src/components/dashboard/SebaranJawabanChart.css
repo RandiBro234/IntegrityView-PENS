@@ -196,6 +196,22 @@ html.js .sebaran__seg-label {
   max-width: 260px;
 }
 .sebaran__tooltip strong { font-size: 12.5px; }
+.sebaran__tooltip-row {
+  display: grid;
+  grid-template-columns: 9px 1fr auto;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+}
+.sebaran__tooltip-row.is-active { font-weight: 800; }
+.sebaran__tooltip-swatch {
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  display: inline-block;
+}
+.sebaran__tooltip-label { opacity: 0.85; }
+.sebaran__tooltip-num { font-variant-numeric: tabular-nums; text-align: right; }
 .sebaran__tooltip-note { font-size: 12px; opacity: 0.7; }
 
 .sebaran--empty {

@@ -481,13 +481,13 @@
 .idp__legend {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px 14px;
-  font-size: 11px;
+  gap: 8px 18px;
+  font-size: 12.5px;
   color: var(--text-secondary);
   flex-shrink: 0;
 }
-.idp__legend-item { display: inline-flex; align-items: center; gap: 5px; font-weight: 600; }
-.idp__legend-swatch { width: 10px; height: 10px; border-radius: 3px; display: inline-block; flex-shrink: 0; }
+.idp__legend-item { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; }
+.idp__legend-swatch { width: 13px; height: 13px; border-radius: 3px; display: inline-block; flex-shrink: 0; }
 
 .idp__butir-table {
   display: flex;
@@ -498,14 +498,14 @@
 .idp__butir-head,
 .idp__butir-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 64px 132px;
-  gap: 10px;
+  grid-template-columns: minmax(0, 1fr) 76px minmax(150px, 220px);
+  gap: 14px;
   align-items: center;
 }
 .idp__butir-head {
-  padding-bottom: 6px;
+  padding-bottom: 8px;
   border-bottom: 1px solid var(--border-soft);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -513,21 +513,29 @@
   flex-shrink: 0;
 }
 .idp__butir-head .idp__butir-rata { text-align: right; }
+.idp__butir-head .idp__butir-bar {
+  height: auto;
+  padding: 0;
+  background: none;
+  border-radius: 0;
+  overflow: visible;
+}
 .idp__butir-body {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
 }
 .idp__butir-row {
-  min-height: 34px;
+  min-height: 48px;
   border-bottom: 1px solid var(--border-soft);
-  font-size: 11.5px;
+  font-size: 12.5px;
 }
 .idp__butir-row:last-child { border-bottom: 0; }
 .idp__butir-teks {
   min-width: 0;
   color: var(--text-primary);
-  line-height: 1.35;
+  font-weight: 700;
+  line-height: 1.4;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
@@ -537,17 +545,61 @@
 .idp__butir-rata {
   text-align: right;
   font-variant-numeric: tabular-nums;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--text-primary);
 }
 .idp__butir-bar {
   display: flex;
-  height: 14px;
-  border-radius: 3px;
+  height: 22px;
+  border-radius: 4px;
   overflow: hidden;
   background: var(--gray-50);
 }
-.idp__butir-seg { display: block; height: 100%; }
+.idp__butir-seg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+.idp__butir-seg-label {
+  font-size: 10.5px;
+  font-weight: 800;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* Tooltip ringkasan jawaban per butir (posisi mengikuti kursor). */
+.idp__tip {
+  position: fixed;
+  z-index: 300;
+  background: var(--navy-900);
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  pointer-events: none;
+  box-shadow: 0 8px 20px rgba(11, 27, 51, 0.3);
+  max-width: 260px;
+}
+.idp__tip strong { font-size: 12.5px; margin-bottom: 2px; }
+.idp__tip-row {
+  display: grid;
+  grid-template-columns: 9px 1fr auto;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+}
+.idp__tip-swatch { width: 9px; height: 9px; border-radius: 2px; }
+.idp__tip-label { opacity: 0.85; }
+.idp__tip-num { text-align: right; font-variant-numeric: tabular-nums; }
+.idp__tip-note { font-size: 12px; opacity: 0.7; margin-top: 2px; }
 
 /* === Kualitas data === */
 .idp__kualitas {
