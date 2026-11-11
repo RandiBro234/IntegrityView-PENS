@@ -80,7 +80,7 @@ export default function SebaranJawabanChart({ data, selectedKey, onSelect, onOpe
                     style={{ width: pct + '%', backgroundColor: SKALA[i].warna }}
                     onMouseMove={(e) => showTip(e, item, i)}
                   >
-                    {pct >= 25 && barWidth * pct / 100 >= 20 && (
+                    {pct >= 15 && barWidth * pct / 100 >= 20 && (
                       <span className="sebaran__seg-label">{formatAngka(pct, 0)}%</span>
                     )}
                   </span>
@@ -123,10 +123,15 @@ export default function SebaranJawabanChart({ data, selectedKey, onSelect, onOpe
         {tooltip && (
           <div className="sebaran__tooltip" style={{ left: tooltip.x + 14, top: tooltip.y - 8 }} role="status">
             <strong>{tooltip.item.namaPanjang}</strong>
-            <span>
-              {SKALA[tooltip.segIdx].label} ({tooltip.segIdx + 1}):{' '}
-              {formatAngka(tooltip.item.distribusiPersen[tooltip.segIdx])}%
-            </span>
+            {SKALA.map((s, i) => (
+              <span key={s.singkat} className={`sebaran__tooltip-row ${i === tooltip.segIdx ? 'is-active' : ''}`}>
+                <span className="sebaran__tooltip-swatch" style={{ backgroundColor: s.warna }} />
+                <span className="sebaran__tooltip-label">{s.label}</span>
+                <span className="sebaran__tooltip-num">
+                  {tooltip.item.distribusiAbsolut[i]} ({formatAngka(tooltip.item.distribusiPersen[i])}%)
+                </span>
+              </span>
+            ))}
             <span className="sebaran__tooltip-note">n = {tooltip.item.n} responden</span>
           </div>
         )}
