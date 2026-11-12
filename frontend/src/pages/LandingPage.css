@@ -78,6 +78,143 @@
   box-shadow: 0 4px 12px rgba(11, 27, 51, 0.2);
 }
 
+/* === Tombol hamburger (hanya mobile) === */
+.landing__menu-btn {
+  display: none;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #DCE4F0;
+  border-radius: 12px;
+  background: #FFFFFF;
+  color: #0B1B33;
+}
+.landing__menu-btn:focus-visible { outline: 2px solid var(--orange-500); outline-offset: 2px; }
+.landing__menu-icon { position: relative; display: block; width: 20px; height: 14px; }
+.landing__menu-icon span {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+  transition: transform 200ms var(--ease-out), opacity 160ms linear;
+}
+.landing__menu-icon span:nth-child(1) { top: 0; }
+.landing__menu-icon span:nth-child(2) { top: 6px; }
+.landing__menu-icon span:nth-child(3) { top: 12px; }
+.landing__menu-btn.is-buka .landing__menu-icon span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.landing__menu-btn.is-buka .landing__menu-icon span:nth-child(2) { opacity: 0; }
+.landing__menu-btn.is-buka .landing__menu-icon span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+/* === Panel menu mobile === */
+.landing__menu-layer { position: fixed; inset: 0; z-index: 39; }
+.landing__menu-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(11, 27, 51, 0.35);
+  animation: landing-menu-fade 200ms ease both;
+}
+.landing__menu {
+  position: absolute;
+  top: var(--nav-h, calc(60px + env(safe-area-inset-top)));
+  left: 0;
+  right: 0;
+  max-height: calc(100dvh - var(--nav-h, 60px));
+  overflow-y: auto;
+  padding: 16px 20px calc(20px + env(safe-area-inset-bottom));
+  background: #FFFFFF;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  box-shadow: 0 18px 40px rgba(11, 27, 51, 0.18);
+  outline: none;
+  animation: landing-menu-turun 200ms var(--ease-out) both;
+}
+@keyframes landing-menu-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes landing-menu-turun {
+  from { opacity: 0; transform: translate3d(0, -10px, 0); }
+  to { opacity: 1; transform: none; }
+}
+
+.landing__menu-profil {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 0 14px;
+  border-bottom: 1px solid #DCE4F0;
+}
+.landing__menu-avatar {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--navy-900);
+  color: #FFFFFF;
+  border: 2px solid var(--orange-500);
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 800;
+}
+.landing__menu-identitas { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+.landing__menu-identitas strong {
+  font-size: 15px;
+  font-weight: 800;
+  color: #0B1B33;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.landing__menu-identitas span { font-size: 12px; color: #6B7280; }
+.landing__menu-keluar {
+  flex-shrink: 0;
+  padding: 9px 16px;
+  border: 1px solid #DCE4F0;
+  border-radius: var(--radius-pill);
+  background: #FFFFFF;
+  color: #0B1B33;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.landing__menu-keluar:hover { border-color: var(--orange-500); color: var(--orange-500); }
+.landing__menu-keluar:focus-visible,
+.landing__menu-masuk:focus-visible { outline: 2px solid var(--orange-500); outline-offset: 2px; }
+.landing__menu-masuk { width: 100%; justify-content: center; }
+
+.landing__menu-nav { display: flex; flex-direction: column; margin-top: 10px; }
+.landing__menu-nav a {
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 0 6px 0 14px;
+  border-left: 3px solid transparent;
+  border-bottom: 1px solid #DCE4F0;
+  font-size: 17px;
+  font-weight: 600;
+  color: #0B1B33;
+}
+.landing__menu-nav a:last-child { border-bottom: 0; }
+.landing__menu-nav a.is-active {
+  border-left-color: var(--orange-500);
+  color: var(--orange-500);
+  font-weight: 800;
+}
+.landing__menu-nav a:focus-visible {
+  outline: 2px solid var(--orange-500);
+  outline-offset: -2px;
+  border-radius: 8px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .landing__menu,
+  .landing__menu-backdrop { animation: none; }
+  .landing__menu-icon span { transition: none; }
+}
+
 /* === Hero: navy gelap ===
    Mengisi sisa tinggi layar di bawah topbar; isi terpusat vertikal. Padding
    memakai vh + safe area bawah agar widget Tanya Ivy tidak menutup kartu. */
@@ -1068,9 +1205,34 @@ html.js .landing__alur-step.is-visible .landing__alur-arrow {
   .landing__footer-grid { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 960px) {
-  .landing__hero { --hero-h: clamp(280px, 48vh, 420px); min-height: auto; }
+  /* Versi mobile menumpuk teks + visual, jadi konten bisa lebih tinggi dari
+     layar. Rata atas (bukan tengah) mencegah judul terpotong ke belakang topbar. */
+  .landing__hero {
+    --hero-h: clamp(280px, 48vh, 420px);
+    min-height: auto;
+    align-items: flex-start;
+  }
   .landing__hero-inner { grid-template-columns: 1fr; gap: clamp(20px, 4vh, 32px); }
-  .landing__nav { display: none; }
+  /* Menu pindah ke baris kedua dan bisa digeser horizontal, bukan hilang. */
+  .landing__topbar { flex-wrap: wrap; gap: 10px 16px; padding: 12px 16px; }
+  .landing__nav {
+    order: 3;
+    width: 100%;
+    margin: 0;
+    gap: 18px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 2px;
+  }
+  .landing__nav::-webkit-scrollbar { display: none; }
+  .landing__nav a { flex-shrink: 0; }
+  .landing__nav-indikator { display: none; }
+  .landing__topbar > .btn,
+  .landing__avatar { margin-left: auto; }
+  /* Header mobile dua baris (~101px): opaque saat scroll dan offset anchor pas. */
+  .landing__topbar.is-padat { background: #fff; }
+  .landing__section-anchor { scroll-margin-top: 110px; }
 }
 /* Dua kartu kanal pelaporan menumpuk di bawah 900px. */
 @media (max-width: 900px) {
@@ -1085,7 +1247,87 @@ html.js .landing__alur-step.is-visible .landing__alur-arrow {
   .landing__hero { --hero-h: clamp(260px, 44vh, 360px); }
   .landing__bento { padding: 12px 14px; }
   .landing__bento-value { font-size: 22px; }
-  .landing__about-inner { grid-template-columns: 1fr; gap: 18px; }
+  /* Ikon tetap sebaris dengan teks, bukan menggantung sendirian di atas. */
+  .landing__about-inner { grid-template-columns: auto 1fr; gap: 14px; align-items: start; }
+  .landing__about-icon { width: 48px; height: 48px; border-radius: 14px; }
+  .landing__about-icon svg { width: 26px; height: 26px; }
   /* Pada layar sempit, teks CTA full width dan tombol pindah ke bawah secara alami */
   .landing__cta-text { flex-basis: 100%; }
+  /* Di ponsel tombol menumpuk penuh supaya tidak saling mendesak/terpotong. */
+  .landing__hero-cta { flex-direction: column; align-items: stretch; }
+  .landing__hero-cta .btn { flex: 1 1 100%; justify-content: center; }
+  /* Ponsel: jangan menutupi foto kampus. Kartu indeks pindah ke bawah foto. */
+  .landing__bento--b,
+  .landing__bento--c { display: none; }
+  .landing__hero-frame { height: auto; width: 100%; }
+  .landing__hero-photo { position: relative; inset: auto; height: var(--hero-h); }
+  .landing__bento--a {
+    position: static;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 2px 12px;
+    max-width: none;
+    margin-top: 12px;
+    padding: 14px 16px;
+    border-radius: 18px;
+    box-shadow: var(--shadow-soft);
+  }
+  .landing__bento--a .blob { display: none; }
+  .landing__bento--a .label-eyebrow { grid-column: 1; font-size: 10px; line-height: 1.35; }
+  .landing__bento--a .landing__bento-value {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    margin: 0;
+    font-size: 26px;
+    font-weight: 800;
+    color: #0B1B33;
+  }
+  /* CountUp membungkus seluruh angka dalam <span>; base style suffix membuatnya kecil. */
+  .landing__bento--a .landing__bento-value span {
+    font-size: 26px;
+    font-weight: 800;
+    color: #0B1B33;
+    margin-left: 0;
+  }
+  .landing__bento--a .delta { grid-column: 1; font-size: 11.5px; }
+  .landing__section-head { flex-wrap: wrap; align-items: flex-start; }
+  .landing__cta-band { margin-inline: 16px; padding: 28px 20px; border-radius: 22px; }
+  .landing__cta-inner { justify-content: flex-start; }
+  .landing__cta-btn { flex: 1 1 100%; justify-content: center; }
+  .landing__footer-bottom { flex-direction: column; }
+  .landing__instr-grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* Layar pendek (mis. 400x550 di DevTools): rapatkan hero agar tidak perlu
+   gulir panjang sebelum CTA terlihat. */
+@media (max-width: 960px) and (max-height: 700px) {
+  .landing__hero { --hero-h: clamp(190px, 34vh, 260px); padding-top: 20px; padding-bottom: 40px; }
+  .landing__hero-title { font-size: clamp(26px, 7vh, 36px); }
+  .landing__hero-lead { font-size: 0.9rem; line-height: 1.55; }
+  .landing__hero-cta { margin-top: 14px; }
+}
+
+/* === Navbar mobile (<768px): satu baris + panel menu === */
+@media (max-width: 768px) {
+  .landing { --nav-h: calc(60px + env(safe-area-inset-top)); }
+
+  .landing__topbar {
+    height: var(--nav-h);
+    padding: env(safe-area-inset-top) 16px 0;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 12px;
+    background: #FFFFFF;
+  }
+  .landing__topbar.is-padat { background: #FFFFFF; }
+
+  /* Baris menu horizontal dan tombol akun pindah ke dalam panel. */
+  .landing__nav { display: none; }
+  .landing__topbar > .landing__avatar,
+  .landing__bar-masuk { display: none; }
+  .landing__menu-btn { display: inline-flex; margin-left: auto; }
+
+  /* Judul section tidak tertutup header sticky. */
+  .landing__section-anchor { scroll-margin-top: calc(var(--nav-h) + 16px); }
 }

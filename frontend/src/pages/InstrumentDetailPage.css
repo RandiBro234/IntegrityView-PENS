@@ -52,6 +52,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  min-width: 0;
 }
 
 .idp__header-right {
@@ -429,15 +430,38 @@
 /* === Responsif === */
 @media (max-width: 900px) {
   .detail-shell .app-main { height: auto; min-height: 100dvh; }
-  .detail-shell .app-content { display: block; padding: 16px; }
+  .detail-shell .app-content { display: block; padding: 16px 16px calc(96px + env(safe-area-inset-bottom)); }
   .idp { height: auto; grid-template-rows: none; }
   .idp__header { flex-wrap: wrap; max-height: none; }
+  .idp__header-right { flex-wrap: wrap; }
   .idp__cards { grid-template-columns: repeat(2, 1fr); max-height: none; }
   .idp__panels { grid-template-columns: 1fr; }
   .idp__panel--right { grid-template-rows: none; }
   .idp__half { overflow: visible; }
   .idp__dist-list { max-height: 420px; }
   .idp__dist-list--scroll { max-height: 420px; }
+}
+
+/* Kolom teks butir menyempit: kecilkan kolom angka & grafik, bukan teksnya. */
+@media (max-width: 720px) {
+  .idp__breadcrumb { flex: 1 1 auto; }
+  .idp__header-right { flex-shrink: 1; flex-wrap: wrap; }
+  .idp__cards { grid-template-columns: repeat(2, 1fr); }
+  .idp__cards > :last-child { grid-column: 1 / -1; }
+  .idp__panel { padding: 16px 14px; }
+  .idp__half { padding: 14px 14px; }
+  .idp__half-head { flex-wrap: wrap; }
+  .idp__panel-title { min-width: 0; overflow-wrap: anywhere; }
+  .idp__modal-overlay { padding: 8px; }
+  .idp__modal--report { max-height: 96dvh; }
+  .idp__modal-preview { padding: 8px; }
+}
+@media (max-width: 420px) {
+  .idp__cards { grid-template-columns: 1fr; }
+  .idp__cards > :last-child { grid-column: auto; }
+  .idp__header-right { width: 100%; }
+  .idp__header-right .report-filters { flex: 1 1 100%; }
+  .idp__header-right .btn { flex: 1 1 0; justify-content: center; }
 }
 
 /* === Modal pratinjau ekspor PDF (pratinjau identik dengan hasil unduhan) === */
@@ -642,3 +666,27 @@
 }
 .idp__tema-list li { display: flex; justify-content: space-between; gap: 8px; color: var(--text-primary); }
 .idp__tema-list strong { font-variant-numeric: tabular-nums; }
+
+/* === Butir di ponsel ===
+   Base style butir didefinisikan setelah blok responsif umum, jadi override-nya
+   diletakkan di akhir file agar menang cascade. */
+@media (max-width: 720px) {
+  .idp__butir-head { grid-template-columns: minmax(0, 1fr) 72px; }
+  .idp__butir-head .idp__butir-bar { display: none; }
+  .idp__butir-head .idp__butir-rata { font-size: 9.5px; letter-spacing: 0.04em; }
+  .idp__butir-row { grid-template-columns: minmax(0, 1fr) 52px minmax(88px, 1fr); gap: 8px; }
+  .idp__change-row { grid-template-columns: minmax(0, 1.4fr) minmax(40px, 1fr) 56px; gap: 8px; }
+}
+@media (max-width: 560px) {
+  .idp__butir-head { display: none; }
+  .idp__butir-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: 'teks rata' 'bar bar';
+    row-gap: 6px;
+    padding: 8px 0;
+  }
+  .idp__butir-teks { grid-area: teks; overflow-wrap: anywhere; }
+  .idp__butir-rata { grid-area: rata; }
+  .idp__butir-bar { grid-area: bar; }
+  .idp__change-name { overflow-wrap: anywhere; white-space: normal; }
+}

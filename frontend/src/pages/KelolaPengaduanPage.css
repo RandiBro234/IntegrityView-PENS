@@ -202,6 +202,22 @@
   .kpo-detail__split { grid-template-columns: 1fr; }
   .kpo-form-row { grid-template-columns: 1fr; }
 }
+@media (max-width: 720px) {
+  .kpo-kpi__value { font-size: 22px; }
+  .kpo-toolbar { flex-direction: column; align-items: stretch; }
+  .kpo-toolbar select,
+  .kpo-toolbar input { min-width: 0; width: 100%; }
+  .kpo-detail__head { padding: 16px; }
+  .kpo-detail__body { padding: 16px 16px 32px; }
+  .kpo-table { min-width: 720px; }
+}
+@media (max-width: 480px) {
+  .kpo-actions { flex-wrap: wrap; }
+  .kpo-actions .btn { flex: 1 1 auto; justify-content: center; }
+  .kpo-dl li { grid-template-columns: 92px 1fr; }
+  .kpo-lampiran__item { flex-wrap: wrap; }
+  .kpo-lampiran__aksi { width: 100%; justify-content: flex-end; }
+}
 
 /* === Lampiran bukti di panel detail === */
 .kpo-lampiran {
