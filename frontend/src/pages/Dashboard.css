@@ -196,7 +196,9 @@
 /* Di bawah 1100px panel turun menjadi satu kolom; halaman boleh digulir. */
 @media (max-width: 1100px) {
   .dashboard-shell .app-main { height: auto; min-height: 100dvh; }
-  .dashboard-shell .app-content { display: block; padding: 16px; }
+  /* Topbar kini dua baris (pencarian turun), jadi tinggi tetap 60px akan memotong. */
+  .dashboard-shell .topbar { height: auto; min-height: 56px; padding: 10px var(--pad-page); }
+  .dashboard-shell .app-content { display: block; padding: 16px 16px calc(96px + env(safe-area-inset-bottom)); }
   .dashboard__grid { display: flex; flex-direction: column; height: auto; }
   .dashboard__duo { grid-template-columns: minmax(0, 1fr); }
   .dashboard__box { min-height: 420px; }
@@ -205,6 +207,23 @@
   .dashboard__box { padding: 16px; min-height: 360px; }
   .dashboard__box-head { flex-wrap: wrap; }
   .dashboard__loading-cards { grid-template-columns: 1fr; }
+  .dashmodal__overlay { padding: 8px; }
+  .dashmodal { max-height: 96dvh; }
+  .dashmodal__preview { padding: 8px; }
+}
+/* Topbar sempit: rapatkan pemilih periode agar filter + ekspor + avatar muat. */
+@media (max-width: 720px) {
+  .report-filters--ringkas .report-filters__periode { min-width: 120px; }
+  .dashboard__ekspor { padding: 8px 12px; font-size: 12.5px; }
+  .dashboard-shell .topbar { height: auto; min-height: 56px; padding: 10px 16px; }
+  .dashboard-shell .topbar__left { min-width: 0; }
+  .dashboard-shell .topbar__right { flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
+  .dashboard-shell .topbar__right .report-filters { order: 5; flex: 1 1 100%; }
+}
+@media (max-width: 480px) {
+  .report-filters--ringkas .report-filters__periode { min-width: 104px; }
+  .dashboard__ekspor { padding: 7px 10px; }
+  .dashboard-shell .topbar__greeting { font-size: 16px; }
 }
 
 /* === Tombol ekspor di topbar === */

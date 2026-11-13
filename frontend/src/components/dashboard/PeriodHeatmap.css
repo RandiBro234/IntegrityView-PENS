@@ -58,3 +58,12 @@
 /* Di sel navy gelap panah memakai varian terang agar tetap terbaca. */
 .heatmap__cell--gelap .heatmap__panah--naik { color: #7FD6C2; }
 .heatmap__cell--gelap .heatmap__panah--turun { color: #FFD1AE; }
+
+/* Layar sempit: kolom nama menyusut, teks sel mengecil agar 11 baris tetap rapi. */
+@media (max-width: 640px) {
+  .heatmap__row { grid-template-columns: minmax(56px, 0.8fr) repeat(5, minmax(0, 1fr)); gap: 3px; }
+  .heatmap__row > span { font-size: 10.5px; padding: 2px; }
+  .heatmap__head b { font-size: 10px; }
+  .heatmap__head i { font-size: 8px; }
+  .heatmap__panah svg { width: 9px; height: 9px; }
+}

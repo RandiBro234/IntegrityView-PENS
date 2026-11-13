@@ -154,6 +154,7 @@ export default function App() {
           }
           return pindah(() => setPage(session ? 'dashboard' : 'auth'));
         }}
+        onKeluar={() => { logout(); window.location.reload(); }}
         session={session}
       />
     );

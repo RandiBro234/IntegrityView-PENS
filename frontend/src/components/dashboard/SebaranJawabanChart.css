@@ -233,3 +233,10 @@ html.js .sebaran__seg-label {
   .sebaran__row { gap: 6px; grid-template-columns: 76px minmax(0, 1fr) 52px 56px 22px; }
   .sebaran__seg-label { display: none; }
 }
+/* Sembunyikan kolom selisih di ponsel sempit; batang dapat ruang lebih lega. */
+@media (max-width: 480px) {
+  .sebaran__row { grid-template-columns: 68px minmax(0, 1fr) 46px 22px; }
+  .sebaran__delta-slot { display: none; }
+  .sebaran__name { font-size: 11.5px; }
+  .sebaran__pct { font-size: 11.5px; }
+}

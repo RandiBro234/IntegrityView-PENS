@@ -289,4 +289,11 @@
 
 @media (max-width: 540px) {
   .survei-grid { grid-template-columns: 1fr; }
+  .survei-hero { padding: 18px; }
+  .survei-hero__progress { padding: 18px; }
+  .survei-hero__progress-num { font-size: 32px; }
+  .survei-stats { gap: 16px 24px; padding: 14px 16px; }
+  .survei-stat__num { font-size: 19px; }
+  .scard { padding: 18px 16px; }
+  .survei-toolbar .survei-filter { width: 100%; justify-content: center; }
 }
