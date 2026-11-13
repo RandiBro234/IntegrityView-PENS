@@ -7,6 +7,8 @@ create table if not exists public.survey_responses (
   -- HMAC-SHA256 dari email responden. Email asli tidak disimpan.
   responden_hash text,
   hash_version smallint not null default 1,
+  sumber_data text not null default 'asli'
+    check (sumber_data in ('asli', 'dummy')),
   data_jawaban jsonb not null default '{}'::jsonb,
   created_at timestamptz not null default now()
 );
@@ -19,6 +21,9 @@ create index if not exists idx_survey_responses_created_at
 
 create index if not exists idx_survey_responses_responden_hash
   on public.survey_responses (responden_hash, nama_instrumen, created_at desc);
+
+create index if not exists idx_survey_responses_sumber_data
+  on public.survey_responses (sumber_data, nama_instrumen, created_at desc);
 
 -- Hapus kunci email dari payload sebelum data disimpan/dibaca frontend.
 create or replace function public.sanitasi_data_jawaban(p_data jsonb)
@@ -57,7 +62,10 @@ drop policy if exists "baca publik survey_responses" on public.survey_responses;
 
 -- Jalur baca aman untuk dashboard: tanpa email_responden dan tanpa
 -- "Email Address" di dalam data_jawaban.
-create or replace function public.survey_rows_safe()
+create or replace function public.survey_rows_safe(
+  p_limit integer default 1000,
+  p_offset integer default 0
+)
 returns table (
   id bigint,
   nama_instrumen text,
@@ -77,11 +85,17 @@ as $$
     r.created_at,
     r.responden_hash
   from public.survey_responses r
-  order by r.created_at desc;
+  order by r.created_at desc, r.id desc
+  limit case
+    when p_limit is null then null
+    else greatest(0, least(p_limit, 1000))
+  end
+  offset greatest(0, p_offset);
 $$;
 
-revoke all on function public.survey_rows_safe() from public;
-grant execute on function public.survey_rows_safe() to anon, authenticated;
+revoke all on function public.survey_rows_safe(integer, integer) from public;
+grant execute on function public.survey_rows_safe(integer, integer)
+  to anon, authenticated;
 
 -- =====================================================================
 -- Pengaduan & Whistleblowing

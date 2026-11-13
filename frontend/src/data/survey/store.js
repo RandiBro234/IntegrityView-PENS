@@ -18,8 +18,8 @@ export const store = {
   rlsTerbuka: false
 };
 
-/* Ambil baris survei lewat RPC aman. Server sudah membuang email dari
-   data_jawaban dan tidak mengirim kolom email_responden. */
+/* Ambil baris survei lewat RPC aman secara berhalaman. Server sudah membuang
+   email dari data_jawaban dan tidak mengirim kolom email_responden. */
 export async function muatDataSurvei() {
   if (store.loaded) return store;
   if (!SUPABASE_URL || !SUPABASE_KEY) {
@@ -34,13 +34,20 @@ export async function muatDataSurvei() {
       'Content-Type': 'application/json'
     };
     if (SUPABASE_KEY.startsWith('eyJ')) headers.Authorization = `Bearer ${SUPABASE_KEY}`;
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/survey_rows_safe`, {
-      method: 'POST',
-      headers,
-      body: '{}'
-    });
-    if (!res.ok) throw new Error(`HTTP ${res.status} saat membaca survey_rows_safe`);
-    const rows = await res.json();
+    const rows = [];
+    const ukuranHalaman = 1000;
+    for (let offset = 0; ;) {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/survey_rows_safe`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ p_limit: ukuranHalaman, p_offset: offset })
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status} saat membaca survey_rows_safe`);
+      const halaman = await res.json();
+      if (!Array.isArray(halaman) || halaman.length === 0) break;
+      rows.push(...halaman);
+      offset += halaman.length;
+    }
     store.rlsTerbuka = false;
     const { records, dibuang, duplikat } = normalisasiBaris(rows);
     store.records = records;
