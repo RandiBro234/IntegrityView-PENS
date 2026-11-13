@@ -1,13 +1,22 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Sidebar from '../components/layout/Sidebar';
 import Topbar from '../components/layout/Topbar';
 import { getUser, getProfilDetail, formatTanggalWaktu } from '../data/mock';
+import { sinkronkanStatusLaporan } from '../data/sinkronLaporan';
 import './ProfilePage.css';
 
 export default function ProfilePage({ onNavigate }) {
   const user = getUser();
-  const profil = getProfilDetail();
+  const [profil, setProfil] = useState(() => getProfilDetail());
   const [tab, setTab] = useState('aktivitas'); // 'aktivitas' | 'keamanan'
+
+  useEffect(() => {
+    let aktif = true;
+    sinkronkanStatusLaporan().then(() => {
+      if (aktif) setProfil(getProfilDetail());
+    });
+    return () => { aktif = false; };
+  }, []);
 
   const handleMenu = (key) => onNavigate && onNavigate(key);
 
