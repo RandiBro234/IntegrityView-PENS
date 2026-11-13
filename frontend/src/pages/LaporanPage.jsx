@@ -1,9 +1,8 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Sidebar from '../components/layout/Sidebar';
 import Topbar from '../components/layout/Topbar';
-import {
-  getUser, isAdmin, getRingkasanPengaduan, getPengaduan, formatAngka
-} from '../data/mock';
+import { getUser, isAdmin, getPengaduan, formatAngka } from '../data/mock';
+import { ambilDaftarLaporan, kelolaApiSiap } from '../data/laporanApi';
 import { PERIODE, getReportData } from '../data/surveyData';
 import { labelKategori } from '../data/reportCategories';
 import { useReportFilters } from '../data/useReportFilters';
@@ -32,8 +31,22 @@ export default function LaporanPage({ onNavigate }) {
     }))
     : [];
 
-  const ringkasAduan = useMemo(() => getRingkasanPengaduan(), []);
-  const pengaduan = useMemo(() => getPengaduan(), []);
+  const [pengaduan, setPengaduan] = useState(() => getPengaduan());
+
+  useEffect(() => {
+    if (!admin || !kelolaApiSiap) return undefined;
+    let aktif = true;
+    ambilDaftarLaporan()
+      .then((rows) => { if (aktif) setPengaduan(rows); })
+      .catch((err) => console.warn('Gagal memuat laporan admin:', err.message));
+    return () => { aktif = false; };
+  }, [admin]);
+
+  const ringkasAduan = useMemo(() => {
+    const ringkas = { total: pengaduan.length, Baru: 0, Diproses: 0, Selesai: 0 };
+    pengaduan.forEach((p) => { ringkas[p.status] = (ringkas[p.status] || 0) + 1; });
+    return ringkas;
+  }, [pengaduan]);
 
   const rekapKategori = useMemo(() => {
     const peta = {};
