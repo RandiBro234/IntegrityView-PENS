@@ -105,3 +105,12 @@ test('ambang sampel minimum mengikuti registri, bukan hardcoded', () => {
   assert.equal(konteks.kecukupan_sampel.minimum, AMBANG.respondenMinimum);
   assert.equal(konteks.kecukupan_sampel.cukup, konteks.ringkasan.n >= AMBANG.respondenMinimum);
 });
+
+test('konteks tetap jauh di bawah ambang biaya', () => {
+  /* Harga penyedia bisa melonjak di atas 100K token input per permintaan.
+     Konteks terbesar (SPIP) ~4,4 KB; batas peringatan 40 KB. */
+  const terbesar = Math.max(
+    ...DAFTAR_SEMUA.map((d) => ukuranKonteks(rakitKonteksSatu(d.agregat, d.instrumen, AMBANG)))
+  );
+  assert.ok(terbesar < 10_000, `konteks ${terbesar} byte terlalu besar`);
+});

@@ -10,13 +10,20 @@
 */
 
 import { PayloadError } from '../../_shared/errors.ts';
-import { pilihInstrumen, rakitKonteksSatu, rakitKonteksSemua, type Konteks } from './konteks.ts';
+import { pilihInstrumen, rakitKonteksSatu, rakitKonteksSemua, ukuranKonteks, type Konteks } from './konteks.ts';
 import { susunPesan } from './prompt.ts';
 import { LlmTidakTersedia, LlmKuotaHabis, LlmSibuk } from './llm.ts';
 import { rapikanJawaban } from './format.ts';
 import { validasiChat } from './validasi.ts';
 import type { Registri } from './tipe.ts';
 import type { HasilKumpulan } from './sumber.ts';
+
+/* Harga penyedia bisa melonjak beberapa kali lipat di atas ambang token
+   tertentu (Kenari: 100K token input per permintaan). Konteks kita sekarang
+   ~1.400 token, tetapi kalau nanti ada yang menambahkan data mentah ke konteks,
+   biaya bisa naik tanpa disadari. Ambang ini memunculkan peringatan di log
+   sebelum itu terjadi. 40.000 byte kira-kira 10.000 token. */
+export const BATAS_PERINGATAN_KONTEKS = 40_000;
 
 export interface Hasil {
   status: number;
@@ -113,6 +120,11 @@ export async function jawabChat(body: unknown, deps: Ketergantungan): Promise<Ha
   }
 
   /* 4. LLM */
+  const ukuran = ukuranKonteks(konteks);
+  if (ukuran > BATAS_PERINGATAN_KONTEKS) {
+    console.warn(`chatbot: konteks ${ukuran} byte melewati ambang ${BATAS_PERINGATAN_KONTEKS}; biaya per permintaan bisa naik`);
+  }
+
   let jawaban: string;
   try {
     jawaban = await deps.tanyaLlm(susunPesan(konteks, masuk.pertanyaan));
