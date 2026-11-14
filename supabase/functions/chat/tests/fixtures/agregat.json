@@ -911,8 +911,8 @@
         ],
         "butir": [
           {
-            "label": "Etika & integritas",
-            "teks": "Etika & integritas",
+            "label": "Pimpinan & pegawai mengutamakan etika, integritas, dan aturan",
+            "teks": "Pimpinan dan pegawai selalu bekerja dengan mengutamakan etika, integritas, dan aturan yang berlaku.",
             "rata": 3.0517241379310347,
             "distribusi": [
               0,
@@ -930,8 +930,8 @@
             "persenNegatif": 13.793103448275861
           },
           {
-            "label": "Pemahaman tugas & kewenangan",
-            "teks": "Pemahaman tugas & kewenangan",
+            "label": "Pegawai paham tugas, tanggung jawab, dan batas kewenangan",
+            "teks": "Setiap pegawai memahami tugas, tanggung jawab, dan batas kewenangannya dengan jelas.",
             "rata": 3.086206896551724,
             "distribusi": [
               2,
@@ -949,8 +949,8 @@
             "persenNegatif": 15.517241379310345
           },
           {
-            "label": "Penilaian risiko",
-            "teks": "Penilaian risiko",
+            "label": "Risiko diperhitungkan sejak perencanaan hingga pelaksanaan",
+            "teks": "Risiko dan hambatan pekerjaan selalu diperhitungkan sejak awal perencanaan hingga pelaksanaan.",
             "rata": 2.9482758620689653,
             "distribusi": [
               1,
@@ -968,8 +968,8 @@
             "persenNegatif": 17.24137931034483
           },
           {
-            "label": "Pemeriksaan & persetujuan",
-            "teks": "Pemeriksaan & persetujuan",
+            "label": "Pemeriksaan & persetujuan berjalan sesuai ketentuan",
+            "teks": "Proses pemeriksaan dan persetujuan dalam pekerjaan telah berjalan dengan baik sesuai ketentuan.",
             "rata": 3.0172413793103448,
             "distribusi": [
               1,
@@ -987,8 +987,8 @@
             "persenNegatif": 17.24137931034483
           },
           {
-            "label": "Perbaikan kesalahan",
-            "teks": "Perbaikan kesalahan",
+            "label": "Kesalahan atau masalah yang ditemukan segera diperbaiki",
+            "teks": "Setiap kesalahan atau masalah yang ditemukan saat bekerja selalu segera diperbaiki.",
             "rata": 3.1724137931034484,
             "distribusi": [
               2,
@@ -1006,8 +1006,8 @@
             "persenNegatif": 8.620689655172415
           },
           {
-            "label": "Ketersediaan informasi",
-            "teks": "Ketersediaan informasi",
+            "label": "Informasi & data pendukung jelas dan mudah diakses",
+            "teks": "Informasi dan data pendukung pekerjaan tersedia dengan jelas dan mudah diakses.",
             "rata": 3.1379310344827585,
             "distribusi": [
               0,
@@ -1025,8 +1025,8 @@
             "persenNegatif": 20.689655172413794
           },
           {
-            "label": "Evaluasi & tindak lanjut",
-            "teks": "Evaluasi & tindak lanjut",
+            "label": "Hasil kerja dievaluasi rutin & kekurangan ditindaklanjuti",
+            "teks": "Hasil kerja dievaluasi secara rutin, dan setiap kekurangan langsung ditindaklanjuti.",
             "rata": 3.0517241379310347,
             "distribusi": [
               2,
@@ -1044,8 +1044,8 @@
             "persenNegatif": 15.517241379310345
           },
           {
-            "label": "Penghargaan prestasi",
-            "teks": "Penghargaan prestasi",
+            "label": "Prestasi & kontribusi pegawai diberi penghargaan layak",
+            "teks": "Prestasi dan kontribusi pegawai diberikan penghargaan secara layak.",
             "rata": 3.0344827586206895,
             "distribusi": [
               0,
@@ -1063,8 +1063,8 @@
             "persenNegatif": 13.793103448275861
           },
           {
-            "label": "Reward & punishment",
-            "teks": "Reward & punishment",
+            "label": "Reward & punishment mendorong disiplin dan kepatuhan",
+            "teks": "Penerapan reward dan punishment mendorong disiplin, integritas, dan kepatuhan.",
             "rata": 3.103448275862069,
             "distribusi": [
               1,
@@ -1083,8 +1083,8 @@
           }
         ],
         "butirTerendah": {
-          "label": "Penilaian risiko",
-          "teks": "Penilaian risiko",
+          "label": "Risiko diperhitungkan sejak perencanaan hingga pelaksanaan",
+          "teks": "Risiko dan hambatan pekerjaan selalu diperhitungkan sejak awal perencanaan hingga pelaksanaan.",
           "rata": 2.9482758620689653,
           "distribusi": [
             1,
@@ -1672,8 +1672,8 @@
         ],
         "butir": [
           {
-            "label": "Etika & integritas",
-            "teks": "Etika & integritas",
+            "label": "Pimpinan & pegawai mengutamakan etika, integritas, dan aturan",
+            "teks": "Pimpinan dan pegawai selalu bekerja dengan mengutamakan etika, integritas, dan aturan yang berlaku.",
             "rata": 3.176470588235294,
             "distribusi": [
               0,
@@ -1691,8 +1691,8 @@
             "persenNegatif": 14.705882352941178
           },
           {
-            "label": "Pemahaman tugas & kewenangan",
-            "teks": "Pemahaman tugas & kewenangan",
+            "label": "Pegawai paham tugas, tanggung jawab, dan batas kewenangan",
+            "teks": "Setiap pegawai memahami tugas, tanggung jawab, dan batas kewenangannya dengan jelas.",
             "rata": 3.0588235294117645,
             "distribusi": [
               0,
@@ -1710,8 +1710,8 @@
             "persenNegatif": 23.52941176470588
           },
           {
-            "label": "Penilaian risiko",
-            "teks": "Penilaian risiko",
+            "label": "Risiko diperhitungkan sejak perencanaan hingga pelaksanaan",
+            "teks": "Risiko dan hambatan pekerjaan selalu diperhitungkan sejak awal perencanaan hingga pelaksanaan.",
             "rata": 3.1176470588235294,
             "distribusi": [
               0,
@@ -1729,8 +1729,8 @@
             "persenNegatif": 20.588235294117645
           },
           {
-            "label": "Pemeriksaan & persetujuan",
-            "teks": "Pemeriksaan & persetujuan",
+            "label": "Pemeriksaan & persetujuan berjalan sesuai ketentuan",
+            "teks": "Proses pemeriksaan dan persetujuan dalam pekerjaan telah berjalan dengan baik sesuai ketentuan.",
             "rata": 3.1176470588235294,
             "distribusi": [
               0,
@@ -1748,8 +1748,8 @@
             "persenNegatif": 17.647058823529413
           },
           {
-            "label": "Perbaikan kesalahan",
-            "teks": "Perbaikan kesalahan",
+            "label": "Kesalahan atau masalah yang ditemukan segera diperbaiki",
+            "teks": "Setiap kesalahan atau masalah yang ditemukan saat bekerja selalu segera diperbaiki.",
             "rata": 3.0294117647058822,
             "distribusi": [
               1,
@@ -1767,8 +1767,8 @@
             "persenNegatif": 26.47058823529412
           },
           {
-            "label": "Ketersediaan informasi",
-            "teks": "Ketersediaan informasi",
+            "label": "Informasi & data pendukung jelas dan mudah diakses",
+            "teks": "Informasi dan data pendukung pekerjaan tersedia dengan jelas dan mudah diakses.",
             "rata": 3.0294117647058822,
             "distribusi": [
               1,
@@ -1786,8 +1786,8 @@
             "persenNegatif": 26.47058823529412
           },
           {
-            "label": "Evaluasi & tindak lanjut",
-            "teks": "Evaluasi & tindak lanjut",
+            "label": "Hasil kerja dievaluasi rutin & kekurangan ditindaklanjuti",
+            "teks": "Hasil kerja dievaluasi secara rutin, dan setiap kekurangan langsung ditindaklanjuti.",
             "rata": 3.1176470588235294,
             "distribusi": [
               0,
@@ -1805,8 +1805,8 @@
             "persenNegatif": 20.588235294117645
           },
           {
-            "label": "Penghargaan prestasi",
-            "teks": "Penghargaan prestasi",
+            "label": "Prestasi & kontribusi pegawai diberi penghargaan layak",
+            "teks": "Prestasi dan kontribusi pegawai diberikan penghargaan secara layak.",
             "rata": 2.9705882352941178,
             "distribusi": [
               2,
@@ -1824,8 +1824,8 @@
             "persenNegatif": 26.47058823529412
           },
           {
-            "label": "Reward & punishment",
-            "teks": "Reward & punishment",
+            "label": "Reward & punishment mendorong disiplin dan kepatuhan",
+            "teks": "Penerapan reward dan punishment mendorong disiplin, integritas, dan kepatuhan.",
             "rata": 3.2058823529411766,
             "distribusi": [
               0,
@@ -1844,8 +1844,8 @@
           }
         ],
         "butirTerendah": {
-          "label": "Penghargaan prestasi",
-          "teks": "Penghargaan prestasi",
+          "label": "Prestasi & kontribusi pegawai diberi penghargaan layak",
+          "teks": "Prestasi dan kontribusi pegawai diberikan penghargaan secara layak.",
           "rata": 2.9705882352941178,
           "distribusi": [
             2,
@@ -1892,47 +1892,47 @@
       "rekomendasi": [
         {
           "prioritas": "Pantau",
-          "judul": "Perkuat aspek Etika & integritas",
+          "judul": "Perkuat aspek Pimpinan & pegawai mengutamakan etika, integritas, dan aturan",
           "dasar": "rata-rata 3,05, terendah dari 9 butir"
         },
         {
           "prioritas": "Pantau",
-          "judul": "Perkuat aspek Pemahaman tugas & kewenangan",
+          "judul": "Perkuat aspek Pegawai paham tugas, tanggung jawab, dan batas kewenangan",
           "dasar": "rata-rata 3,09, terendah dari 9 butir; 15,5% menjawab 1-2"
         },
         {
           "prioritas": "Pantau",
-          "judul": "Perkuat aspek Penilaian risiko",
+          "judul": "Perkuat aspek Risiko diperhitungkan sejak perencanaan hingga pelaksanaan",
           "dasar": "rata-rata 2,95, terendah dari 9 butir; 17,2% menjawab 1-2"
         },
         {
           "prioritas": "Pantau",
-          "judul": "Perkuat aspek Pemeriksaan & persetujuan",
+          "judul": "Perkuat aspek Pemeriksaan & persetujuan berjalan sesuai ketentuan",
           "dasar": "rata-rata 3,02, terendah dari 9 butir; 17,2% menjawab 1-2"
         },
         {
           "prioritas": "Pantau",
-          "judul": "Perkuat aspek Perbaikan kesalahan",
+          "judul": "Perkuat aspek Kesalahan atau masalah yang ditemukan segera diperbaiki",
           "dasar": "rata-rata 3,17, terendah dari 9 butir"
         },
         {
           "prioritas": "Pantau",
-          "judul": "Perkuat aspek Ketersediaan informasi",
+          "judul": "Perkuat aspek Informasi & data pendukung jelas dan mudah diakses",
           "dasar": "rata-rata 3,14, terendah dari 9 butir; 20,7% menjawab 1-2"
         },
         {
           "prioritas": "Pantau",
-          "judul": "Perkuat aspek Evaluasi & tindak lanjut",
+          "judul": "Perkuat aspek Hasil kerja dievaluasi rutin & kekurangan ditindaklanjuti",
           "dasar": "rata-rata 3,05, terendah dari 9 butir; 15,5% menjawab 1-2"
         },
         {
           "prioritas": "Pantau",
-          "judul": "Perkuat aspek Penghargaan prestasi",
+          "judul": "Perkuat aspek Prestasi & kontribusi pegawai diberi penghargaan layak",
           "dasar": "rata-rata 3,03, terendah dari 9 butir"
         },
         {
           "prioritas": "Pantau",
-          "judul": "Perkuat aspek Reward & punishment",
+          "judul": "Perkuat aspek Reward & punishment mendorong disiplin dan kepatuhan",
           "dasar": "rata-rata 3,10, terendah dari 9 butir"
         }
       ]
@@ -2480,7 +2480,7 @@
         ],
         "butir": [
           {
-            "label": "Layanan jujur & transparan",
+            "label": "Layanan diberikan jujur, transparan, dan sesuai ketentuan",
             "teks": "Layanan di institusi ini diberikan secara jujur, transparan, dan sesuai ketentuan yang berlaku.",
             "rata": 3.1904761904761907,
             "distribusi": [
@@ -2499,7 +2499,7 @@
             "persenNegatif": 9.523809523809524
           },
           {
-            "label": "Layanan adil",
+            "label": "Layanan adil tanpa membedakan jabatan, kedekatan, atau unit",
             "teks": "Layanan diberikan secara adil kepada semua pihak, tanpa membeda-bedakan berdasarkan jabatan, kedekatan personal, atau unit kerja.",
             "rata": 3.119047619047619,
             "distribusi": [
@@ -2518,7 +2518,7 @@
             "persenNegatif": 21.428571428571427
           },
           {
-            "label": "Bebas manipulasi",
+            "label": "Bebas manipulasi data dan keberpihakan pihak tertentu",
             "teks": "Proses layanan bebas dari manipulasi data, penyalahgunaan prosedur, atau keberpihakan kepada pihak tertentu.",
             "rata": 3.238095238095238,
             "distribusi": [
@@ -2537,7 +2537,7 @@
             "persenNegatif": 16.666666666666664
           },
           {
-            "label": "Bebas pungutan",
+            "label": "Tidak ada permintaan uang, hadiah, atau fasilitas di luar ketentuan",
             "teks": "Tidak ada permintaan atau ekspektasi pemberian uang, hadiah, atau fasilitas di luar ketentuan sebagai syarat atau kelancaran layanan.",
             "rata": 3.142857142857143,
             "distribusi": [
@@ -2556,7 +2556,7 @@
             "persenNegatif": 19.047619047619047
           },
           {
-            "label": "Tanpa perantara",
+            "label": "Layanan diakses langsung tanpa perantara agar cepat",
             "teks": "Layanan dapat diakses langsung sesuai prosedur tanpa perlu menggunakan perantara agar urusan lebih mudah atau cepat.",
             "rata": 3.1904761904761907,
             "distribusi": [
@@ -2575,7 +2575,7 @@
             "persenNegatif": 11.904761904761903
           },
           {
-            "label": "Layanan bebas korupsi",
+            "label": "Layanan secara keseluruhan berintegritas dan bebas korupsi",
             "teks": "Secara keseluruhan, layanan di institusi ini telah dilaksanakan dengan integritas dan bebas dari praktik korupsi.",
             "rata": 3.2857142857142856,
             "distribusi": [
@@ -2595,7 +2595,7 @@
           }
         ],
         "butirTerendah": {
-          "label": "Layanan adil",
+          "label": "Layanan adil tanpa membedakan jabatan, kedekatan, atau unit",
           "teks": "Layanan diberikan secara adil kepada semua pihak, tanpa membeda-bedakan berdasarkan jabatan, kedekatan personal, atau unit kerja.",
           "rata": 3.119047619047619,
           "distribusi": [
@@ -2974,7 +2974,7 @@
         ],
         "butir": [
           {
-            "label": "Layanan jujur & transparan",
+            "label": "Layanan diberikan jujur, transparan, dan sesuai ketentuan",
             "teks": "Layanan di institusi ini diberikan secara jujur, transparan, dan sesuai ketentuan yang berlaku.",
             "rata": 2.84,
             "distribusi": [
@@ -2993,7 +2993,7 @@
             "persenNegatif": 28.000000000000004
           },
           {
-            "label": "Layanan adil",
+            "label": "Layanan adil tanpa membedakan jabatan, kedekatan, atau unit",
             "teks": "Layanan diberikan secara adil kepada semua pihak, tanpa membeda-bedakan berdasarkan jabatan, kedekatan personal, atau unit kerja.",
             "rata": 2.8,
             "distribusi": [
@@ -3012,7 +3012,7 @@
             "persenNegatif": 32
           },
           {
-            "label": "Bebas manipulasi",
+            "label": "Bebas manipulasi data dan keberpihakan pihak tertentu",
             "teks": "Proses layanan bebas dari manipulasi data, penyalahgunaan prosedur, atau keberpihakan kepada pihak tertentu.",
             "rata": 2.96,
             "distribusi": [
@@ -3031,7 +3031,7 @@
             "persenNegatif": 24
           },
           {
-            "label": "Bebas pungutan",
+            "label": "Tidak ada permintaan uang, hadiah, atau fasilitas di luar ketentuan",
             "teks": "Tidak ada permintaan atau ekspektasi pemberian uang, hadiah, atau fasilitas di luar ketentuan sebagai syarat atau kelancaran layanan.",
             "rata": 3.04,
             "distribusi": [
@@ -3050,7 +3050,7 @@
             "persenNegatif": 24
           },
           {
-            "label": "Tanpa perantara",
+            "label": "Layanan diakses langsung tanpa perantara agar cepat",
             "teks": "Layanan dapat diakses langsung sesuai prosedur tanpa perlu menggunakan perantara agar urusan lebih mudah atau cepat.",
             "rata": 2.84,
             "distribusi": [
@@ -3069,7 +3069,7 @@
             "persenNegatif": 36
           },
           {
-            "label": "Layanan bebas korupsi",
+            "label": "Layanan secara keseluruhan berintegritas dan bebas korupsi",
             "teks": "Secara keseluruhan, layanan di institusi ini telah dilaksanakan dengan integritas dan bebas dari praktik korupsi.",
             "rata": 2.88,
             "distribusi": [
@@ -3089,7 +3089,7 @@
           }
         ],
         "butirTerendah": {
-          "label": "Layanan adil",
+          "label": "Layanan adil tanpa membedakan jabatan, kedekatan, atau unit",
           "teks": "Layanan diberikan secara adil kepada semua pihak, tanpa membeda-bedakan berdasarkan jabatan, kedekatan personal, atau unit kerja.",
           "rata": 2.8,
           "distribusi": [
@@ -3142,17 +3142,17 @@
         },
         {
           "prioritas": "Pantau",
-          "judul": "Perkuat aspek Layanan adil",
+          "judul": "Perkuat aspek Layanan adil tanpa membedakan jabatan, kedekatan, atau unit",
           "dasar": "rata-rata 3,12, terendah dari 6 butir; 21,4% menjawab 1-2"
         },
         {
           "prioritas": "Pantau",
-          "judul": "Perkuat aspek Bebas manipulasi",
+          "judul": "Perkuat aspek Bebas manipulasi data dan keberpihakan pihak tertentu",
           "dasar": "rata-rata 3,24, terendah dari 6 butir; 16,7% menjawab 1-2"
         },
         {
           "prioritas": "Pantau",
-          "judul": "Perkuat aspek Bebas pungutan",
+          "judul": "Perkuat aspek Tidak ada permintaan uang, hadiah, atau fasilitas di luar ketentuan",
           "dasar": "rata-rata 3,14, terendah dari 6 butir; 19,0% menjawab 1-2"
         }
       ]

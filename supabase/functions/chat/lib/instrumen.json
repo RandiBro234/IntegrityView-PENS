@@ -14,56 +14,56 @@
         {
           "kode": "SPIP1",
           "nomor": 1,
-          "label": "Etika & integritas",
-          "teks": "Etika & integritas"
+          "label": "Pimpinan & pegawai mengutamakan etika, integritas, dan aturan",
+          "teks": "Pimpinan dan pegawai selalu bekerja dengan mengutamakan etika, integritas, dan aturan yang berlaku."
         },
         {
           "kode": "SPIP2",
           "nomor": 2,
-          "label": "Pemahaman tugas & kewenangan",
-          "teks": "Pemahaman tugas & kewenangan"
+          "label": "Pegawai paham tugas, tanggung jawab, dan batas kewenangan",
+          "teks": "Setiap pegawai memahami tugas, tanggung jawab, dan batas kewenangannya dengan jelas."
         },
         {
           "kode": "SPIP3",
           "nomor": 3,
-          "label": "Penilaian risiko",
-          "teks": "Penilaian risiko"
+          "label": "Risiko diperhitungkan sejak perencanaan hingga pelaksanaan",
+          "teks": "Risiko dan hambatan pekerjaan selalu diperhitungkan sejak awal perencanaan hingga pelaksanaan."
         },
         {
           "kode": "SPIP4",
           "nomor": 4,
-          "label": "Pemeriksaan & persetujuan",
-          "teks": "Pemeriksaan & persetujuan"
+          "label": "Pemeriksaan & persetujuan berjalan sesuai ketentuan",
+          "teks": "Proses pemeriksaan dan persetujuan dalam pekerjaan telah berjalan dengan baik sesuai ketentuan."
         },
         {
           "kode": "SPIP5",
           "nomor": 5,
-          "label": "Perbaikan kesalahan",
-          "teks": "Perbaikan kesalahan"
+          "label": "Kesalahan atau masalah yang ditemukan segera diperbaiki",
+          "teks": "Setiap kesalahan atau masalah yang ditemukan saat bekerja selalu segera diperbaiki."
         },
         {
           "kode": "SPIP6",
           "nomor": 6,
-          "label": "Ketersediaan informasi",
-          "teks": "Ketersediaan informasi"
+          "label": "Informasi & data pendukung jelas dan mudah diakses",
+          "teks": "Informasi dan data pendukung pekerjaan tersedia dengan jelas dan mudah diakses."
         },
         {
           "kode": "SPIP7",
           "nomor": 7,
-          "label": "Evaluasi & tindak lanjut",
-          "teks": "Evaluasi & tindak lanjut"
+          "label": "Hasil kerja dievaluasi rutin & kekurangan ditindaklanjuti",
+          "teks": "Hasil kerja dievaluasi secara rutin, dan setiap kekurangan langsung ditindaklanjuti."
         },
         {
           "kode": "SPIP8",
           "nomor": 8,
-          "label": "Penghargaan prestasi",
-          "teks": "Penghargaan prestasi"
+          "label": "Prestasi & kontribusi pegawai diberi penghargaan layak",
+          "teks": "Prestasi dan kontribusi pegawai diberikan penghargaan secara layak."
         },
         {
           "kode": "SPIP9",
           "nomor": 9,
-          "label": "Reward & punishment",
-          "teks": "Reward & punishment"
+          "label": "Reward & punishment mendorong disiplin dan kepatuhan",
+          "teks": "Penerapan reward dan punishment mendorong disiplin, integritas, dan kepatuhan."
         }
       ]
     },
@@ -79,37 +79,37 @@
         {
           "kode": "SPAK1",
           "nomor": 1,
-          "label": "Layanan jujur & transparan",
+          "label": "Layanan diberikan jujur, transparan, dan sesuai ketentuan",
           "teks": "Layanan di institusi ini diberikan secara jujur, transparan, dan sesuai ketentuan yang berlaku."
         },
         {
           "kode": "SPAK2",
           "nomor": 2,
-          "label": "Layanan adil",
+          "label": "Layanan adil tanpa membedakan jabatan, kedekatan, atau unit",
           "teks": "Layanan diberikan secara adil kepada semua pihak, tanpa membeda-bedakan berdasarkan jabatan, kedekatan personal, atau unit kerja."
         },
         {
           "kode": "SPAK3",
           "nomor": 3,
-          "label": "Bebas manipulasi",
+          "label": "Bebas manipulasi data dan keberpihakan pihak tertentu",
           "teks": "Proses layanan bebas dari manipulasi data, penyalahgunaan prosedur, atau keberpihakan kepada pihak tertentu."
         },
         {
           "kode": "SPAK4",
           "nomor": 4,
-          "label": "Bebas pungutan",
+          "label": "Tidak ada permintaan uang, hadiah, atau fasilitas di luar ketentuan",
           "teks": "Tidak ada permintaan atau ekspektasi pemberian uang, hadiah, atau fasilitas di luar ketentuan sebagai syarat atau kelancaran layanan."
         },
         {
           "kode": "SPAK5",
           "nomor": 5,
-          "label": "Tanpa perantara",
+          "label": "Layanan diakses langsung tanpa perantara agar cepat",
           "teks": "Layanan dapat diakses langsung sesuai prosedur tanpa perlu menggunakan perantara agar urusan lebih mudah atau cepat."
         },
         {
           "kode": "SPAK6",
           "nomor": 6,
-          "label": "Layanan bebas korupsi",
+          "label": "Layanan secara keseluruhan berintegritas dan bebas korupsi",
           "teks": "Secara keseluruhan, layanan di institusi ini telah dilaksanakan dengan integritas dan bebas dari praktik korupsi."
         }
       ]
@@ -126,50 +126,50 @@
         {
           "kode": "SPKP1",
           "nomor": 1,
-          "label": "Prosedur jelas",
-          "teks": "Prosedur jelas"
+          "label": "Prosedur pelayanan terstruktur, ringkas, dan mudah diakses",
+          "teks": "Prosedur pelayanan terstruktur secara jelas, ringkas, dan mudah diakses."
         },
         {
           "kode": "SPKP2",
           "nomor": 2,
-          "label": "Persyaratan transparan",
-          "teks": "Persyaratan transparan"
+          "label": "Persyaratan administratif transparan, relevan, mudah dipenuhi",
+          "teks": "Persyaratan administratif pelayanan transparan, relevan, dan mudah dipenuhi."
         },
         {
           "kode": "SPKP3",
           "nomor": 3,
-          "label": "Informasi tarif",
-          "teks": "Informasi tarif"
+          "label": "Informasi tarif disampaikan terbuka & sesuai regulasi resmi",
+          "teks": "Informasi tarif atau biaya pelayanan disampaikan secara terbuka dan sesuai regulasi resmi."
         },
         {
           "kode": "SPKP4",
           "nomor": 4,
-          "label": "Ketepatan waktu",
-          "teks": "Ketepatan waktu"
+          "label": "Penyelesaian layanan tepat waktu sesuai standar pelayanan",
+          "teks": "Penyelesaian pelayanan tepat waktu sesuai dengan standar pelayanan yang ditetapkan."
         },
         {
           "kode": "SPKP5",
           "nomor": 5,
-          "label": "Responsivitas petugas",
-          "teks": "Responsivitas petugas"
+          "label": "Petugas responsif, solutif, dan kompeten menanggapi kebutuhan",
+          "teks": "Petugas bersikap responsif, solutif, dan kompeten dalam menanggapi kebutuhan pemohon layanan."
         },
         {
           "kode": "SPKP6",
           "nomor": 6,
-          "label": "Kualitas output",
-          "teks": "Kualitas output"
+          "label": "Output layanan akurat, berkualitas, dan memenuhi standar",
+          "teks": "Output pelayanan yang diterima akurat, berkualitas, dan memenuhi standar yang dipersyaratkan."
         },
         {
           "kode": "SPKP7",
           "nomor": 7,
-          "label": "Sarana & sistem informasi",
-          "teks": "Sarana & sistem informasi"
+          "label": "Sarana fisik & sistem informasi memadai dan berfungsi optimal",
+          "teks": "Sarana fisik dan infrastruktur sistem informasi pelayanan memadai serta berfungsi optimal."
         },
         {
           "kode": "SPKP8",
           "nomor": 8,
-          "label": "Mekanisme keluhan",
-          "teks": "Mekanisme keluhan"
+          "label": "Keluhan & permohonan informasi mudah diakses dan ditindaklanjuti",
+          "teks": "Mekanisme penyampaian keluhan dan permohonan informasi mudah diakses serta ditindaklanjuti secara efektif."
         }
       ]
     },
@@ -185,31 +185,31 @@
         {
           "kode": "GRAT1",
           "nomor": 1,
-          "label": "Pemahaman gratifikasi",
+          "label": "Pemberian dari pihak terkait pekerjaan termasuk gratifikasi",
           "teks": "Saya memahami bahwa pemberian uang, barang, atau fasilitas dari pihak yang terkait dengan pekerjaan saya dapat termasuk kategori gratifikasi."
         },
         {
           "kode": "GRAT2",
           "nomor": 2,
-          "label": "Identifikasi pemberian yang ditolak",
+          "label": "Mengenali pemberian yang harus ditolak atau dilaporkan",
           "teks": "Saya dapat mengidentifikasi situasi di mana pemberian dari mahasiswa, orang tua/wali, mitra, atau penyedia jasa harus ditolak atau dilaporkan."
         },
         {
           "kode": "GRAT3",
           "nomor": 3,
-          "label": "Saluran pelaporan",
+          "label": "Mengetahui saluran resmi pelaporan gratifikasi",
           "teks": "Saya mengetahui saluran atau mekanisme resmi untuk melaporkan penerimaan gratifikasi di institusi ini."
         },
         {
           "kode": "GRAT4",
           "nomor": 4,
-          "label": "Komitmen menolak",
+          "label": "Ada komitmen lingkungan kerja menolak pemberian",
           "teks": "Saya melihat adanya komitmen nyata di lingkungan kerja saya untuk menolak pemberian yang dapat memengaruhi objektivitas dalam pelaksanaan tugas."
         },
         {
           "kode": "GRAT5",
           "nomor": 5,
-          "label": "Sosialisasi informasi",
+          "label": "Informasi menolak & melapor sudah disampaikan jelas",
           "teks": "Informasi mengenai gratifikasi, cara menolak, dan cara melaporkannya telah disampaikan secara jelas kepada saya."
         }
       ]
@@ -226,38 +226,38 @@
         {
           "kode": "BENT1",
           "nomor": 1,
-          "label": "Pemahaman benturan kepentingan",
-          "teks": "Pemahaman benturan kepentingan"
+          "label": "Hubungan personal tidak memengaruhi keputusan kedinasan",
+          "teks": "Saya memahami bahwa hubungan personal atau afiliasi tertentu tidak boleh memengaruhi keputusan kedinasan."
         },
         {
           "kode": "BENT2",
           "nomor": 2,
-          "label": "Pengenalan potensi",
-          "teks": "Pengenalan potensi"
+          "label": "Mengenali potensi benturan di pengadaan & rekruitmen",
+          "teks": "Saya mengenali potensi benturan kepentingan dalam pengadaan, penilaian, rekruitmen, dan pengambilan keputusan."
         },
         {
           "kode": "BENT3",
           "nomor": 3,
-          "label": "Pencegahan dini",
-          "teks": "Pencegahan dini"
+          "label": "Potensi benturan dicegah sebelum berdampak ke kerja",
+          "teks": "Potensi benturan kepentingan dapat diidentifikasi dan dicegah sebelum berdampak pada proses kerja."
         },
         {
           "kode": "BENT4",
           "nomor": 4,
-          "label": "Kanal pelaporan",
-          "teks": "Kanal pelaporan"
+          "label": "Mengetahui prosedur & kanal pelaporan benturan",
+          "teks": "Saya mengetahui prosedur dan kanal pelaporan indikasi benturan kepentingan di lingkungan instansi."
         },
         {
           "kode": "BENT5",
           "nomor": 5,
-          "label": "Tata kelola penanganan",
-          "teks": "Tata kelola penanganan"
+          "label": "Tata kelola mencegah intervensi pihak berkepentingan",
+          "teks": "Institusi menerapkan tata kelola penanganan yang efektif guna mencegah intervensi pihak berkepentingan."
         },
         {
           "kode": "BENT6",
           "nomor": 6,
-          "label": "Penanganan objektif",
-          "teks": "Penanganan objektif"
+          "label": "Ditangani objektif, adil, dan sesuai aturan normatif",
+          "teks": "Penanganan benturan kepentingan diselesaikan secara objektif, adil, dan berlandaskan aturan normatif."
         }
       ]
     },
@@ -273,38 +273,38 @@
         {
           "kode": "WBS1",
           "nomor": 1,
-          "label": "Pengetahuan saluran WBS",
-          "teks": "Pengetahuan saluran WBS"
+          "label": "Pengetahuan ketersediaan sistem WBS resmi institusi",
+          "teks": "Pengetahuan ketersediaan sistem WBS resmi institusi"
         },
         {
           "kode": "WBS2",
           "nomor": 2,
-          "label": "Klasifikasi pelanggaran",
-          "teks": "Klasifikasi pelanggaran"
+          "label": "Pemahaman klasifikasi pelanggaran etik & hukum",
+          "teks": "Pemahaman klasifikasi pelanggaran etik & hukum"
         },
         {
           "kode": "WBS3",
           "nomor": 3,
-          "label": "Kemudahan akses",
-          "teks": "Kemudahan akses"
+          "label": "Kemudahan akses informasi & prosedur pelaporan",
+          "teks": "Kemudahan akses informasi & prosedur pelaporan"
         },
         {
           "kode": "WBS4",
           "nomor": 4,
-          "label": "Perlindungan pelapor",
-          "teks": "Perlindungan pelapor"
+          "label": "Jaminan perlindungan pelapor dari ancaman & tekanan",
+          "teks": "Jaminan perlindungan pelapor dari ancaman & tekanan"
         },
         {
           "kode": "WBS5",
           "nomor": 5,
-          "label": "Kerahasiaan identitas",
-          "teks": "Kerahasiaan identitas"
+          "label": "Kerahasiaan identitas pelapor & substansi laporan",
+          "teks": "Kerahasiaan identitas pelapor & substansi laporan"
         },
         {
           "kode": "WBS6",
           "nomor": 6,
-          "label": "Keyakinan tindak lanjut",
-          "teks": "Keyakinan tindak lanjut"
+          "label": "Keyakinan tindak lanjut yang objektif & transparan",
+          "teks": "Keyakinan tindak lanjut yang objektif & transparan"
         }
       ]
     },
@@ -320,38 +320,38 @@
         {
           "kode": "PGD1",
           "nomor": 1,
-          "label": "Kanal tersedia",
-          "teks": "Kanal tersedia"
+          "label": "Kanal pengaduan beragam & mudah ditemukan",
+          "teks": "Kanal pengaduan tersedia dalam beberapa pilihan (tatap muka, surat, telepon, dan daring), aktif, serta mudah ditemukan oleh masyarakat."
         },
         {
           "kode": "PGD2",
           "nomor": 2,
-          "label": "Panduan alur",
-          "teks": "Panduan alur"
+          "label": "Alur, bukti, dan estimasi waktu penyelesaian jelas",
+          "teks": "Alur pengaduan dijelaskan secara jelas mulai dari cara mengirim, bukti yang perlu dilampirkan, hingga perkiraan waktu penyelesaian."
         },
         {
           "kode": "PGD3",
           "nomor": 3,
-          "label": "Respons & distribusi",
-          "teks": "Respons & distribusi"
+          "label": "Respons awal cepat & diteruskan ke unit tepat",
+          "teks": "Setiap pengaduan mendapat respons awal dan diteruskan ke unit penanggung jawab yang tepat secara cepat."
         },
         {
           "kode": "PGD4",
           "nomor": 4,
-          "label": "Penyelesaian komprehensif",
-          "teks": "Penyelesaian komprehensif"
+          "label": "Diselesaikan sampai akar masalah, bukan formalitas",
+          "teks": "Pengaduan diselesaikan sampai akar masalahnya, bukan hanya ditutup secara administratif."
         },
         {
           "kode": "PGD5",
           "nomor": 5,
-          "label": "Pelacakan progres",
-          "teks": "Pelacakan progres"
+          "label": "Pelapor dapat melacak status & progres sendiri",
+          "teks": "Status dan progres pengaduan dapat dilacak oleh pelapor kapan saja tanpa harus menanyakan langsung ke petugas."
         },
         {
           "kode": "PGD6",
           "nomor": 6,
-          "label": "Tindak lanjut kredibel",
-          "teks": "Tindak lanjut kredibel"
+          "label": "Hasil tindak lanjut dijelaskan kembali ke pelapor",
+          "teks": "Hasil tindak lanjut disampaikan kembali kepada pelapor disertai penjelasan yang dapat dipercaya dan dipertanggungjawabkan."
         }
       ]
     },
@@ -367,44 +367,44 @@
         {
           "kode": "BZI1",
           "nomor": 1,
-          "label": "Urgensi ZI",
-          "teks": "Urgensi ZI"
+          "label": "Urgensi Zona Integritas bagi tata kelola bersih",
+          "teks": "Urgensi Zona Integritas bagi tata kelola bersih"
         },
         {
           "kode": "BZI2",
           "nomor": 2,
-          "label": "Komitmen pimpinan",
-          "teks": "Komitmen pimpinan"
+          "label": "Komitmen nyata pimpinan memberantas korupsi",
+          "teks": "Komitmen nyata pimpinan memberantas korupsi"
         },
         {
           "kode": "BZI3",
           "nomor": 3,
-          "label": "Keteladanan pimpinan",
-          "teks": "Keteladanan pimpinan"
+          "label": "Keteladanan pimpinan dalam disiplin & etika",
+          "teks": "Keteladanan pimpinan dalam disiplin & etika"
         },
         {
           "kode": "BZI4",
           "nomor": 4,
-          "label": "Kepatuhan kode etik",
-          "teks": "Kepatuhan kode etik"
+          "label": "Kepatuhan dosen & tendik pada kode etik",
+          "teks": "Kepatuhan dosen & tendik pada kode etik"
         },
         {
           "kode": "BZI5",
           "nomor": 5,
-          "label": "Budaya anti-manipulasi",
-          "teks": "Budaya anti-manipulasi"
+          "label": "Budaya menolak manipulasi data & kecurangan",
+          "teks": "Budaya menolak manipulasi data & kecurangan"
         },
         {
           "kode": "BZI6",
           "nomor": 6,
-          "label": "Proaktif melaporkan",
-          "teks": "Proaktif melaporkan"
+          "label": "Proaktif melaporkan indikasi penyimpangan",
+          "teks": "Proaktif melaporkan indikasi penyimpangan"
         },
         {
           "kode": "BZI7",
           "nomor": 7,
-          "label": "Implementasi nyata",
-          "teks": "Implementasi nyata"
+          "label": "Implementasi nyata, bukan sekadar administratif",
+          "teks": "Implementasi nyata, bukan sekadar administratif"
         }
       ]
     },
@@ -420,38 +420,38 @@
         {
           "kode": "JOSS1",
           "nomor": 1,
-          "label": "Pemahaman filosofi",
-          "teks": "Pemahaman filosofi"
+          "label": "Pemahaman filosofi & esensi nilai budaya kerja PENS JOSS",
+          "teks": "Pemahaman filosofi & esensi nilai budaya kerja PENS JOSS"
         },
         {
           "kode": "JOSS2",
           "nomor": 2,
-          "label": "Sosialisasi nilai",
-          "teks": "Sosialisasi nilai"
+          "label": "Sosialisasi nilai yang tertanam konsisten pada seluruh pegawai",
+          "teks": "Sosialisasi nilai yang tertanam konsisten pada seluruh pegawai"
         },
         {
           "kode": "JOSS3",
           "nomor": 3,
-          "label": "Penerapan berkesinambungan",
-          "teks": "Penerapan berkesinambungan"
+          "label": "Penerapan prinsip PENS JOSS berkesinambungan dalam tugas kedinasan",
+          "teks": "Penerapan prinsip PENS JOSS berkesinambungan dalam tugas kedinasan"
         },
         {
           "kode": "JOSS4",
           "nomor": 4,
-          "label": "Tercermin di kerja & layanan",
-          "teks": "Tercermin di kerja & layanan"
+          "label": "Nilai tercermin pada pola koordinasi, etos kerja & kualitas layanan",
+          "teks": "Nilai tercermin pada pola koordinasi, etos kerja & kualitas layanan"
         },
         {
           "kode": "JOSS5",
           "nomor": 5,
-          "label": "Keteladanan pimpinan",
-          "teks": "Keteladanan pimpinan"
+          "label": "Keteladanan pimpinan dalam proses kerja & pengambilan kebijakan",
+          "teks": "Keteladanan pimpinan dalam proses kerja & pengambilan kebijakan"
         },
         {
           "kode": "JOSS6",
           "nomor": 6,
-          "label": "Identitas budaya",
-          "teks": "Identitas budaya"
+          "label": "Transformasi nilai menjadi identitas budaya organisasi yang riil",
+          "teks": "Transformasi nilai menjadi identitas budaya organisasi yang riil"
         }
       ]
     },
@@ -467,44 +467,44 @@
         {
           "kode": "LR1",
           "nomor": 1,
-          "label": "Pemahaman 5R",
-          "teks": "Pemahaman 5R"
+          "label": "5R pilar lingkungan tertata, bersih & produktif",
+          "teks": "Saya memahami konsep 5R sebagai pilar terciptanya lingkungan institusi yang tertata, bersih, dan produktif."
         },
         {
           "kode": "LR2",
           "nomor": 2,
-          "label": "Penataan area",
-          "teks": "Penataan area"
+          "label": "Seleksi & eliminasi material tak diperlukan",
+          "teks": "Penataan area kerja/layanan dilakukan dengan menyeleksi dan mengeliminasi material yang tidak diperlukan."
         },
         {
           "kode": "LR3",
           "nomor": 3,
-          "label": "Penempatan ergonomis",
-          "teks": "Penempatan ergonomis"
+          "label": "Sarana & dokumen ditata ergonomis pada tempatnya",
+          "teks": "Sarana, dokumen, dan fasilitas ditempatkan secara ergonomis dan terorganisasi pada tempatnya."
         },
         {
           "kode": "LR4",
           "nomor": 4,
-          "label": "Kebersihan",
-          "teks": "Kebersihan"
+          "label": "Kebersihan ruang kerja & area publik berkelanjutan",
+          "teks": "Ruang kerja, sarana pendidikan, dan area publik dijaga kebersihannya secara berkelanjutan."
         },
         {
           "kode": "LR5",
           "nomor": 5,
-          "label": "Pemeliharaan infrastruktur",
-          "teks": "Pemeliharaan infrastruktur"
+          "label": "Pemeliharaan infrastruktur kampus tertib & andal",
+          "teks": "Pemeliharaan berkala terhadap infrastruktur kampus berjalan tertib demi menjamin keandalan fungsi."
         },
         {
           "kode": "LR6",
           "nomor": 6,
-          "label": "Disiplin mandiri",
-          "teks": "Disiplin mandiri"
+          "label": "Disiplin mandiri menjaga tertib, bersih & rapi",
+          "teks": "Setiap insan institusi memiliki kedisiplinan mandiri dalam memelihara ketertiban, kebersihan, dan kerapian."
         },
         {
           "kode": "LR7",
           "nomor": 7,
-          "label": "5R jadi kebiasaan",
-          "teks": "5R jadi kebiasaan"
+          "label": "Kebijakan 5R jadi standar operasional & kebiasaan",
+          "teks": "Kebijakan 5R telah menjadi standar operasional dan kebiasaan kerja sehari-hari di seluruh unit."
         }
       ]
     }
