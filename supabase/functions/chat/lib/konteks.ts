@@ -63,6 +63,15 @@ export interface KonteksSemua {
   cakupan: 'semua-instrumen';
   periode: string;
   jumlah_instrumen: number;
+  /* Rata-rata seluruh instrumen, dihitung sama seperti dashboard: rata-rata
+     tidak tertimbang dari indeks tiap instrumen (bukan rata-rata tertimbang
+     jumlah responden). */
+  ringkasan_keseluruhan: {
+    indeks_persepsi: number;
+    skor_rata: number;
+    jumlah_instrumen: number;
+    responden_unik: number;
+  };
   instrumen: KonteksRingkasInstrumen[];
 }
 
@@ -182,12 +191,23 @@ export function rakitKonteksSatu(
 }
 
 export function rakitKonteksSemua(
-  daftar: Array<{ agregat: Agregat; instrumen: InstrumenInfo; judulRekomendasi?: string[] }>
+  daftar: Array<{ agregat: Agregat; instrumen: InstrumenInfo; judulRekomendasi?: string[] }>,
+  respondenUnik = 0
 ): KonteksSemua {
+  const indeksRata = daftar.length
+    ? daftar.reduce((a, d) => a + d.agregat.indeks, 0) / daftar.length
+    : 0;
+
   return {
     cakupan: 'semua-instrumen',
     periode: daftar[0]?.agregat.periode ?? '',
     jumlah_instrumen: daftar.length,
+    ringkasan_keseluruhan: {
+      indeks_persepsi: bulat(indeksRata, 1),
+      skor_rata: bulat(keSkor(indeksRata), 2),
+      jumlah_instrumen: daftar.length,
+      responden_unik: respondenUnik
+    },
     instrumen: daftar.map(({ agregat, instrumen, judulRekomendasi }) => {
       const terendah = agregat.butirTerendah;
       return {

@@ -40,6 +40,10 @@ export interface HasilKumpulan {
   dibuang: number;
   duplikat: number;
   totalBaris: number;
+  /* Jumlah responden unik pada periode terpilih: hash distinct lintas
+     instrumen, ditambah baris tanpa hash yang dihitung satu per satu. Sama
+     dengan cara dashboard menghitung "Responden". */
+  respondenUnik: number;
 }
 
 /* Periode terbaru yang benar-benar punya data, mengikuti urutan PERIODE di
@@ -128,7 +132,17 @@ export function kumpulkan(
 
   const semuaPeriode = [...new Set([...peta.values()].map((v) => v.periode))];
   const periode = periodeDiminta && semuaPeriode.includes(periodeDiminta) ? periodeDiminta : periodeTerbaru(semuaPeriode);
-  if (!periode) return { periode: '', perInstrumen: [], dibuang, duplikat, totalBaris: rows.length };
+  if (!periode) return { periode: '', perInstrumen: [], dibuang, duplikat, totalBaris: rows.length, respondenUnik: 0 };
+
+  /* Responden unik periode terpilih: hash distinct lintas instrumen. Baris
+     tanpa hash sudah diberi kunci unik saat dedup, jadi ikut terhitung satu
+     per satu seperti di dashboard. */
+  const hashPeriode = new Set<string>();
+  for (const [kunci, isi] of terpilih) {
+    if (isi.periode !== periode) continue;
+    hashPeriode.add(kunci.startsWith('tanpa-hash|') ? kunci : kunci.split('|')[0]);
+  }
+  const respondenUnik = hashPeriode.size;
 
   /* Periode pembanding: periode sebelumnya yang punya data instrumen yang sama. */
   const perInstrumen: HasilSatuInstrumen[] = [];
@@ -168,7 +182,7 @@ export function kumpulkan(
   }
 
   perInstrumen.sort((a, b) => a.instrumen.nama.localeCompare(b.instrumen.nama));
-  return { periode, perInstrumen, dibuang, duplikat, totalBaris: rows.length };
+  return { periode, perInstrumen, dibuang, duplikat, totalBaris: rows.length, respondenUnik };
 }
 
 /* ---------------------------------------------------------------------------

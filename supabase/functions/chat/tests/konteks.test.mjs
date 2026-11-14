@@ -90,7 +90,7 @@ test('konteks satu instrumen tidak memuat PII', () => {
 });
 
 test('ringkasan semua instrumen kecil dan tanpa butir lengkap', () => {
-  const konteks = rakitKonteksSemua(DAFTAR_SEMUA);
+  const konteks = rakitKonteksSemua(DAFTAR_SEMUA, 500);
   const teks = JSON.stringify(konteks);
 
   assert.equal(konteks.cakupan, 'semua-instrumen');
@@ -98,6 +98,18 @@ test('ringkasan semua instrumen kecil dan tanpa butir lengkap', () => {
   assert.ok(ukuranKonteks(konteks) < DAFTAR_SEMUA.length * 1024, 'konteks terlalu besar');
   assert.doesNotMatch(teks, /"butir":/, 'butir lengkap ikut terkirim');
   assert.doesNotMatch(teks, /@/);
+});
+
+test('ringkasan keseluruhan memakai rata-rata tidak tertimbang', () => {
+  /* Sama seperti dashboard: rata-rata indeks tiap instrumen, bukan rata-rata
+     tertimbang jumlah responden. */
+  const konteks = rakitKonteksSemua(DAFTAR_SEMUA, 500);
+  const harapan = DAFTAR_SEMUA.reduce((a, d) => a + d.agregat.indeks, 0) / DAFTAR_SEMUA.length;
+
+  assert.ok(Math.abs(konteks.ringkasan_keseluruhan.indeks_persepsi - harapan) < 0.1);
+  assert.ok(Math.abs(konteks.ringkasan_keseluruhan.skor_rata - harapan / 25) < 0.01);
+  assert.equal(konteks.ringkasan_keseluruhan.jumlah_instrumen, DAFTAR_SEMUA.length);
+  assert.equal(konteks.ringkasan_keseluruhan.responden_unik, 500);
 });
 
 test('ambang sampel minimum mengikuti registri, bukan hardcoded', () => {

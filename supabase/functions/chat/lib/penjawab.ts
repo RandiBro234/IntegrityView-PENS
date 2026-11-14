@@ -115,7 +115,8 @@ export async function jawabChat(body: unknown, deps: Ketergantungan): Promise<Ha
         agregat: d.agregat,
         instrumen: d.instrumen,
         judulRekomendasi: d.rekomendasi.map((r) => r.judul)
-      }))
+      })),
+      data.respondenUnik
     );
   }
 
