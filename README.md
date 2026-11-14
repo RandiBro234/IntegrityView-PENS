@@ -37,6 +37,37 @@ npm run lint       # oxlint
 
 Tidak ada test runner dan tidak ada formatter.
 
+## Deploy ke Vercel
+
+Repo sudah menyiapkan dua konfigurasi. Pilih salah satu saat import project:
+
+**A. Root Directory = `frontend`** (disarankan)
+
+- Framework Preset: **Vite**
+- Build Command: `npm run build`
+- Output Directory: `dist`
+- Install Command: `npm install`
+- Rewrite SPA memakai `frontend/vercel.json`
+
+**B. Root Directory = root repo**
+
+- Biarkan pengaturan build mengikuti `vercel.json` di root:
+  install `npm --prefix frontend install`, build `npm --prefix frontend run build`,
+  output `frontend/dist`.
+
+Tambahkan environment variables di **Project Settings > Environment Variables**
+(Production dan Preview):
+
+```env
+VITE_SUPABASE_URL=https://<project-ref>.supabase.co
+VITE_SUPABASE_ANON_KEY=sb_publishable_...
+VITE_ENABLE_SIMULATION=true
+VITE_ENABLE_DEMO_LAPORAN=true
+```
+
+Set `VITE_ENABLE_DEMO_LAPORAN=false` untuk produksi bila seed laporan demo tidak ingin tampil.
+Vite membaca env saat build, jadi **redeploy** setelah mengubah nilainya.
+
 ## Variabel lingkungan
 
 Salin `frontend/.env.example` menjadi `frontend/.env`:
