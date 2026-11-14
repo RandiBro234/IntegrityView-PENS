@@ -56,6 +56,25 @@ export interface KonfigLlm {
   /* Batas tunggu yang masih diterima sebelum mengulang; lebih dari ini langsung
      menyerah supaya pengguna tidak menggantung. */
   maksTungguMs: number;
+  /* Header tambahan untuk agregator yang memerlukannya (mis. HTTP-Referer).
+     Ditulis sebagai JSON di LLM_EXTRA_HEADERS. */
+  extraHeaders: Record<string, string>;
+}
+
+/* JSON yang salah bentuk tidak boleh membuat chatbot mati; cukup diabaikan. */
+function bacaHeaderEkstra(mentah: string): Record<string, string> {
+  if (!mentah) return {};
+  try {
+    const hasil = JSON.parse(mentah);
+    if (!hasil || typeof hasil !== 'object' || Array.isArray(hasil)) return {};
+    const bersih: Record<string, string> = {};
+    for (const [k, v] of Object.entries(hasil)) {
+      if (typeof v === 'string') bersih[k] = v;
+    }
+    return bersih;
+  } catch {
+    return {};
+  }
 }
 
 export function konfigLlm(): KonfigLlm {
@@ -69,7 +88,8 @@ export function konfigLlm(): KonfigLlm {
     suhu: Number(env('LLM_SUHU') || 0.1),
     reasoningEffort: env('LLM_REASONING_EFFORT'),
     maksCoba: Number(env('LLM_MAKS_COBA') || 3),
-    maksTungguMs: Number(env('LLM_MAKS_TUNGGU_MS') || 6000)
+    maksTungguMs: Number(env('LLM_MAKS_TUNGGU_MS') || 6000),
+    extraHeaders: bacaHeaderEkstra(env('LLM_EXTRA_HEADERS'))
   };
 }
 
@@ -110,7 +130,8 @@ export async function tanyaLlm(pesan: { system: string; user: string }, konfig =
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${konfig.apiKey}`
+          Authorization: `Bearer ${konfig.apiKey}`,
+          ...konfig.extraHeaders
         },
         body: JSON.stringify({
           model: konfig.model,
