@@ -22,7 +22,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { jawabChat } from '../supabase/functions/chat/lib/penjawab.ts';
-import { kumpulkan, KOLOM } from '../supabase/functions/chat/lib/sumber.ts';
+import { kumpulkan, ambilBaris } from '../supabase/functions/chat/lib/sumber.ts';
 import { susunPesan } from '../supabase/functions/chat/lib/prompt.ts';
 
 const AKAR = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -54,28 +54,16 @@ export async function buatKetergantungan({ batasPerJam = 20, stub = '1' } = {}) 
   const headers = { apikey: key, Accept: 'application/json' };
   if (key.startsWith('eyJ')) headers.Authorization = `Bearer ${key}`;
 
-  /* Bentuk klien tiruan yang meniru supabase-js secukupnya. */
+  /* Klien tiruan yang meniru supabase-js secukupnya: hanya rpc(). */
   const client = {
-    from() {
-      return {
-        select(kolom) {
-          return {
-            order(_k, { ascending }) {
-              return {
-                async limit(n) {
-                  const arah = ascending ? 'asc' : 'desc';
-                  const res = await fetch(
-                    `${url}/rest/v1/survey_responses?select=${kolom}&order=created_at.${arah}&limit=${n}`,
-                    { headers }
-                  );
-                  if (!res.ok) return { data: null, error: { message: `HTTP ${res.status}` } };
-                  return { data: await res.json(), error: null };
-                }
-              };
-            }
-          };
-        }
-      };
+    async rpc(nama, argumen) {
+      const res = await fetch(`${url}/rest/v1/rpc/${nama}`, {
+        method: 'POST',
+        headers: { ...headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify(argumen)
+      });
+      if (!res.ok) return { data: null, error: { message: `HTTP ${res.status}` } };
+      return { data: await res.json(), error: null };
     }
   };
 
@@ -85,7 +73,7 @@ export async function buatKetergantungan({ batasPerJam = 20, stub = '1' } = {}) 
     registri,
     deps: {
       registri,
-      ambilData: async () => kumpulkan(await ambilBarisLokal(client), registri),
+      ambilData: async () => kumpulkan(await ambilBaris(client), registri),
       /* Stub LLM: balasan menyebut kode butir supaya jalur `dasar` ikut teruji. */
       tanyaLlm: async (pesan) => {
         if (stub === 'gagal') {
@@ -103,12 +91,6 @@ export async function buatKetergantungan({ batasPerJam = 20, stub = '1' } = {}) 
       }
     }
   };
-}
-
-async function ambilBarisLokal(client, batas = 5000) {
-  const { data, error } = await client.from('survey_responses').select(KOLOM).order('created_at', { ascending: false }).limit(batas);
-  if (error) throw new Error(`gagal membaca survey_responses: ${error.message}`);
-  return data ?? [];
 }
 
 /* Server HTTP dengan kontrak sama seperti Edge Function. */

@@ -17,7 +17,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { jawabChat } from '../supabase/functions/chat/lib/penjawab.ts';
-import { kumpulkan } from '../supabase/functions/chat/lib/sumber.ts';
+import { kumpulkan, ambilBaris } from '../supabase/functions/chat/lib/sumber.ts';
 import { tanyaLlm } from '../supabase/functions/chat/lib/llm.ts';
 
 const AKAR = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -68,18 +68,26 @@ const kepala = { apikey: kunci, Accept: 'application/json' };
 if (kunci.startsWith('eyJ')) kepala.Authorization = `Bearer ${kunci}`;
 
 /* Cache singkat: data survei tidak berubah per detik, dan setiap pertanyaan
-   tidak perlu menarik 314 baris ulang. */
+   tidak perlu menarik ribuan baris ulang. */
 let cache = { waktu: 0, data: null };
 const UMUR_CACHE_MS = 60_000;
 
+/* Klien tiruan: hanya rpc(), sesuai bentuk yang dipakai lib/sumber.ts. */
+const klien = {
+  async rpc(nama, argumen) {
+    const res = await fetch(`${urlProyek}/rest/v1/rpc/${nama}`, {
+      method: 'POST',
+      headers: { ...kepala, 'Content-Type': 'application/json' },
+      body: JSON.stringify(argumen)
+    });
+    if (!res.ok) return { data: null, error: { message: `HTTP ${res.status}` } };
+    return { data: await res.json(), error: null };
+  }
+};
+
 async function ambilData() {
   if (cache.data && Date.now() - cache.waktu < UMUR_CACHE_MS) return cache.data;
-  const res = await fetch(
-    `${urlProyek}/rest/v1/survey_responses?select=nama_instrumen,data_jawaban,created_at&order=created_at.desc&limit=5000`,
-    { headers: kepala }
-  );
-  if (!res.ok) throw new Error(`HTTP ${res.status} saat membaca survey_responses`);
-  const data = kumpulkan(await res.json(), registri);
+  const data = kumpulkan(await ambilBaris(klien), registri);
   cache = { waktu: Date.now(), data };
   return data;
 }

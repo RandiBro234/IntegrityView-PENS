@@ -13,7 +13,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { jawabChat, cariDasar } from '../lib/penjawab.ts';
-import { kumpulkan, periodeTerbaru, KOLOM } from '../lib/sumber.ts';
+import { kumpulkan, periodeTerbaru, ambilBaris, UKURAN_HALAMAN } from '../lib/sumber.ts';
 import { LlmTidakTersedia } from '../lib/llm.ts';
 import { validasiChat, MAKS_PERTANYAAN } from '../lib/validasi.ts';
 
@@ -171,11 +171,36 @@ test('instrumen valid tapi belum ada datanya -> 200 tanpa memanggil LLM', async 
    Sumber data
    --------------------------------------------------------------------------- */
 
-test('query hanya mengambil kolom yang diizinkan', () => {
-  const kolom = KOLOM.split(',').sort();
-  assert.deepEqual(kolom, ['created_at', 'data_jawaban', 'nama_instrumen'].sort());
-  assert.ok(!KOLOM.includes('email'));
-  assert.ok(!KOLOM.includes('id'));
+test('ambilBaris() menarik semua halaman sampai habis', async () => {
+  /* Klien tiruan: 2.500 baris, halaman maksimum 1.000. */
+  const total = 2500;
+  const diminta = [];
+  const klien = {
+    rpc(nama, argumen) {
+      diminta.push({ nama, ...argumen });
+      const mulai = argumen.p_offset;
+      const selesai = Math.min(mulai + argumen.p_limit, total);
+      const data = [];
+      for (let i = mulai; i < selesai; i++) {
+        data.push({ nama_instrumen: 'SPIP', data_jawaban: {}, created_at: '2026-10-15T03:00:00+00:00' });
+      }
+      return Promise.resolve({ data, error: null });
+    }
+  };
+
+  const rows = await ambilBaris(klien);
+  assert.equal(rows.length, total, 'tidak semua baris terambil');
+  assert.equal(diminta.length, 3, 'jumlah halaman tidak sesuai');
+  assert.equal(diminta[0].nama, 'survey_rows_safe');
+  assert.equal(diminta[0].p_limit, UKURAN_HALAMAN);
+  assert.deepEqual(diminta.map((d) => d.p_offset), [0, 1000, 2000]);
+});
+
+test('ambilBaris() meneruskan error RPC, bukan mengembalikan data kosong', async () => {
+  const klien = {
+    rpc: () => Promise.resolve({ data: null, error: { message: 'izin ditolak' } })
+  };
+  await assert.rejects(() => ambilBaris(klien), /izin ditolak/);
 });
 
 test('kumpulkan() membuang instrumen asing dan baris jumlah butir salah', () => {
@@ -191,6 +216,28 @@ test('kumpulkan() membuang instrumen asing dan baris jumlah butir salah', () => 
   );
   assert.equal(salah.dibuang, 1);
   assert.equal(salah.perInstrumen.length, 0);
+});
+
+test('kumpulkan() mendedup responden dengan hash sama, ambil yang terbaru', () => {
+  const baris = buatBarisPeriode('2026-ganjil', 3);
+  /* Tiga baris dengan hash sama: hanya satu yang boleh dihitung. */
+  const denganHash = baris.map((b, i) => ({
+    ...b,
+    responden_hash: 'hash-sama',
+    created_at: `2026-10-${10 + i}T03:00:00+00:00`
+  }));
+
+  const hasil = kumpulkan(denganHash, REGISTRI);
+  assert.equal(hasil.duplikat, 2, 'duplikat tidak terdeteksi');
+  assert.equal(hasil.perInstrumen[0].agregat.n, 1, 'responden dihitung lebih dari sekali');
+  assert.equal(hasil.perInstrumen[0].agregat.kualitas.duplikat, 2);
+});
+
+test('kumpulkan() tidak mendedup baris tanpa hash', () => {
+  const baris = buatBarisPeriode('2026-ganjil', 3).map((b) => ({ ...b, responden_hash: null }));
+  const hasil = kumpulkan(baris, REGISTRI);
+  assert.equal(hasil.duplikat, 0);
+  assert.equal(hasil.perInstrumen[0].agregat.n, 3);
 });
 
 test('periode dipilih dengan urutan semester yang benar', () => {

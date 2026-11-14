@@ -120,17 +120,27 @@ async function kasusDariDb() {
     process.exit(1);
   }
 
-  const headers = { apikey: key, Accept: 'application/json' };
-  if (key.startsWith('eyJ')) headers.Authorization = `Bearer ${key}`;
+  const headers = { apikey: key, Accept: 'application/json', 'Content-Type': 'application/json' };
 
-  /* Hanya kolom yang dibutuhkan. Email sengaja tidak diambil. */
-  const kolom = 'select=nama_instrumen,data_jawaban,created_at&order=created_at.desc';
-  const res = await fetch(`${url}/rest/v1/survey_responses?${kolom}`, { headers });
-  if (!res.ok) {
-    console.error(`\n  GAGAL: HTTP ${res.status} saat membaca survey_responses.\n`);
-    process.exit(1);
+  /* Lewat RPC berhalaman: tabel sudah >6000 baris, sedangkan PostgREST
+     membatasi 1000 baris per request. Email tidak pernah ikut karena RPC
+     sudah membuangnya di server. */
+  const baris = [];
+  for (let offset = 0; ;) {
+    const res = await fetch(`${url}/rest/v1/rpc/survey_rows_safe`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ p_limit: 1000, p_offset: offset })
+    });
+    if (!res.ok) {
+      console.error(`\n  GAGAL: HTTP ${res.status} saat membaca survey_rows_safe.\n`);
+      process.exit(1);
+    }
+    const halaman = await res.json();
+    if (!Array.isArray(halaman) || halaman.length === 0) break;
+    baris.push(...halaman);
+    offset += halaman.length;
   }
-  const baris = await res.json();
 
   const perPeriode = new Map();
   for (const b of baris) {
