@@ -17,9 +17,20 @@ import registri from './lib/instrumen.json' with { type: 'json' };
 import { ambilBaris, kumpulkan } from './lib/sumber.ts';
 import { jawabChat } from './lib/penjawab.ts';
 import { tanyaLlm } from './lib/llm.ts';
+import { buatCache } from './lib/cache.ts';
 
 const BATAS_PER_JAM = Number(Deno.env.get('CHAT_BATAS_PER_JAM') || 20);
 const JENDELA_JAM_MENIT = 60;
+
+/* Data survei tidak berubah per detik, tetapi menariknya mahal: >7.000 baris
+   dalam 8 request berurutan. Cache ini membuat pertanyaan berikutnya dalam
+   satu menit tidak menyentuh database sama sekali. */
+const CACHE_MS = Number(Deno.env.get('CHAT_CACHE_MS') || 60_000);
+
+const ambilData = buatCache({
+  umurMs: CACHE_MS,
+  ambil: async () => kumpulkan(await ambilBaris(buatClient()), registri)
+});
 
 /* Batas harian seluruh sistem. Dihitung di memori instance; cukup untuk
    prototipe, dan sengaja bukan penghitung per pengguna. */
@@ -57,7 +68,7 @@ Deno.serve(async (req: Request) => {
 
   const hasil = await jawabChat(body, {
     registri,
-    ambilData: async () => kumpulkan(await ambilBaris(supabase), registri),
+    ambilData,
     tanyaLlm,
     cekBatas: async () => {
       const perIp = await cekBatas(supabase, req, 'chat', BATAS_PER_JAM, JENDELA_JAM_MENIT);
