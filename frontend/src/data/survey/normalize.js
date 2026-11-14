@@ -164,12 +164,12 @@ export function normalisasiBaris(rows = []) {
       dibuang[slug] = (dibuang[slug] || 0) + 1;
       return;
     }
-    const email = row.email_responden ? String(row.email_responden).trim().toLowerCase() : null;
+    const respondenKey = row.responden_hash ? String(row.responden_hash).trim().toLowerCase() : null;
     records.push({
       slug,
       periode,
-      email,
-      respondentId: email || `row:${row.id ?? index}`,
+      respondenKey,
+      respondentId: respondenKey || `row:${row.id ?? index}`,
       createdAt: row.created_at,
       items: parsed.items,
       terbuka: parsed.terbuka || null,
@@ -177,13 +177,13 @@ export function normalisasiBaris(rows = []) {
     });
   });
 
-  /* Dedup: email + instrumen + periode, simpan created_at terbaru.
-     Baris tanpa email tidak pernah dianggap duplikat. */
+  /* Dedup: hash responden + instrumen + periode, simpan created_at terbaru.
+     Baris tanpa hash tidak pernah dianggap duplikat. */
   const peta = new Map();
   const hasil = [];
   records.forEach((rec) => {
-    if (!rec.email) { hasil.push(rec); return; }
-    const kunci = `${rec.email}|${rec.slug}|${rec.periode}`;
+    if (!rec.respondenKey) { hasil.push(rec); return; }
+    const kunci = `${rec.respondenKey}|${rec.slug}|${rec.periode}`;
     const lama = peta.get(kunci);
     if (!lama) { peta.set(kunci, rec); hasil.push(rec); return; }
     duplikat[rec.slug] = (duplikat[rec.slug] || 0) + 1;

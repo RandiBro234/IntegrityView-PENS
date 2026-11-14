@@ -15,6 +15,7 @@ import './InstrumentDetailPage.css';
 export default function InstrumentDetailPage({ slug, onBack }) {
   const [modal, setModal] = useState(null);
   const [tab, setTab] = useState('distribusi');
+  const [tip, setTip] = useState(null);
   const [ekspor, setEkspor] = useState(false);
   const [mengunduh, setMengunduh] = useState(false);
   const reportRef = useRef(null);
@@ -161,16 +162,23 @@ export default function InstrumentDetailPage({ slug, onBack }) {
                 <div className="idp__butir-body">
                   {st.butir.map((b) => (
                     <div key={b.label} className="idp__butir-row">
-                      <span className="idp__butir-teks" title={b.teks}>{b.teks}</span>
+                      <span className="idp__butir-teks" title={b.teks}>{b.label}</span>
                       <span className="idp__butir-rata">{formatAngka(b.rata, 2)}</span>
-                      <span className="idp__butir-bar">
+                      <span
+                        className="idp__butir-bar"
+                        onMouseMove={(e) => setTip({ x: e.clientX, y: e.clientY, butir: b })}
+                        onMouseLeave={() => setTip(null)}
+                      >
                         {b.distribusiPersen.map((pct, i) => (
                           <span
                             key={i}
                             className="idp__butir-seg"
                             style={{ width: pct + '%', backgroundColor: SKALA[i].warna }}
-                            title={`${SKALA[i].label}: ${formatAngka(pct)}%`}
-                          />
+                          >
+                            {pct >= 15 && (
+                              <span className="idp__butir-seg-label">{formatAngka(pct, 0)}%</span>
+                            )}
+                          </span>
                         ))}
                       </span>
                     </div>
@@ -315,6 +323,29 @@ export default function InstrumentDetailPage({ slug, onBack }) {
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {tip && (
+        <div
+          className="idp__tip"
+          role="status"
+          style={{
+            left: Math.min(tip.x + 16, window.innerWidth - 260),
+            top: tip.y + 16
+          }}
+        >
+          <strong>{tip.butir.label}</strong>
+          {SKALA.map((s, i) => (
+            <span key={s.singkat} className="idp__tip-row">
+              <span className="idp__tip-swatch" style={{ backgroundColor: s.warna }} />
+              <span className="idp__tip-label">{s.label}</span>
+              <span className="idp__tip-num">
+                {tip.butir.distribusi[i]} ({formatAngka(tip.butir.distribusiPersen[i])}%)
+              </span>
+            </span>
+          ))}
+          <span className="idp__tip-note">n = {st.n} responden</span>
         </div>
       )}
     </div>

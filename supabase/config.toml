@@ -9,5 +9,11 @@ verify_jwt = false
 [functions.buat-upload-lampiran]
 verify_jwt = false
 
+[functions.kelola-laporan]
+verify_jwt = false
+
+[functions.ambil-lampiran]
+verify_jwt = false
+
 [functions.chat]
 verify_jwt = false

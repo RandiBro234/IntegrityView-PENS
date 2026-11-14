@@ -40,7 +40,7 @@ const CONTOH = [
   ],
   [
     /indeks|zi|skor|nilai/i,
-    'Rata-rata skor ZI memakai skala 1–4: 1 = Sangat Tidak Setuju, 4 = Sangat Setuju. Angka 3,2 misalnya berarti responden cenderung Setuju. Angka ini berbeda dari "Setuju + Sangat Setuju", yang menghitung persentase jawaban orang.',
+    'Indeks Persepsi Integritas memakai skala 1–4: 1 = Sangat Tidak Setuju, 4 = Sangat Setuju. Angka 3,2 misalnya berarti responden cenderung Setuju. Ini bukan Skor Zona Integritas resmi, hanya rata-rata jawaban survei.',
   ],
   [
     /lapor|wbs|pengaduan|adu|dugaan/i,
@@ -56,7 +56,7 @@ const CONTOH = [
   ],
 ];
 
-const CADANGAN = 'Untuk prototipe ini saya baru bisa menjawab soal cara isi survei, skor ZI, dashboard, pelaporan WBS, dan privasi data. Untuk pertanyaan lain, hubungi pengelola Zona Integritas PENS.';
+const CADANGAN = 'Untuk prototipe ini saya baru bisa menjawab soal cara isi survei, Indeks Persepsi Integritas, dashboard, pelaporan WBS, dan privasi data. Untuk pertanyaan lain, hubungi pengelola Zona Integritas PENS.';
 
 /* Jawaban contoh: dipakai hanya bila Edge Function belum tersedia. */
 const jawabContoh = (teks) => {

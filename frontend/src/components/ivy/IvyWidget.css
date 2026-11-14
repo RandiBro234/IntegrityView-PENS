@@ -229,9 +229,13 @@
   .ivy { display: none; }
 }
 
+@media (max-width: 900px) {
+  .ivy { right: 12px; bottom: 16px; }
+  /* Halaman aplikasi punya bottom nav 64px; landing tidak, jadi hanya di sana widget dinaikkan. */
+  body:has(.sidebar) .ivy { bottom: calc(76px + env(safe-area-inset-bottom)); }
+}
 @media (max-width: 480px) {
-  .ivy { right: 16px; bottom: 16px; }
-  .ivy__panel { width: calc(100vw - 32px); height: calc(100dvh - 120px); }
+  .ivy__panel { width: calc(100vw - 32px); height: calc(100dvh - 180px); }
 }
 
 @media (prefers-reduced-motion: reduce) {

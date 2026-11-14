@@ -11,6 +11,8 @@ Opsi:
     --dry-run        Uji baca CSV tanpa menulis ke database
 
 Kredensial diambil dari backend/.env (lihat app/config.py).
+Set RESPONDENT_HASH_PEPPER di environment sebelum menjalankan migrasi.
+Email responden hanya disimpan sebagai HMAC-SHA256 (responden_hash).
 """
 
 import sys
@@ -21,11 +23,38 @@ if str(BACKEND_DIR) not in sys.path:
     sys.path.insert(0, str(BACKEND_DIR))
 
 import argparse
+import hashlib
+import hmac
+import os
 
 import pandas as pd
 from psycopg2.extras import Json
 
 from app.db import get_connection
+
+KOLOM_EMAIL = {
+    "email", "email address", "alamat email", "email responden",
+    "surel", "respondent email", "__respondent_email",
+}
+
+
+def hash_email(email):
+    """Hash email dengan pepper server-side; email asli tidak disimpan."""
+    pepper = os.environ.get("RESPONDENT_HASH_PEPPER")
+    if not pepper:
+        raise RuntimeError(
+            "RESPONDENT_HASH_PEPPER belum diset. Tambahkan ke environment sebelum migrasi."
+        )
+    return hmac.new(
+        pepper.encode("utf-8"),
+        str(email).strip().lower().encode("utf-8"),
+        hashlib.sha256,
+    ).hexdigest()
+
+
+def kunci_email(kunci):
+    bersih = str(kunci).replace("\ufeff", "").strip().lower()
+    return bersih in KOLOM_EMAIL or "email" in bersih
 
 
 def bersihkan_nilai(nilai):
@@ -57,7 +86,11 @@ def migrasi(file_csv, instrumen, email_col, timestamp_col, hapus_dulu, dry_run):
     for _, row in df.iterrows():
         data_json = {col: bersihkan_nilai(val) for col, val in row.items()}
         email = data_json.get(email_col) or None
-        records.append((instrumen, email, Json(data_json)))
+        data_bersih = {
+            col: val for col, val in data_json.items() if not kunci_email(col)
+        }
+        responden_hash = hash_email(email) if email else None
+        records.append((instrumen, responden_hash, Json(data_bersih)))
 
     print(f"Terbaca {len(records)} baris untuk instrumen '{instrumen}' dari {file_csv}.")
 
@@ -80,7 +113,7 @@ def migrasi(file_csv, instrumen, email_col, timestamp_col, hapus_dulu, dry_run):
             print(f"Menghapus {cursor.rowcount} baris lama untuk '{instrumen}'.")
 
         query = """
-            INSERT INTO survey_responses (nama_instrumen, email_responden, data_jawaban)
+            INSERT INTO survey_responses (nama_instrumen, responden_hash, data_jawaban)
             VALUES (%s, %s, %s)
         """
         cursor.executemany(query, records)

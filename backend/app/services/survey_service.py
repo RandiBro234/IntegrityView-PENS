@@ -6,6 +6,7 @@ from typing import Any, Optional
 
 from ..repositories import survey_repository
 from .email import ambil_email
+from .privasi import hash_email, sanitasi_data_jawaban
 
 
 class PayloadKosong(ValueError):
@@ -17,7 +18,10 @@ def simpan_webhook(instrumen: str, data: dict[str, Any]) -> dict[str, str]:
         raise PayloadKosong("Data jawaban kosong. Cek trigger Google Form.")
 
     email = ambil_email(data)
-    survey_repository.simpan_jawaban(instrumen, email, data)
+    responden_hash = hash_email(email) if email else None
+    survey_repository.simpan_jawaban(
+        instrumen, responden_hash, sanitasi_data_jawaban(data)
+    )
     return {
         "status": "success",
         "message": f"Data {instrumen} tersimpan.",

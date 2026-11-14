@@ -18,9 +18,8 @@ export const store = {
   rlsTerbuka: false
 };
 
-/* Ambil baris mentah. Catatan: anon key saat ini masih bisa membaca baris
-   mentah; migrasi SQL di supabase/migrations menyediakan RPC agregat
-   sebagai jalur yang disarankan. */
+/* Ambil baris survei lewat RPC aman secara berhalaman. Server sudah membuang
+   email dari data_jawaban dan tidak mengirim kolom email_responden. */
 export async function muatDataSurvei() {
   if (store.loaded) return store;
   if (!SUPABASE_URL || !SUPABASE_KEY) {
@@ -29,13 +28,27 @@ export async function muatDataSurvei() {
     return store;
   }
   try {
-    const headers = { apikey: SUPABASE_KEY, Accept: 'application/json' };
+    const headers = {
+      apikey: SUPABASE_KEY,
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    };
     if (SUPABASE_KEY.startsWith('eyJ')) headers.Authorization = `Bearer ${SUPABASE_KEY}`;
-    const kolom = 'select=id,nama_instrumen,email_responden,data_jawaban,created_at&order=created_at.desc';
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/survey_responses?${kolom}`, { headers });
-    if (!res.ok) throw new Error(`HTTP ${res.status} saat membaca survey_responses`);
-    const rows = await res.json();
-    store.rlsTerbuka = true;
+    const rows = [];
+    const ukuranHalaman = 1000;
+    for (let offset = 0; ;) {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/survey_rows_safe`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ p_limit: ukuranHalaman, p_offset: offset })
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status} saat membaca survey_rows_safe`);
+      const halaman = await res.json();
+      if (!Array.isArray(halaman) || halaman.length === 0) break;
+      rows.push(...halaman);
+      offset += halaman.length;
+    }
+    store.rlsTerbuka = false;
     const { records, dibuang, duplikat } = normalisasiBaris(rows);
     store.records = records;
     store.dibuang = dibuang;

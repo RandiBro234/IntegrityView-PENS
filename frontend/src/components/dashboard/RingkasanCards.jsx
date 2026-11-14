@@ -11,8 +11,8 @@ export default function RingkasanCards({ ringkasan, pembanding }) {
 
   const catatanSkor = [
     r.ci ? `Interval kepercayaan 95%: ${formatAngka(r.ci.bawah, 1)} – ${formatAngka(r.ci.atas, 1)} pada skala 0–100` : null,
-    'Skor ZI = rata-rata skor instrumen (skala asli 1–4) dikali 25 menjadi indeks 0–100. 100 berarti seluruh jawaban Sangat Setuju.',
-    'Setuju + Sangat Setuju dihitung dari jumlah jawaban orang, bukan dari skor, jadi angkanya bisa berbeda.',
+    'Indeks Persepsi Integritas = rata-rata skor instrumen survei (skala asli 1–4) dikali 25 menjadi 0–100. 100 berarti seluruh jawaban Sangat Setuju.',
+    'Bukan Skor Zona Integritas resmi: angka ini murni dari jawaban survei, tanpa bobot komponen penilaian ZI.',
     r.simulasiTerpakai > 0 ? `termasuk ${r.simulasiTerpakai} instrumen simulasi` : null
   ].filter(Boolean).join('\n');
 
@@ -54,7 +54,7 @@ export default function RingkasanCards({ ringkasan, pembanding }) {
 
       <Reveal as="article" className="rcard" delay={140}>
         <div className="rcard__top">
-          <p className="rcard__eyebrow">Skor ZI (0–100)</p>
+          <p className="rcard__eyebrow">Indeks Persepsi Integritas (0–100)</p>
           <InfoTip label="Metode skor" teks={catatanSkor} />
         </div>
         <div className="rcard__main">

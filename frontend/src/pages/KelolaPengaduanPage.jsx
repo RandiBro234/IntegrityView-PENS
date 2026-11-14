@@ -1,13 +1,17 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Sidebar from '../components/layout/Sidebar';
 import Topbar from '../components/layout/Topbar';
 import {
   getUser, isAdmin, getPengaduan, updatePengaduan, tambahBalasan,
-  getRingkasanPengaduan, STATUS_ADUAN, formatTanggal, formatTanggalWaktu
+  STATUS_ADUAN, formatTanggal, formatTanggalWaktu
 } from '../data/mock';
 import {
   opsiFilterKategori, labelKategori, kunciKategori, dialihkanKeSatisView
 } from '../data/reportCategories';
+import { ambilLampiranLokal } from '../lib/lampiranLokal';
+import {
+  ambilDaftarLaporan, ambilUrlLampiran, balasLaporan, kelolaApiSiap, perbaruiLaporan
+} from '../data/laporanApi';
 import './KelolaPengaduanPage.css';
 
 const STATUS_BADGE = { 'Baru': 'badge-status-baru', 'Diproses': 'badge-status-diproses', 'Selesai': 'badge-status-selesai' };
@@ -16,15 +20,30 @@ const OPSI_KATEGORI = opsiFilterKategori();
 export default function KelolaPengaduanPage({ onNavigate }) {
   const user = getUser();
   const admin = isAdmin();
-  const [, setRefresh] = useState(0);
   const [filterStatus, setFilterStatus] = useState('');
   const [filterKategori, setFilterKategori] = useState('');
   const [cari, setCari] = useState('');
   const [terpilih, setTerpilih] = useState(null);
+  const [daftar, setDaftar] = useState(() => getPengaduan());
 
-  const ringkas = getRingkasanPengaduan();
+  const muatServer = useCallback(() => {
+    if (!kelolaApiSiap) return;
+    ambilDaftarLaporan()
+      .then((rows) => setDaftar(rows))
+      .catch((err) => console.warn('Gagal memuat laporan admin:', err.message));
+  }, []);
 
-  const daftar = getPengaduan().filter((p) => {
+  useEffect(() => {
+    if (admin) muatServer();
+  }, [admin, muatServer]);
+
+  const ringkas = daftar.reduce((hasil, p) => {
+    hasil.total += 1;
+    hasil[p.status] = (hasil[p.status] || 0) + 1;
+    return hasil;
+  }, { total: 0, Baru: 0, Diproses: 0, Selesai: 0 });
+
+  const daftarTampil = daftar.filter((p) => {
     const q = cari.trim().toLowerCase();
     if (filterStatus && p.status !== filterStatus) return false;
     if (filterKategori && kunciKategori(p.kategori) !== filterKategori) return false;
@@ -37,9 +56,12 @@ export default function KelolaPengaduanPage({ onNavigate }) {
   });
 
   const handleMenu = (key) => onNavigate && onNavigate(key);
-  const segarkan = () => setRefresh((n) => n + 1);
+  const segarkan = () => {
+    setDaftar(getPengaduan());
+    muatServer();
+  };
 
-  const detail = terpilih ? getPengaduan().find((p) => p.id === terpilih) : null;
+  const detail = terpilih ? daftar.find((p) => p.id === terpilih) : null;
 
   if (!admin) {
     return (
@@ -105,7 +127,7 @@ export default function KelolaPengaduanPage({ onNavigate }) {
             />
           </div>
 
-          {daftar.length === 0 ? (
+          {daftarTampil.length === 0 ? (
             <div className="kpo-empty">Tidak ada laporan yang cocok dengan filter ini.</div>
           ) : (
             <div className="kpo-table-wrap">
@@ -116,7 +138,7 @@ export default function KelolaPengaduanPage({ onNavigate }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {daftar.map((p) => (
+                  {daftarTampil.map((p) => (
                     <tr key={p.id} className={terpilih === p.id ? 'is-selected' : ''} onClick={() => setTerpilih(p.id)}>
                       <td className="kpo-id">{p.id}</td>
                       <td className="kpo-judul">{p.judul}</td>
@@ -149,6 +171,128 @@ export default function KelolaPengaduanPage({ onNavigate }) {
   );
 }
 
+/* Lampiran bukti pelapor. File demo tersimpan di IndexedDB (lokal), jadi admin
+   di browser yang sama bisa membuka/mengunduhnya. Lampiran server dibuka lewat
+   signed URL berumur pendek dari metadata path di database. */
+function LampiranBukti({ kode, lampiran }) {
+  const adaLokal = Array.isArray(lampiran) && lampiran.some((l) => l && l.lokal);
+  /* Simpan hasil per kode; nilai lama otomatis dianggap kosong saat kode berganti. */
+  const [muatan, setMuatan] = useState({ kode: null, files: null, gagal: false });
+  const [sibuk, setSibuk] = useState('');
+  const [pesan, setPesan] = useState('');
+
+  useEffect(() => {
+    if (!adaLokal) return undefined;
+    let aktif = true;
+    ambilLampiranLokal(kode)
+      .then((files) => { if (aktif) setMuatan({ kode, files, gagal: false }); })
+      .catch(() => { if (aktif) setMuatan({ kode, files: null, gagal: true }); });
+    return () => { aktif = false; };
+  }, [kode, adaLokal]);
+
+  if (!Array.isArray(lampiran) || !lampiran.length) return null;
+  const berkas = muatan.kode === kode ? muatan.files : null;
+  const gagal = muatan.kode === kode ? muatan.gagal : false;
+
+  /* Lampiran demo tersimpan di IndexedDB; lampiran server hanya punya path dan
+     dibuka lewat signed URL berumur pendek dari Edge Function. */
+  const ambilUrl = async (l, file, unduh) => {
+    if (file?.blob) {
+      const url = URL.createObjectURL(file.blob);
+      if (unduh) {
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = file.nama || 'lampiran';
+        a.click();
+      } else {
+        window.open(url, '_blank', 'noopener');
+      }
+      window.setTimeout(() => URL.revokeObjectURL(url), 60000);
+      return;
+    }
+    if (!l.path) return;
+    setSibuk(l.path);
+    setPesan('');
+    try {
+      const url = await ambilUrlLampiran(l.path);
+      if (unduh) {
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = l.nama || 'lampiran';
+        a.click();
+      } else {
+        window.open(url, '_blank', 'noopener');
+      }
+    } catch (err) {
+      setPesan(err.message || 'Gagal membuka lampiran.');
+    } finally {
+      setSibuk('');
+    }
+  };
+
+  return (
+    <section className="kpo-sec">
+      <p className="kpo-sec__head">Lampiran bukti ({lampiran.length})</p>
+      {gagal && <p className="kpo-sec__text kpo-muted">Gagal membaca lampiran dari perangkat ini.</p>}
+      {pesan && <p className="kpo-error">{pesan}</p>}
+      <ul className="kpo-lampiran">
+        {lampiran.map((l, i) => {
+          const file = berkas?.find((f) => f.nama === l.nama) || null;
+          const tersedia = !!file?.blob || !!l.path;
+          const sedang = sibuk === l.path;
+          return (
+            <li key={l.path || `${l.nama}-${i}`} className="kpo-lampiran__item">
+              <span className="kpo-lampiran__ikon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M14 3v5h5" />
+                  <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Z" />
+                </svg>
+              </span>
+              <span className="kpo-lampiran__info">
+                <span className="kpo-lampiran__nama" title={l.nama}>{l.nama || 'Lampiran'}</span>
+                <span className="kpo-lampiran__meta">
+                  {jenisBerkas(l.nama)} · {formatUkuran(l.ukuran)}
+                </span>
+              </span>
+              {tersedia && (
+                <span className="kpo-lampiran__aksi">
+                  <button
+                    type="button"
+                    className="kpo-lampiran__btn"
+                    onClick={() => ambilUrl(l, file, false)}
+                    disabled={sedang}
+                  >
+                    {sedang ? 'Membuka…' : 'Buka'}
+                  </button>
+                  <button
+                    type="button"
+                    className="kpo-lampiran__btn"
+                    onClick={() => ambilUrl(l, file, true)}
+                    disabled={sedang}
+                  >
+                    Unduh
+                  </button>
+                </span>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  );
+}
+
+function formatUkuran(bytes) {
+  if (!bytes) return '-';
+  if (bytes >= 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  return `${Math.max(1, Math.round(bytes / 1024))} KB`;
+}
+
+function jenisBerkas(nama) {
+  const ext = String(nama || '').split('.').pop().toUpperCase();
+  return ext && ext.length <= 5 ? ext : 'Berkas';
+}
+
 function KpiCard({ label, value, tone = '', active, onClick }) {
   return (
     <button type="button" className={`kpo-kpi__card ${active ? 'is-active' : ''} ${tone ? 'kpo-kpi__card--' + tone : ''}`} onClick={onClick}>
@@ -165,26 +309,66 @@ function DetailPanel({ data, onClose, onSaved, adminNama }) {
   const [catatanInternal, setCatatanInternal] = useState('');
   const [balasanTeks, setBalasanTeks] = useState('');
   const [error, setError] = useState('');
+  const [menyimpan, setMenyimpan] = useState(false);
 
-  const simpan = () => {
+  const simpan = async () => {
     if (status !== 'Baru' && !pic.trim()) {
       setError('PIC wajib diisi jika status bukan Baru.');
       return;
     }
     setError('');
-    updatePengaduan(data.id, { status, pic: pic.trim(), catatanPublik: catatanPublik.trim(), catatanInternalBaru: catatanInternal.trim() || null });
-    setCatatanPublik('');
-    setCatatanInternal('');
-    onSaved();
-    onClose();
+    setMenyimpan(true);
+    try {
+      const patch = {
+        status,
+        pic: pic.trim(),
+        catatanPublik: catatanPublik.trim(),
+        catatanInternalBaru: catatanInternal.trim() || null
+      };
+      if (kelolaApiSiap) {
+        await perbaruiLaporan({
+          jenis: data.jenis,
+          kode: data.id,
+          status: patch.status,
+          pic: patch.pic,
+          catatanPublik: patch.catatanPublik,
+          catatanInternalBaru: patch.catatanInternalBaru
+        });
+      }
+      updatePengaduan(data.id, patch);
+      setCatatanPublik('');
+      setCatatanInternal('');
+      onSaved();
+      onClose();
+    } catch (err) {
+      setError(err.message || 'Gagal menyimpan perubahan.');
+    } finally {
+      setMenyimpan(false);
+    }
   };
 
-  const kirimBalasan = () => {
+  const kirimBalasan = async () => {
     if (!balasanTeks.trim()) return;
-    tambahBalasan(data.id, balasanTeks, [], adminNama);
-    setBalasanTeks('');
-    onSaved();
-    onClose();
+    setError('');
+    setMenyimpan(true);
+    try {
+      if (kelolaApiSiap) {
+        await balasLaporan({
+          jenis: data.jenis,
+          kode: data.id,
+          teks: balasanTeks.trim(),
+          oleh: adminNama
+        });
+      }
+      tambahBalasan(data.id, balasanTeks, [], adminNama);
+      setBalasanTeks('');
+      onSaved();
+      onClose();
+    } catch (err) {
+      setError(err.message || 'Gagal mengirim balasan.');
+    } finally {
+      setMenyimpan(false);
+    }
   };
 
   const balasan = (data.balasan || []).slice().reverse();
@@ -210,6 +394,8 @@ function DetailPanel({ data, onClose, onSaved, adminNama }) {
             <p className="kpo-sec__head">Deskripsi laporan</p>
             <p className="kpo-sec__text">{data.deskripsi}</p>
           </section>
+
+          <LampiranBukti kode={data.id} lampiran={data.lampiran} />
 
           <div className="kpo-detail__split">
             <section className="kpo-sec">
@@ -259,7 +445,9 @@ function DetailPanel({ data, onClose, onSaved, adminNama }) {
               <textarea rows="2" value={catatanInternal} onChange={(e) => setCatatanInternal(e.target.value)} placeholder="Hanya admin" />
             </label>
             <div className="kpo-actions">
-              <button type="button" className="btn btn-primary" onClick={simpan}>Simpan Perubahan</button>
+              <button type="button" className="btn btn-primary" onClick={simpan} disabled={menyimpan}>
+                {menyimpan ? 'Menyimpan...' : 'Simpan Perubahan'}
+              </button>
             </div>
           </section>
 
@@ -280,7 +468,9 @@ function DetailPanel({ data, onClose, onSaved, adminNama }) {
               <textarea rows="2" value={balasanTeks} onChange={(e) => setBalasanTeks(e.target.value)} placeholder="Penjelasan hasil penanganan" />
             </label>
             <div className="kpo-actions">
-              <button type="button" className="btn btn-primary" onClick={kirimBalasan}>Kirim Balasan</button>
+              <button type="button" className="btn btn-primary" onClick={kirimBalasan} disabled={menyimpan}>
+                {menyimpan ? 'Mengirim...' : 'Kirim Balasan'}
+              </button>
             </div>
           </section>
 

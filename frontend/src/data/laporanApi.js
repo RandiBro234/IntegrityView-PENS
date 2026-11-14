@@ -4,10 +4,12 @@
 
 const SUPABASE_URL = (import.meta.env.VITE_SUPABASE_URL || '').replace(/\/$/, '');
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+const ADMIN_TOKEN = import.meta.env.VITE_ADMIN_KELOLA_TOKEN || '';
 const TIMEOUT_MS = 15000;
 const TIMEOUT_UPLOAD_MS = 60000;
 
 export const laporanApiSiap = Boolean(SUPABASE_URL && SUPABASE_KEY);
+export const kelolaApiSiap = laporanApiSiap && Boolean(ADMIN_TOKEN);
 export const MAKS_LAMPIRAN = 3;
 export const MAKS_UKURAN_LAMPIRAN = 10 * 1024 * 1024;
 
@@ -99,6 +101,80 @@ async function panggilFunction(nama, payload) {
   }
 }
 
+async function panggilAdmin(payload) {
+  if (!kelolaApiSiap) {
+    throw new Error('Akses admin Supabase belum dikonfigurasi.');
+  }
+
+  const { controller, timer } = batalkanSetelah(TIMEOUT_MS);
+  try {
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/kelola-laporan`, {
+      method: 'POST',
+      headers: {
+        ...headers(),
+        'Content-Type': 'application/json',
+        'x-admin-token': ADMIN_TOKEN
+      },
+      body: JSON.stringify(payload),
+      signal: controller.signal
+    });
+    const body = await bodyJson(res);
+    if (!res.ok) {
+      throw new Error(body.error || `Permintaan admin gagal (HTTP ${res.status}).`);
+    }
+    return body.data;
+  } catch (err) {
+    throw new Error(pesanJaringan(err));
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+export function normalisasiLaporan(row) {
+  return {
+    id: row.kode || row.id,
+    jenis: row.jenis || 'wbs',
+    judul: row.judul || '',
+    kategori: row.kategori || '',
+    lokasi: row.lokasi || '',
+    deskripsi: row.deskripsi || '',
+    anonim: !!row.anonim,
+    nama_pelapor: row.nama_pelapor ?? null,
+    kontak_pelapor: row.kontak_pelapor ?? null,
+    hubungan: row.hubungan ?? null,
+    status: row.status || 'Baru',
+    pic: row.pic || '',
+    waktuLapor: row.created_at || row.waktuLapor || null,
+    waktuUpdate: row.updated_at || row.waktuUpdate || row.created_at || null,
+    riwayat: Array.isArray(row.riwayat) ? row.riwayat : [],
+    catatanInternal: Array.isArray(row.catatan_internal)
+      ? row.catatan_internal
+      : (Array.isArray(row.catatanInternal) ? row.catatanInternal : []),
+    balasan: Array.isArray(row.balasan) ? row.balasan : [],
+    lampiran: Array.isArray(row.lampiran) ? row.lampiran : []
+  };
+}
+
+export async function ambilDaftarLaporan() {
+  const data = await panggilAdmin({ aksi: 'daftar' });
+  if (!Array.isArray(data?.laporan)) {
+    throw new Error('Server tidak mengembalikan daftar laporan.');
+  }
+  return data.laporan.map(normalisasiLaporan);
+}
+
+export async function perbaruiLaporan(payload) {
+  const data = await panggilAdmin({ aksi: 'perbarui', ...payload });
+  if (!data?.laporan) throw new Error('Server tidak mengembalikan laporan yang diperbarui.');
+  return normalisasiLaporan(data.laporan);
+}
+
+export async function balasLaporan(payload) {
+  const data = await panggilAdmin({ aksi: 'balas', ...payload });
+  if (!data?.laporan) throw new Error('Server tidak mengembalikan laporan yang dibalas.');
+  return normalisasiLaporan(data.laporan);
+}
+
 export async function kirimLaporan(payload) {
   const data = await panggilFunction('kirim-laporan', payload);
   if (!data?.kode) throw new Error('Server tidak mengembalikan kode laporan.');
@@ -141,6 +217,13 @@ export async function unggahLampiran(jenis, file) {
   }
 
   return { path: tanda.path, nama: file.name, tipe, ukuran: file.size };
+}
+
+/* Signed URL sementara untuk membuka lampiran di bucket privat (admin). */
+export async function ambilUrlLampiran(path) {
+  const data = await panggilFunction('ambil-lampiran', { path });
+  if (!data?.url) throw new Error('Server tidak mengembalikan tautan lampiran.');
+  return data.url;
 }
 
 export async function lacakLaporan(kode) {

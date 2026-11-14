@@ -150,3 +150,9 @@
   .idb__n { flex-basis: 46px; font-size: 11px; }
   .idb__seg-label { display: none; }
 }
+@media (max-width: 480px) {
+  .idb { gap: 6px; }
+  .idb__name { flex-basis: 84px; font-size: 10.5px; }
+  .idb__n { flex-basis: 40px; font-size: 10.5px; }
+  .idb__open { width: 22px; height: 22px; }
+}

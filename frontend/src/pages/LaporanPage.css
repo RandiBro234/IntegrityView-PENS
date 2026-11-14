@@ -89,3 +89,10 @@
 @media (max-width: 900px) {
   .lpr-kpi { grid-template-columns: repeat(2, 1fr); }
 }
+@media (max-width: 560px) {
+  .lpr-head__actions { width: 100%; }
+  .lpr-head__actions select { flex: 1; min-width: 0; }
+  .lpr-head__actions .btn { flex: 1; justify-content: center; }
+  .lpr-kpi__value { font-size: 22px; }
+  .lpr-table { min-width: 560px; }
+}

@@ -30,7 +30,7 @@ export function simulasiRecords(instrumen, idx, periodeIdx) {
     return {
       slug: instrumen.slug,
       periode: PERIODE[periodeIdx].key,
-      email: null,
+      respondenKey: null,
       respondentId: `sim:${instrumen.slug}:${PERIODE[periodeIdx].key}:${r}`,
       createdAt: null,
       items,

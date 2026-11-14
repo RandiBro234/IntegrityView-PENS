@@ -59,11 +59,14 @@ function gradientLangkah(i) {
 
 const SURVEI_PUBLIK = SURVEI_INFO.filter((s) => ['pengaduan', 'pens-joss', '5r'].includes(s.key));
 
-export default function LandingPage({ onEnterDashboard, session }) {
+export default function LandingPage({ onEnterDashboard, onKeluar, session }) {
   const [scrollY, setScrollY] = useState(0);
   const [aktifSection, setAktifSection] = useState('');
   const [indikator, setIndikator] = useState(null);
+  const [menuBuka, setMenuBuka] = useState(false);
   const navRef = useRef(null);
+  const panelRef = useRef(null);
+  const tombolMenuRef = useRef(null);
 
   const { filter } = useReportFilters();
   /* Selector sudah punya cache internal; dihitung langsung agar ikut diperbarui setelah data asli tiba. */
@@ -118,6 +121,73 @@ export default function LandingPage({ onEnterDashboard, session }) {
     });
   }, [aktifSection]);
 
+  /* Panel menu mobile: kunci scroll latar, tutup dengan Escape, dan kurung fokus
+     di dalam panel selama terbuka. */
+  useEffect(() => {
+    if (!menuBuka) return undefined;
+    const panel = panelRef.current;
+    const overflowSemula = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    panel?.focus();
+
+    const onKey = (e) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        setMenuBuka(false);
+        tombolMenuRef.current?.focus({ preventScroll: true });
+        return;
+      }
+      if (e.key !== 'Tab' || !panel) return;
+      const fokus = Array.from(panel.querySelectorAll('a[href], button:not([disabled])'))
+        .filter((el) => el.offsetParent !== null);
+      if (!fokus.length) return;
+      const pertama = fokus[0];
+      const terakhir = fokus[fokus.length - 1];
+      if (e.shiftKey && document.activeElement === pertama) {
+        e.preventDefault();
+        terakhir.focus();
+      } else if (!e.shiftKey && document.activeElement === terakhir) {
+        e.preventDefault();
+        pertama.focus();
+      }
+    };
+
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = overflowSemula;
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [menuBuka]);
+
+  /* Kembali ke navigasi desktop: panel otomatis ditutup. */
+  useEffect(() => {
+    const onResize = () => { if (window.innerWidth > 768) setMenuBuka(false); };
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
+  const tutupMenu = () => {
+    setMenuBuka(false);
+    tombolMenuRef.current?.focus({ preventScroll: true });
+  };
+
+  /* Tautan section: tutup panel dulu, lalu gulir setelah layout kembali normal. */
+  const keSection = (e, id) => {
+    e.preventDefault();
+    setMenuBuka(false);
+    tombolMenuRef.current?.focus({ preventScroll: true });
+    const tujuan = document.getElementById(id);
+    if (!tujuan) return;
+    const kurangiGerak = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    requestAnimationFrame(() => {
+      tujuan.scrollIntoView({ behavior: kurangiGerak ? 'auto' : 'smooth', block: 'start' });
+    });
+  };
+
+  const peranLabel = session?.role === 'admin'
+    ? 'Admin Zona Integritas'
+    : 'Dosen & Tenaga Kependidikan';
+
   const parallax = Math.min(20, scrollY * 0.06);
   const navbarPadat = scrollY > 8;
   const lewatHero = scrollY > (typeof window !== 'undefined' ? window.innerHeight * 0.7 : 500);
@@ -161,19 +231,90 @@ export default function LandingPage({ onEnterDashboard, session }) {
               {session.inisial}
             </button>
           ) : (
-            <button type="button" className="btn btn-primary" onClick={onEnterDashboard}>Masuk</button>
+            <button type="button" className="btn btn-primary landing__bar-masuk" onClick={onEnterDashboard}>Masuk</button>
           )}
+
+          <button
+            ref={tombolMenuRef}
+            type="button"
+            className={`landing__menu-btn ${menuBuka ? 'is-buka' : ''}`}
+            aria-label={menuBuka ? 'Tutup menu' : 'Buka menu'}
+            aria-expanded={menuBuka}
+            aria-controls="landing-menu"
+            onClick={() => setMenuBuka((v) => !v)}
+          >
+            <span className="landing__menu-icon" aria-hidden="true">
+              <span /><span /><span />
+            </span>
+          </button>
         </header>
+
+        {menuBuka && (
+          <div className="landing__menu-layer">
+            <div
+              className="landing__menu-backdrop"
+              aria-hidden="true"
+              onClick={tutupMenu}
+            />
+            <div
+              ref={panelRef}
+              id="landing-menu"
+              className="landing__menu"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Menu navigasi"
+              tabIndex={-1}
+            >
+              {session ? (
+                <div className="landing__menu-profil">
+                  <span className="landing__menu-avatar" aria-hidden="true">{session.inisial}</span>
+                  <div className="landing__menu-identitas">
+                    <strong>{session.nama}</strong>
+                    <span>{peranLabel}</span>
+                  </div>
+                  <button
+                    type="button"
+                    className="landing__menu-keluar"
+                    onClick={() => { setMenuBuka(false); if (onKeluar) onKeluar(); }}
+                  >
+                    Keluar
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  className="btn btn-primary landing__menu-masuk"
+                  onClick={() => { setMenuBuka(false); onEnterDashboard(); }}
+                >
+                  Masuk
+                </button>
+              )}
+
+              <nav className="landing__menu-nav" aria-label="Navigasi bagian">
+                {SECTION_NAV.map((s) => (
+                  <a
+                    key={s.id}
+                    href={`#${s.id}`}
+                    className={aktifSection === s.id ? 'is-active' : ''}
+                    aria-current={aktifSection === s.id ? 'true' : undefined}
+                    onClick={(e) => keSection(e, s.id)}
+                  >
+                    {s.label}
+                  </a>
+                ))}
+              </nav>
+            </div>
+          </div>
+        )}
 
         <section className="landing__hero">
           <div className="landing__hero-inner">
             <div className="landing__hero-text">
-              <Reveal as="p" className="label-eyebrow" delay={0}>Zona Integritas PENS</Reveal>
               <Reveal as="h1" className="landing__hero-title" delay={70}>
-                Capaian integritas kampus, terbuka untuk diperiksa siapa saja.
+                Persepsi integritas kampus terbuka untuk diperiksa siapa saja.
               </Reveal>
               <Reveal as="p" className="landing__hero-lead" delay={140}>
-                Platform ini menyatukan {ringkasan.totalInstrumen} instrumen survei, dashboard analitik publik, dan kanal pelaporan WBS dalam satu alamat. Pimpinan dan assessor membaca data tanpa menunggu laporan manual.
+                Platform ini menyatukan {ringkasan.totalInstrumen} instrumen survei, dashboard analitik publik, dan kanal pelaporan WBS dalam satu alamat. Pimpinan dan penilai dapat membaca data kapan saja secara terbuka.
               </Reveal>
               <Reveal className="landing__hero-cta" delay={210}>
                 <button type="button" className="btn btn-primary" onClick={onEnterDashboard}>
@@ -192,7 +333,7 @@ export default function LandingPage({ onEnterDashboard, session }) {
 
                 <Reveal className="landing__bento landing__bento--a" variant="scale-in" delay={280}>
                   <BlobDecor color="#0B1B33" />
-                  <p className="label-eyebrow">Rata-rata Skor ZI (1–4) {laporan.periode.label}</p>
+                  <p className="label-eyebrow">Indeks Persepsi Integritas (1–4) {laporan.periode.label}</p>
                   <div className="landing__bento-value">
                     <CountUp value={keSkor(ringkasan.rataSkor)} desimal={2} suffix=" / 4" langsung />
                   </div>
@@ -236,12 +377,12 @@ export default function LandingPage({ onEnterDashboard, session }) {
           </div>
           <div>
             <p className="label-eyebrow">Tentang</p>
-            <h2 className="landing__section-title">Zona Integritas adalah komitmen, bukan slogan.</h2>
+            <h2 className="landing__section-title">Membaca integritas kampus dari data, bukan asumsi.</h2>
             <p className="landing__about-text">
-              Zona Integritas (ZI) adalah program nasional Kementerian PANRB untuk membangun birokrasi yang bersih, bebas korupsi, dan berorientasi layanan. PENS sebagai perguruan tinggi negeri wajib membuktikan capaiannya lewat survei terstandar dan kanal pelaporan WBS yang transparan.
+              IntegrityView mengumpulkan persepsi sivitas terhadap layanan kampus lewat survei terstandar, menyajikan hasilnya sebagai agregat, dan membuka kanal pelaporan WBS yang transparan. Zona Integritas menjadi konteks programnya, tetapi angka di platform ini murni hasil survei, bukan penilaian Zona Integritas resmi.
             </p>
             <p className="landing__about-text">
-              IntegrityView dikelola oleh <strong>{KONTAK.unit}</strong> untuk menyatukan pengisian survei, pemantauan skor, dan tindak lanjut laporan dalam satu platform terbuka.
+              Platform dikelola oleh <strong>{KONTAK.unit}</strong> untuk menyatukan pengisian survei, pemantauan hasil, dan tindak lanjut laporan dalam satu tempat terbuka.
             </p>
           </div>
         </Reveal>

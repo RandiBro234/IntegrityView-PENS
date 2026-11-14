@@ -12,6 +12,7 @@ import {
 import {
   kategoriPerGrup, deskripsiKategori, contohKategori, labelKategori
 } from '../data/reportCategories';
+import { simpanLampiranLokal } from '../lib/lampiranLokal';
 import './PengaduanPage.css';
 
 const HUBUNGAN = ['Mahasiswa', 'Dosen', 'Tenaga Kependidikan', 'Masyarakat Umum', 'Alumni'];
@@ -88,6 +89,7 @@ function BuatLaporan() {
   const [mengirim, setMengirim] = useState(false);
   const [statusKirim, setStatusKirim] = useState('');
   const [errorKirim, setErrorKirim] = useState('');
+  const [seret, setSeret] = useState(false);
 
   const grup = kategoriPerGrup();
 
@@ -110,9 +112,7 @@ function BuatLaporan() {
     return !Object.keys(e).length;
   };
 
-  const pilihLampiran = (e) => {
-    const files = Array.from(e.target.files || []);
-    e.target.value = '';
+  const tambahLampiran = (files) => {
     if (!files.length) return;
     setErrorKirim('');
     if (lampiran.length + files.length > MAKS_LAMPIRAN) {
@@ -128,6 +128,18 @@ function BuatLaporan() {
     }
     setErrors((prev) => ({ ...prev, lampiran: '' }));
     setLampiran((prev) => [...prev, ...files]);
+  };
+
+  const pilihLampiran = (e) => {
+    const files = Array.from(e.target.files || []);
+    e.target.value = '';
+    tambahLampiran(files);
+  };
+
+  const jatuhkanLampiran = (e) => {
+    e.preventDefault();
+    setSeret(false);
+    tambahLampiran(Array.from(e.dataTransfer?.files || []));
   };
 
   const hapusLampiran = (index) => {
@@ -179,14 +191,20 @@ function BuatLaporan() {
       hubungan: form.hubungan
     };
 
-    /* Tanpa env Supabase, tetap simpan lokal agar demo tidak rusak. Lampiran
-       hanya bisa disimpan jika Storage tersedia. */
+    /* Tanpa env Supabase, simpan lokal (termasuk file lampiran di IndexedDB)
+       agar demo tetap utuh dan admin bisa membuka bukti di browser yang sama. */
     if (!laporanApiSiap) {
+      const rec = savePengaduan(data);
       if (lampiran.length) {
-        setErrorKirim('Lampiran membutuhkan koneksi Supabase. Hapus lampiran atau sambungkan konfigurasi.');
-        return;
+        try {
+          rec.lampiran = await simpanLampiranLokal(rec.id, lampiran);
+          simpanPengaduanLokal(rec);
+        } catch {
+          setErrorKirim('Gagal menyimpan lampiran di perangkat ini. Coba lagi tanpa lampiran.');
+          return;
+        }
       }
-      setHasil(savePengaduan(data));
+      setHasil(rec);
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
@@ -330,25 +348,61 @@ function BuatLaporan() {
             </Field>
 
             <Field label="Lampiran bukti (opsional)" error={errors.lampiran}>
-              <input
-                type="file"
-                multiple
-                accept=".doc,.docx,.pdf,.jpg,.jpeg,.png"
-                onChange={pilihLampiran}
-              />
-              <p className="pg-hint">
-                Maks. {MAKS_LAMPIRAN} file, 10MB per file. Format PDF, Word, JPG, atau PNG.
-              </p>
+              <label
+                className={`pg-drop ${seret ? 'is-seret' : ''} ${lampiran.length >= MAKS_LAMPIRAN ? 'is-penuh' : ''}`}
+                onDragOver={(e) => { e.preventDefault(); if (lampiran.length < MAKS_LAMPIRAN) setSeret(true); }}
+                onDragLeave={() => setSeret(false)}
+                onDrop={jatuhkanLampiran}
+              >
+                <input
+                  className="pg-drop__input"
+                  type="file"
+                  multiple
+                  accept=".doc,.docx,.pdf,.jpg,.jpeg,.png"
+                  onChange={pilihLampiran}
+                  disabled={lampiran.length >= MAKS_LAMPIRAN}
+                />
+                <span className="pg-drop__ikon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M14 3v5h5" />
+                    <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Z" />
+                    <path d="M12 18v-6M9 15l3-3 3 3" />
+                  </svg>
+                </span>
+                <span className="pg-drop__teks">
+                  <span className="pg-drop__judul">
+                    {lampiran.length >= MAKS_LAMPIRAN ? 'Batas lampiran tercapai' : 'Klik untuk memilih file bukti'}
+                  </span>
+                  <span className="pg-drop__sub">
+                    Atau seret file ke area ini · maks. {MAKS_LAMPIRAN} file, 10MB/file · PDF, Word, JPG, PNG
+                  </span>
+                </span>
+              </label>
               {lampiran.length > 0 && (
                 <ul className="pg-filelist">
                   {lampiran.map((file, i) => (
                     <li className="pg-filelist__item" key={`${file.name}-${file.size}-${i}`}>
+                      <span className="pg-filelist__ikon" aria-hidden="true">
+                        {file.type.startsWith('image/') ? (
+                          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="3" />
+                            <circle cx="8.5" cy="8.5" r="1.5" />
+                            <path d="m21 15-5-5L5 21" />
+                          </svg>
+                        ) : (
+                          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M14 3v5h5" />
+                            <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Z" />
+                          </svg>
+                        )}
+                      </span>
                       <span className="pg-filelist__nama">{file.name}</span>
                       <span className="pg-filelist__ukuran">{formatUkuran(file.size)}</span>
                       <button
                         type="button"
                         className="pg-filelist__hapus"
                         onClick={() => hapusLampiran(i)}
+                        aria-label={`Hapus ${file.name}`}
                       >
                         Hapus
                       </button>

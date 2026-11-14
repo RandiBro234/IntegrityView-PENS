@@ -202,3 +202,75 @@
   .kpo-detail__split { grid-template-columns: 1fr; }
   .kpo-form-row { grid-template-columns: 1fr; }
 }
+@media (max-width: 720px) {
+  .kpo-kpi__value { font-size: 22px; }
+  .kpo-toolbar { flex-direction: column; align-items: stretch; }
+  .kpo-toolbar select,
+  .kpo-toolbar input { min-width: 0; width: 100%; }
+  .kpo-detail__head { padding: 16px; }
+  .kpo-detail__body { padding: 16px 16px 32px; }
+  .kpo-table { min-width: 720px; }
+}
+@media (max-width: 480px) {
+  .kpo-actions { flex-wrap: wrap; }
+  .kpo-actions .btn { flex: 1 1 auto; justify-content: center; }
+  .kpo-dl li { grid-template-columns: 92px 1fr; }
+  .kpo-lampiran__item { flex-wrap: wrap; }
+  .kpo-lampiran__aksi { width: 100%; justify-content: flex-end; }
+}
+
+/* === Lampiran bukti di panel detail === */
+.kpo-lampiran {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.kpo-lampiran__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--bg-page);
+  border: 1px solid var(--border-soft);
+  border-radius: 12px;
+}
+.kpo-lampiran__ikon {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
+  background: var(--white);
+  border: 1px solid var(--border-soft);
+  color: var(--navy-700, #13284A);
+}
+.kpo-lampiran__info { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1; }
+.kpo-lampiran__nama {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.kpo-lampiran__meta { font-size: 11.5px; color: var(--text-secondary); }
+.kpo-lampiran__aksi { display: flex; gap: 6px; flex-shrink: 0; }
+.kpo-lampiran__btn {
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1.5px solid var(--border-soft);
+  background: var(--white);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+.kpo-lampiran__btn:hover { border-color: var(--orange-500); color: var(--orange-500); }
+.kpo-lampiran__btn:focus-visible { outline: 2px solid var(--orange-500); outline-offset: 2px; }
+.kpo-lampiran__btn:disabled { opacity: 0.6; cursor: default; }

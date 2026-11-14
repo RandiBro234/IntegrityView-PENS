@@ -44,6 +44,7 @@ p { margin: 0; }
 .app-content {
   padding: 24px 28px 48px;
   flex: 1;
+  min-width: 0;
 }
 
 .label-eyebrow {
@@ -242,5 +243,26 @@ button:hover > .arah-link { transform: translate(2px, -2px); }
 
 @media (max-width: 900px) {
   .app-shell { grid-template-columns: 1fr; }
-  .app-content { padding: 16px 16px 96px; }
+  .app-content { padding: 16px 16px calc(96px + env(safe-area-inset-bottom)); }
+}
+
+/* Widget Ivy berada di luar stacking context halaman, jadi bisa menutupi
+   footer modal. Sembunyikan selama overlay mana pun terbuka. */
+body:has(.idp__modal-overlay) .ivy,
+body:has(.dashmodal__overlay) .ivy,
+body:has(.kpo-overlay) .ivy,
+body:has(.rek-panel__overlay) .ivy,
+body:has(.landing__menu) .ivy,
+body:has(.landing__menu) .landing__to-top {
+  display: none;
+}
+
+/* Mobile: cegah konten melebar keluar layar dan perbesar target sentuh. */
+@media (max-width: 720px) {
+  body { overflow-x: hidden; }
+  .btn { padding: 12px 18px; }
+  .chip { padding: 7px 12px; }
+  input,
+  select,
+  textarea { font-size: 16px; }
 }

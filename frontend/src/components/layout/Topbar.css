@@ -134,11 +134,24 @@
   .topbar__clock { display: none; }
 }
 
+/* Mobile: flex-wrap membuat sapaan dan ikon berbagi baris, pencarian turun
+   sendiri, dan isi topbar kanan (filter) boleh membungkus tanpa melebarkan
+   kolom hingga mendorong sapaan keluar layar. */
 @media (max-width: 720px) {
-  .topbar { padding: 14px 16px 8px; gap: 12px; }
+  .topbar { display: flex; flex-wrap: wrap; padding: 14px 16px 8px; gap: 8px 12px; }
+  .topbar__left { flex: 1 1 auto; min-width: 0; }
+  .topbar__center { order: 5; flex: 1 1 100%; }
+  .topbar__right { flex: 0 1 auto; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
   .topbar__right .chip { display: none; }
   .topbar__cta { display: none; }
-  .topbar__greeting { font-size: 18px; }
+  .topbar__greeting { font-size: 18px; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+}
+@media (max-width: 480px) {
+  .topbar__greeting { font-size: 16px; }
+  .topbar__search { padding: 8px 12px; }
+  .topbar__search input { font-size: 13px; }
+  .topbar__notif,
+  .topbar__avatar { width: 36px; height: 36px; }
 }
 @media (max-width: 900px) {
   .topbar--compact { height: auto; min-height: 60px; grid-template-columns: 1fr auto; gap: 8px; }
