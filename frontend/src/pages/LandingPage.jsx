@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { BlobDecor } from '../components/cards/StatCard';
-import { KONTAK, formatAngka, labelPartisipan } from '../data/mock';
+import { KONTAK, labelPartisipan } from '../data/mock';
 import { getReportData, SURVEI_INFO } from '../data/surveyData';
 import { useReportFilters } from '../data/useReportFilters';
 import Delta from '../components/dashboard/Delta';
@@ -82,7 +82,6 @@ export default function LandingPage({ onEnterDashboard, onKeluar, session }) {
   const { responden } = ringkasan;
   const rekomendasiSemua = laporan.instrumen.flatMap((s) => s.rekomendasi);
   const prioritasTinggi = rekomendasiSemua.filter((r) => r.prioritas === 'Tinggi').length;
-  const prioritasPantau = rekomendasiSemua.filter((r) => r.prioritas === 'Pantau').length;
 
   useEffect(() => {
     const fn = () => setScrollY(window.scrollY);
@@ -433,7 +432,6 @@ export default function LandingPage({ onEnterDashboard, onKeluar, session }) {
         <Reveal className="landing__section-head">
           <div>
             <p className="label-eyebrow">Statistik Ringkas</p>
-            <h2 className="landing__section-title">Skor per kategori instrumen.</h2>
           </div>
         </Reveal>
 
@@ -491,14 +489,7 @@ export default function LandingPage({ onEnterDashboard, onKeluar, session }) {
             <div className="landing__stat-num">
               <CountUp value={responden.total} />
             </div>
-            <div className="landing__stat-foot">
-              <span>
-                {responden.adaKelompok
-                  ? `${formatAngka(responden.dosen, 0)} dosen · ${formatAngka(responden.tendik, 0)} tenaga kependidikan`
-                  : 'Dosen dan tenaga kependidikan'}
-              </span>
-              <Delta value={ringkasan.deltaResponden} unit="responden" />
-            </div>
+
           </Reveal>
 
           <Reveal as="article" className="landing__stat-card" delay={(kategoriSkor.length + 2) * 70}>
@@ -509,11 +500,10 @@ export default function LandingPage({ onEnterDashboard, onKeluar, session }) {
               <span className="landing__stat-unit">/{ringkasan.totalInstrumen}</span>
             </div>
             <div className="landing__stat-foot">
-              <span>instrumen berisi data asli</span>
               <span>
                 {ringkasan.simulasiTerpakai
-                  ? `${ringkasan.simulasiTerpakai} instrumen masih simulasi`
-                  : 'Seluruh instrumen berdata asli'}
+                  ? `${ringkasan.simulasiTerpakai} instrumen masih memakai simulasi`
+                  : 'Seluruh instrumen berisi data asli'}
               </span>
             </div>
           </Reveal>
@@ -526,7 +516,6 @@ export default function LandingPage({ onEnterDashboard, onKeluar, session }) {
             </div>
             <div className="landing__stat-foot">
               <span>rekomendasi prioritas tinggi</span>
-              <span>{prioritasPantau} rekomendasi perlu dipantau</span>
             </div>
           </Reveal>
         </div>
