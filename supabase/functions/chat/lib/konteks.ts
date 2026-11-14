@@ -113,11 +113,28 @@ function cariInstrumenDiTeks(pertanyaan: string, registri: Registri): InstrumenI
   return terbaik?.info ?? null;
 }
 
+/* Pertanyaan yang jelas meminta gambaran lintas instrumen. Tanpa ini, pertanyaan
+   seperti "selain Benturan, apa lagi?" akan memilih Benturan (karena namanya
+   disebut) lalu menjawab "data lain tidak tersedia" — padahal datanya ada.
+   "selain itu" dikecualikan karena itu kata sambung biasa. */
+const POLA_LINTAS_INSTRUMEN =
+  /\bselain\b(?!\s+itu\b)|\blainnya\b|\binstumen lain\b|\bsemua instrumen\b|\bkeseluruhan\b|\bbandingkan\b|\bperbandingan\b|\bperingkat\b/i;
+
 export function pilihInstrumen(
   pertanyaan: string,
   instrumenDariRequest: string | null | undefined,
   registri: Registri
 ): InstrumenInfo | null {
+  /* 1. Permintaan lintas instrumen menang atas segalanya. */
+  if (POLA_LINTAS_INSTRUMEN.test(pertanyaan)) return null;
+
+  /* 2. Instrumen yang disebut eksplisit di pertanyaan menang atas halaman yang
+     sedang dibuka. Kalau pengguna di halaman SPAK lalu bertanya "bagaimana
+     SPIP?", yang dimaksud SPIP. */
+  const dariTeks = cariInstrumenDiTeks(pertanyaan, registri);
+  if (dariTeks) return dariTeks;
+
+  /* 3. Tidak ada petunjuk di teks: pakai halaman yang sedang dibuka. */
   if (instrumenDariRequest) {
     const kunci = instrumenDariRequest.trim().toLowerCase();
     const langsung = registri.instrumen.find(
@@ -132,7 +149,8 @@ export function pilihInstrumen(
     }
   }
 
-  return cariInstrumenDiTeks(pertanyaan, registri);
+  /* 4. Tidak ada petunjuk sama sekali: ringkasan semua. */
+  return null;
 }
 
 export function rakitKonteksSatu(

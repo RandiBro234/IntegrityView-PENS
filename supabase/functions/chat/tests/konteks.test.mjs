@@ -40,16 +40,28 @@ const DAFTAR_SEMUA = FIXTURE.kasus.map((k) => ({
    Pemilihan instrumen
    --------------------------------------------------------------------------- */
 
-test('instrumen dipilih: permintaan > teks pertanyaan > ringkasan semua', () => {
-  /* Request menang atas teks. */
-  assert.equal(pilihInstrumen('bagaimana hasil SPAK?', 'spip', REGISTRI)?.slug, 'spip');
-  /* Tanpa request, kode atau nama di teks yang menentukan. */
-  assert.equal(pilihInstrumen('butir mana di SPIP yang paling lemah?', null, REGISTRI)?.slug, 'spip');
+test('instrumen dipilih: lintas instrumen > teks > halaman > ringkasan', () => {
+  /* Permintaan lintas instrumen menang, walau ada nama instrumen di teks. */
+  assert.equal(pilihInstrumen('selain Benturan, apa lagi yang bisa dikembangkan?', null, REGISTRI), null);
+  assert.equal(pilihInstrumen('selain instrumen benturan kepentingan, mana lagi yang skornya kecil', null, REGISTRI), null);
+  assert.equal(pilihInstrumen('bandingkan SPAK dan SPKP', null, REGISTRI), null);
+  assert.equal(pilihInstrumen('berapa indeks keseluruhan?', 'spak', REGISTRI), null);
+
+  /* Instrumen di teks menang atas halaman yang sedang dibuka. */
+  assert.equal(pilihInstrumen('bagaimana SPIP?', 'spak', REGISTRI)?.slug, 'spip');
   assert.equal(pilihInstrumen('jelaskan Survei Persepsi Anti Korupsi', null, REGISTRI)?.slug, 'spak');
-  /* Tidak disebut apa pun -> ringkasan semua. */
-  assert.equal(pilihInstrumen('instrumen mana yang paling rendah?', null, REGISTRI), null);
-  /* Alias nama dari database dikenali. */
+
+  /* Tanpa petunjuk di teks, halaman yang dibuka yang dipakai. */
+  assert.equal(pilihInstrumen('butir mana yang paling lemah?', 'spip', REGISTRI)?.slug, 'spip');
   assert.equal(pilihInstrumen('apa itu?', 'Survei Persepsi Anti Korupsi', REGISTRI)?.slug, 'spak');
+
+  /* Tanpa petunjuk sama sekali -> ringkasan semua. */
+  assert.equal(pilihInstrumen('instrumen mana yang paling rendah?', null, REGISTRI), null);
+});
+
+test('"selain itu" tidak dianggap permintaan lintas instrumen', () => {
+  /* Kata sambung biasa, bukan permintaan membandingkan instrumen. */
+  assert.equal(pilihInstrumen('selain itu, berapa n-nya?', 'spak', REGISTRI)?.slug, 'spak');
 });
 
 test('kode instrumen tidak tertangkap di dalam kata lain', () => {

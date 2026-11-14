@@ -68,6 +68,7 @@ test('system prompt memuat aturan wajib dan larangan', () => {
     'Sebut kode butir',
     'padankan dengan kode yang berakhiran nomor itu',
     'Jangan menyatakan data tidak tersedia untuk butir yang jelas ada di DATA',
+    'tanyakan singkat instrumen mana yang dimaksud',
     'maksimal 80 kata',
     '1-3 paragraf pendek',
     'Jangan pakai markdown',
