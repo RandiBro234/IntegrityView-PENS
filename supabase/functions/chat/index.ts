@@ -32,23 +32,6 @@ const ambilData = buatCache({
   ambil: async () => kumpulkan(await ambilBaris(buatClient()), registri)
 });
 
-/* Batas harian seluruh sistem. Dihitung di memori instance; cukup untuk
-   prototipe, dan sengaja bukan penghitung per pengguna. */
-const BATAS_HARIAN = Number(Deno.env.get('CHAT_BATAS_HARIAN') || 200);
-let harianTerpakai = 0;
-let harianMulai = new Date().setHours(0, 0, 0, 0);
-
-function bolehHarian(): boolean {
-  const awalHariIni = new Date().setHours(0, 0, 0, 0);
-  if (awalHariIni !== harianMulai) {
-    harianMulai = awalHariIni;
-    harianTerpakai = 0;
-  }
-  if (harianTerpakai >= BATAS_HARIAN) return false;
-  harianTerpakai += 1;
-  return true;
-}
-
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: CORS });
@@ -70,11 +53,11 @@ Deno.serve(async (req: Request) => {
     registri,
     ambilData,
     tanyaLlm,
-    cekBatas: async () => {
-      const perIp = await cekBatas(supabase, req, 'chat', BATAS_PER_JAM, JENDELA_JAM_MENIT);
-      if (!perIp) return false;
-      return bolehHarian();
-    }
+    /* Hanya batas per IP. Batas harian seluruh sistem sengaja tidak dipakai:
+       penghitung di memori Edge Function tidak bertahan dan terpisah antar
+       instance, sehingga angkanya menyesatkan. Kalau nanti perlu pengaman
+       biaya yang benar-benar global, pakai tabel di database. */
+    cekBatas: () => cekBatas(supabase, req, 'chat', BATAS_PER_JAM, JENDELA_JAM_MENIT)
   });
 
   return json(hasil.body, hasil.status);
