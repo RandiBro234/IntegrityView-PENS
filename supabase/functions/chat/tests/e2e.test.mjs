@@ -49,7 +49,7 @@ test('konteks dari data asli memakai dua skala dan bebas PII', { skip: lewati },
   const konteks = rakitKonteksSatu(satu.agregat, satu.instrumen, deps.registri.ambang, satu.rekomendasi);
   const teks = JSON.stringify(konteks);
 
-  assert.ok(konteks.ringkasan.skor_zi > 0 && konteks.ringkasan.skor_zi <= 100, 'skor ZI harus 0-100');
+  assert.ok(konteks.ringkasan.indeks_persepsi > 0 && konteks.ringkasan.indeks_persepsi <= 100, 'indeks persepsi harus 0-100');
   assert.ok(konteks.ringkasan.skor_rata >= 1 && konteks.ringkasan.skor_rata <= 4, 'skor rata-rata harus 1-4');
   assert.doesNotMatch(teks, /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/, 'ada email di konteks');
   assert.doesNotMatch(teks, /email_responden/);

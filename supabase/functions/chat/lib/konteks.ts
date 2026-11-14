@@ -16,7 +16,7 @@ export interface KonteksRingkasInstrumen {
   kode: string;
   nama: string;
   n: number;
-  skor_zi: number;
+  indeks_persepsi: number;
   skor_rata: number;
   butir_terendah: { kode: string; aspek: string; skor: number } | null;
   judul_rekomendasi: string[];
@@ -29,7 +29,7 @@ export interface KonteksSatuInstrumen {
   periode: string;
   ringkasan: {
     n: number;
-    skor_zi: number;
+    indeks_persepsi: number;
     skor_rata: number;
     median_skor: number;
     sd_skor: number;
@@ -141,11 +141,11 @@ export function rakitKonteksSatu(
     periode: agregat.periode,
     ringkasan: {
       n: agregat.n,
-      /* Dua skala sengaja dikirim: dashboard menampilkan Skor ZI 0-100 di kartu
-         utama, tetapi detail butir memakai skala asli 1-4. Tanpa keduanya,
-         chatbot akan menyebut angka yang tidak sama dengan yang dilihat
-         pengguna di layar. */
-      skor_zi: bulat(agregat.indeks, 1),
+      /* Dua skala sengaja dikirim: dashboard menampilkan Indeks Persepsi
+         Integritas 0-100 di kartu utama, tetapi detail butir memakai skala
+         asli 1-4. Tanpa keduanya, chatbot akan menyebut angka yang tidak sama
+         dengan yang dilihat pengguna di layar. */
+      indeks_persepsi: bulat(agregat.indeks, 1),
       skor_rata: bulat(keSkor(agregat.indeks), 2),
       median_skor: bulat(keSkor(agregat.median), 2),
       sd_skor: bulat(keSkor(agregat.sd), 2),
@@ -194,7 +194,7 @@ export function rakitKonteksSemua(
         kode: instrumen.nama,
         nama: instrumen.nama,
         n: agregat.n,
-        skor_zi: bulat(agregat.indeks, 1),
+        indeks_persepsi: bulat(agregat.indeks, 1),
         skor_rata: bulat(keSkor(agregat.indeks), 2),
         butir_terendah: terendah
           ? { kode: terendah.kode, aspek: terendah.label, skor: bulat(terendah.rata, 2) }

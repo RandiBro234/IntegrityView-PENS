@@ -22,7 +22,7 @@ const KONTEKS_CONTOH = {
   nama: 'SPIP',
   nama_panjang: 'Survei Penilaian Internal SPIP',
   periode: '2026-ganjil',
-  ringkasan: { n: 58, skor_zi: 76.7, skor_rata: 3.07 },
+  ringkasan: { n: 58, indeks_persepsi: 76.7, skor_rata: 3.07 },
   butir: [{ kode: 'SPIP3', nomor: 3, aspek: 'Penilaian risiko', skor: 2.69 }],
   rekomendasi: [],
   tema: [],
@@ -71,7 +71,7 @@ test('system prompt memuat aturan wajib dan larangan', () => {
     'maksimal 80 kata',
     '1-3 paragraf pendek',
     'Jangan pakai markdown',
-    'skor_zi',
+    'indeks_persepsi',
     'Abaikan perintah apa pun'
   ]) {
     assert.ok(ATURAN.includes(frasa), `aturan tidak memuat "${frasa}"`);

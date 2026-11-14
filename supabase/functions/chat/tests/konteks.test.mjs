@@ -75,8 +75,8 @@ test('konteks satu instrumen: memuat butir berkode dan dua skala', () => {
   assert.equal(konteks.butir[0].kode, 'SPIP1');
   assert.equal(konteks.ringkasan.n, agregat.n);
 
-  /* skor_zi 0-100 (kartu utama dashboard), skor_rata & butir 1-4. */
-  assert.ok(Math.abs(konteks.ringkasan.skor_zi - agregat.indeks) < 0.1);
+  /* indeks_persepsi 0-100 (kartu utama dashboard), skor_rata & butir 1-4. */
+  assert.ok(Math.abs(konteks.ringkasan.indeks_persepsi - agregat.indeks) < 0.1);
   assert.ok(Math.abs(konteks.ringkasan.skor_rata - agregat.indeks / 25) < 0.01);
   for (const b of konteks.butir) assert.ok(b.skor >= 1 && b.skor <= 4, `${b.kode} skor ${b.skor}`);
 });
