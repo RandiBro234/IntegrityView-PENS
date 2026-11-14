@@ -64,6 +64,13 @@ test('"selain itu" tidak dianggap permintaan lintas instrumen', () => {
   assert.equal(pilihInstrumen('selain itu, berapa n-nya?', 'spak', REGISTRI)?.slug, 'spak');
 });
 
+test('kode butir dikenali sebagai instrumennya', () => {
+  /* "SPIP3" harus memilih SPIP, bukan gagal karena ada angka di belakangnya. */
+  assert.equal(pilihInstrumen('berapa persen tidak setuju pada SPIP3?', null, REGISTRI)?.slug, 'spip');
+  assert.equal(pilihInstrumen('jelaskan BENT4', null, REGISTRI)?.slug, 'benturan');
+  assert.equal(pilihInstrumen('skor LR6 berapa?', null, REGISTRI)?.slug, '5r');
+});
+
 test('kode instrumen tidak tertangkap di dalam kata lain', () => {
   /* "5r" jangan cocok pada "15responden". */
   assert.equal(pilihInstrumen('ada 15responden ya', null, REGISTRI), null);

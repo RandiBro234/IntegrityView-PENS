@@ -92,21 +92,33 @@ function bulat(nilai: number, desimal = 2): number {
 }
 
 /* Cari instrumen yang disebut di pertanyaan. Cocokkan nama pendek, nama
-   panjang, dan slug, dengan batas kata supaya "5r" tidak tertangkap di dalam
-   kata lain. Bila beberapa cocok, ambil yang namanya paling panjang (paling
-   spesifik). */
+   panjang, slug, dan kode butir (SPIP3, BENT4, LR6). Batas kata di depan
+   mencegah "5r" tertangkap di dalam "15r"; batas di belakang hanya menolak
+   huruf, bukan angka, supaya "SPIP3" tetap dikenali sebagai SPIP. */
 function cariInstrumenDiTeks(pertanyaan: string, registri: Registri): InstrumenInfo | null {
   const teks = pertanyaan.toLowerCase();
   let terbaik: { info: InstrumenInfo; panjang: number } | null = null;
 
+  const cocok = (nama: string) => {
+    const aman = nama.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return new RegExp(`(?<![a-z0-9])${aman}(?![a-z])`, 'i').test(teks);
+  };
+
   for (const info of registri.instrumen) {
     if (!info.punya_agregat) continue;
+
     for (const nama of [info.nama, info.nama_panjang, info.slug]) {
       if (!nama) continue;
-      const aman = nama.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      const pola = new RegExp(`(?<![a-z0-9])${aman}(?![a-z0-9])`, 'i');
-      if (pola.test(teks) && (!terbaik || nama.length > terbaik.panjang)) {
+      if (cocok(nama) && (!terbaik || nama.length > terbaik.panjang)) {
         terbaik = { info, panjang: nama.length };
+      }
+    }
+
+    /* Kode butir sering tidak berawalan nama instrumen: BENT4 untuk Benturan,
+       LR6 untuk 5R. Cocokkan langsung ke daftar kode. */
+    for (const butir of info.butir) {
+      if (cocok(butir.kode) && (!terbaik || butir.kode.length > terbaik.panjang)) {
+        terbaik = { info, panjang: butir.kode.length };
       }
     }
   }

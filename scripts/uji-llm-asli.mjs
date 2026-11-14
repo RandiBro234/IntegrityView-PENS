@@ -72,22 +72,30 @@ console.log(`  Endpoint: ${konfig.baseUrl}\n`);
    --------------------------------------------------------------------------- */
 const registri = JSON.parse(await readFile(resolve(AKAR, 'supabase/functions/chat/lib/instrumen.json'), 'utf8'));
 
-/* Baca langsung lewat REST, tanpa dependensi supabase-js. Kolom email
-   sengaja tidak diambil. */
+/* Baca lewat RPC berhalaman, sama seperti Edge Function. Tabel sudah >7000
+   baris sedangkan PostgREST membatasi 1000 per request, jadi select biasa akan
+   terpotong dan hasil uji menjadi tidak mewakili. */
 const urlProyek = process.env.SUPABASE_URL.replace(/\/$/, '');
 const kunci = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const kepala = { apikey: kunci, Accept: 'application/json' };
+const kepala = { apikey: kunci, Accept: 'application/json', 'Content-Type': 'application/json' };
 if (kunci.startsWith('eyJ')) kepala.Authorization = `Bearer ${kunci}`;
 
-const resData = await fetch(
-  `${urlProyek}/rest/v1/survey_responses?select=nama_instrumen,data_jawaban,created_at&order=created_at.desc&limit=5000`,
-  { headers: kepala }
-);
-if (!resData.ok) {
-  console.error(`\n  GAGAL: HTTP ${resData.status} saat membaca survey_responses.\n`);
-  process.exit(1);
+const barisData = [];
+for (let offset = 0; ;) {
+  const res = await fetch(`${urlProyek}/rest/v1/rpc/survey_rows_safe`, {
+    method: 'POST',
+    headers: kepala,
+    body: JSON.stringify({ p_limit: 1000, p_offset: offset })
+  });
+  if (!res.ok) {
+    console.error(`\n  GAGAL: HTTP ${res.status} saat membaca survey_rows_safe.\n`);
+    process.exit(1);
+  }
+  const halaman = await res.json();
+  if (!Array.isArray(halaman) || halaman.length === 0) break;
+  barisData.push(...halaman);
+  offset += halaman.length;
 }
-const barisData = await resData.json();
 
 const data = kumpulkan(barisData, registri);
 

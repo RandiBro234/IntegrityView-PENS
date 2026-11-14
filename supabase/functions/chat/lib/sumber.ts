@@ -73,7 +73,10 @@ export function kumpulkan(
      periode, memakai baris terbaru. Aturan ini sama dengan normalisasiBaris()
      di frontend supaya n chatbot = n dashboard. Baris tanpa hash tidak pernah
      dianggap duplikat. */
-  const terpilih = new Map<string, { row: BarisMentah; slug: string; periode: string; items: number[]; kelompok: string | null }>();
+  const terpilih = new Map<
+    string,
+    { row: BarisMentah; slug: string; periode: string; items: number[]; kelompok: string | null; terbuka: string | null }
+  >();
 
   for (const row of rows) {
     const slug = slugDariNama(row.nama_instrumen, registri.alias);
@@ -97,14 +100,14 @@ export function kumpulkan(
     if (!hash) {
       /* Tanpa hash: tidak bisa didedup, langsung masukkan dengan kunci unik. */
       const kunciUnik = `tanpa-hash|${slug}|${periode}|${terpilih.size}`;
-      terpilih.set(kunciUnik, { row, slug, periode, items: hasil.items, kelompok: hasil.kelompok });
+      terpilih.set(kunciUnik, { row, slug, periode, items: hasil.items, kelompok: hasil.kelompok, terbuka: hasil.terbuka });
       continue;
     }
 
     const kunciDedup = `${hash}|${slug}|${periode}`;
     const lama = terpilih.get(kunciDedup);
     if (!lama) {
-      terpilih.set(kunciDedup, { row, slug, periode, items: hasil.items, kelompok: hasil.kelompok });
+      terpilih.set(kunciDedup, { row, slug, periode, items: hasil.items, kelompok: hasil.kelompok, terbuka: hasil.terbuka });
       continue;
     }
 
@@ -115,7 +118,7 @@ export function kumpulkan(
 
     /* Simpan yang lebih baru. */
     if (new Date(row.created_at).getTime() > new Date(lama.row.created_at).getTime()) {
-      terpilih.set(kunciDedup, { row, slug, periode, items: hasil.items, kelompok: hasil.kelompok });
+      terpilih.set(kunciDedup, { row, slug, periode, items: hasil.items, kelompok: hasil.kelompok, terbuka: hasil.terbuka });
     }
   }
 
@@ -125,9 +128,10 @@ export function kumpulkan(
       const instrumen = registri.instrumen.find((i) => i.slug === isi.slug)!;
       peta.set(kunci, { instrumen, periode: isi.periode, records: [] });
     }
-    /* `terbuka` sengaja dibuang: konteks LLM hanya memakai tema (sudah
-       diringkas di hitungAgregat) dan tidak pernah teks mentah. */
-    peta.get(kunci)!.records.push({ items: isi.items, kelompok: isi.kelompok });
+    /* `terbuka` ikut dihitung agar tema komentar bisa diringkas, tetapi teks
+       mentahnya tidak pernah masuk konteks LLM: rakitKonteksSatu hanya memakai
+       kualitas.tema (label + jumlah), bukan isi komentarnya. */
+    peta.get(kunci)!.records.push({ items: isi.items, kelompok: isi.kelompok, terbuka: isi.terbuka });
   }
 
   const semuaPeriode = [...new Set([...peta.values()].map((v) => v.periode))];
