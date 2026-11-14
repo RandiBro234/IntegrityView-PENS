@@ -66,6 +66,8 @@ test('system prompt memuat aturan wajib dan larangan', () => {
     'Data itu tidak tersedia di dashboard',
     'di luar hasil survei',
     'Sebut kode butir',
+    'padankan dengan kode yang berakhiran nomor itu',
+    'Jangan menyatakan data tidak tersedia untuk butir yang jelas ada di DATA',
     'maksimal 80 kata',
     '1-3 paragraf pendek',
     'Jangan pakai markdown',
