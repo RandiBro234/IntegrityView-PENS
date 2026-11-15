@@ -30,7 +30,9 @@ export default function SebaranJawabanChart({ data, selectedKey, onSelect, onOpe
   useLayoutEffect(() => {
     const bar = innerRef.current?.querySelector('.sebaran__bar');
     if (!bar) return;
-    const ukur = () => setBarWidth(bar.getBoundingClientRect().width);
+    /* offsetWidth mengabaikan transform animasi scaleX(0), jadi label persen
+       sudah terukur sejak render pertama tanpa menunggu resize. */
+    const ukur = () => setBarWidth(bar.offsetWidth);
     ukur();
     const ro = new ResizeObserver(ukur);
     ro.observe(bar);
