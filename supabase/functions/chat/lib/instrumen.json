@@ -315,7 +315,7 @@
       "kategori": "Pelayanan Publik",
       "kelompok": "Layanan",
       "jumlah_butir": 6,
-      "punya_agregat": false,
+      "punya_agregat": true,
       "butir": [
         {
           "kode": "PGD1",

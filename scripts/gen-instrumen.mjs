@@ -49,11 +49,12 @@ const AWALAN = {
   '5r': 'LR'
 };
 
-/* `pengaduan` ada di instrumentConfig.js tetapi bukan instrumen berskala 1-4:
-   ia sistem tiket tanpa distribusi jawaban, sehingga tidak punya agregat yang
-   bisa dijelaskan chatbot. Tetap dimasukkan (kode butir bisa dipakai di tempat
-   lain), tetapi ditandai agar perakit konteks melewatinya. */
-const TANPA_AGREGAT = new Set(['pengaduan']);
+/* Instrumen yang tidak punya agregat berskala 1-4, sehingga harus dilewati
+   perakit konteks. Saat ini kosong: `pengaduan` dulu berupa sistem tiket tanpa
+   distribusi jawaban, tetapi sejak data dummy 10 instrumen dilengkapi, ia juga
+   punya 6 butir berskala 1-4 dan ikut dihitung dashboard. Daftar ini
+   dipertahankan untuk kemungkinan instrumen non-survei di masa depan. */
+const TANPA_AGREGAT = new Set();
 
 function gagal(pesan) {
   console.error(`\n  GAGAL: ${pesan}\n`);

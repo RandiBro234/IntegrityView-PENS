@@ -76,9 +76,23 @@ test('kode instrumen tidak tertangkap di dalam kata lain', () => {
   assert.equal(pilihInstrumen('ada 15responden ya', null, REGISTRI), null);
 });
 
-test('instrumen tanpa agregat tidak pernah dipilih', () => {
-  /* pengaduan ada di registry tetapi punya_agregat=false. */
-  assert.equal(pilihInstrumen('bagaimana pengaduan masyarakat?', 'pengaduan', REGISTRI), null);
+test('pengaduan kini punya agregat dan bisa dipilih', () => {
+  /* Dulu pengaduan berupa sistem tiket tanpa skala 1-4, sehingga dilewati.
+     Sejak data 10 instrumen dilengkapi, ia punya 6 butir berskala dan ikut
+     dihitung dashboard. */
+  assert.equal(pilihInstrumen('bagaimana pengaduan masyarakat?', 'pengaduan', REGISTRI)?.slug, 'pengaduan');
+  assert.equal(REGISTRI.instrumen.filter((i) => i.punya_agregat).length, 10);
+});
+
+test('instrumen bertanda punya_agregat=false tetap dilewati', () => {
+  /* Mekanismenya masih ada untuk instrumen non-survei di masa depan. */
+  const registriUji = {
+    ...REGISTRI,
+    instrumen: REGISTRI.instrumen.map((i) =>
+      i.slug === 'pengaduan' ? { ...i, punya_agregat: false } : i
+    )
+  };
+  assert.equal(pilihInstrumen('bagaimana pengaduan masyarakat?', 'pengaduan', registriUji), null);
 });
 
 /* ---------------------------------------------------------------------------
