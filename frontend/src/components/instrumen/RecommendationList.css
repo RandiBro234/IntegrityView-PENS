@@ -4,7 +4,9 @@
   margin: 0;
   display: flex;
   flex-direction: column;
+  flex: 1;
   min-height: 0;
+  overflow-y: auto;
 }
 
 .reclist__item {
@@ -14,6 +16,7 @@
   margin-bottom: 12px;
   min-height: 0;
   min-width: 0;
+  flex-shrink: 0;
 }
 .reclist__item:last-child { margin-bottom: 0; }
 
