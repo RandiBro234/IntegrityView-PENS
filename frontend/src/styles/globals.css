@@ -207,6 +207,22 @@ html.js:not(.vt) .page-transition.is-out {
   to { opacity: 1; transform: none; }
 }
 
+/* Perpindahan ke/dari landing memakai cross-fade seluruh halaman tanpa
+   geser vertikal, agar shell dashboard dan landing tidak terlihat patah. */
+html.js .page-transition.page-transition--fade {
+  animation: page-fade-in 260ms var(--ease-out) both;
+}
+html.js .page-transition.page-transition--fade.is-out {
+  animation: none;
+  opacity: 0;
+  transform: none;
+  transition: opacity 150ms var(--ease-in-out);
+}
+@keyframes page-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 /* Peningkatan bertahap bila View Transitions API tersedia.
    Hanya area konten yang dianimasikan; sidebar dan topbar tetap diam. */
 @media (prefers-reduced-motion: no-preference) {
