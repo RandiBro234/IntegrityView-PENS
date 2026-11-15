@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import Sidebar from '../components/layout/Sidebar';
 import Topbar from '../components/layout/Topbar';
+import { useAuth } from '../auth/AuthProvider';
 import {
-  getUser, isAdmin, getPengaduan, updatePengaduan, tambahBalasan,
+  getPengaduan, updatePengaduan, tambahBalasan,
   STATUS_ADUAN, formatTanggal, formatTanggalWaktu
 } from '../data/mock';
 import {
@@ -18,8 +19,8 @@ const STATUS_BADGE = { 'Baru': 'badge-status-baru', 'Diproses': 'badge-status-di
 const OPSI_KATEGORI = opsiFilterKategori();
 
 export default function KelolaPengaduanPage({ onNavigate }) {
-  const user = getUser();
-  const admin = isAdmin();
+  const { user } = useAuth();
+  const admin = user?.role === 'admin';
   const [filterStatus, setFilterStatus] = useState('');
   const [filterKategori, setFilterKategori] = useState('');
   const [cari, setCari] = useState('');

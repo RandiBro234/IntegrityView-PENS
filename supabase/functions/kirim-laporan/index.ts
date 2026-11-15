@@ -4,11 +4,12 @@
 // Deploy (dari root project):
 //   supabase functions deploy kirim-laporan --use-api
 //
-// Function ini sengaja tanpa JWT karena dipakai pengunjung publik. Validasi
-// dilakukan di sini; anon tidak punya akses langsung ke tabel.
+// Function ini wajib memakai JWT pengguna. Anon tidak punya akses langsung
+// ke tabel; validasi dan penautan akun dilakukan di sini.
 
 import { CORS, json } from '../_shared/http.ts';
 import { buatClient } from '../_shared/supabase.ts';
+import { penggunaDariRequest } from '../_shared/auth.ts';
 import { cekBatas, BATAS_KIRIM } from '../_shared/limit.ts';
 import { PayloadError } from '../_shared/errors.ts';
 import {
@@ -33,6 +34,11 @@ Deno.serve(async (req: Request) => {
   }
   if (req.method !== 'POST') {
     return json({ error: 'Method not allowed' }, 405);
+  }
+
+  const { pengguna, error: galatAuth } = await penggunaDariRequest(req);
+  if (!pengguna) {
+    return json({ error: galatAuth || 'Sesi tidak valid.' }, 401);
   }
 
   let body: unknown;
@@ -85,6 +91,7 @@ Deno.serve(async (req: Request) => {
   const { data, error } = await supabase
     .from(tabel)
     .insert({
+      user_id: pengguna.id,
       judul: laporan.judul,
       kategori: laporan.kategori,
       lokasi: laporan.lokasi,
@@ -99,7 +106,25 @@ Deno.serve(async (req: Request) => {
       balasan: [],
       lampiran
     })
-    .select('*')
+    .select([
+      'kode',
+      'judul',
+      'kategori',
+      'lokasi',
+      'deskripsi',
+      'anonim',
+      'nama_pelapor',
+      'kontak_pelapor',
+      'hubungan',
+      'status',
+      'pic',
+      'riwayat',
+      'catatan_internal',
+      'balasan',
+      'lampiran',
+      'created_at',
+      'updated_at'
+    ].join(', '))
     .single();
 
   if (error) {

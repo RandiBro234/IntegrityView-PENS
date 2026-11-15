@@ -10,6 +10,28 @@ html, body, #root {
 
 html { scroll-behavior: smooth; }
 
+.app-loading {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 12px;
+  min-height: 100vh;
+  background: var(--bg-page);
+  color: var(--text-secondary);
+}
+
+.app-loading__mark {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: var(--navy-900);
+  color: #fff;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
 /* Judul section tidak tertutup navbar sticky saat menu diklik. */
 .landing__section-anchor { scroll-margin-top: calc(71px + 16px); }
 

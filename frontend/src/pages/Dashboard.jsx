@@ -9,12 +9,12 @@ import ReportFilters from '../components/dashboard/ReportFilters';
 import RingkasanDashboardTemplate from '../components/dashboard/RingkasanDashboardTemplate';
 import { getReportData } from '../data/surveyData';
 import { useReportFilters } from '../data/useReportFilters';
-import { getUser } from '../data/mock';
+import { useAuth } from '../auth/AuthProvider';
 import { unduhLaporanPdf, namaFileLaporan } from '../lib/reportPdf';
 import './Dashboard.css';
 
 export default function Dashboard({ onBackToLanding, onNavigate, onOpenInstrument }) {
-  const user = getUser();
+  const { user } = useAuth();
   const { filter, setFilter, siap } = useReportFilters();
   const [selectedKey, setSelectedKey] = useState(null);
   const [tab, setTab] = useState('sebaran');

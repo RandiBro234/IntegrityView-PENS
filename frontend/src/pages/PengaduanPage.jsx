@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import Sidebar from '../components/layout/Sidebar';
 import Topbar from '../components/layout/Topbar';
+import { useAuth } from '../auth/AuthProvider';
 import {
-  getUser, savePengaduan, simpanPengaduanLokal, cariPengaduan,
+  savePengaduan, simpanPengaduanLokal, cariPengaduan,
   formatTanggal, formatTanggalWaktu
 } from '../data/mock';
 import {
@@ -27,7 +28,7 @@ const FORM_KOSONG = {
 };
 
 export default function PengaduanPage({ onNavigate, initialTab = 'buat', initialKode = '' }) {
-  const user = getUser();
+  const { user } = useAuth();
   const [tab, setTab] = useState(initialTab); // 'buat' | 'lacak'
 
   const handleMenu = (key) => onNavigate && onNavigate(key);
@@ -69,7 +70,7 @@ export default function PengaduanPage({ onNavigate, initialTab = 'buat', initial
               </button>
             </div>
 
-            {tab === 'buat' ? <BuatLaporan /> : <LacakStatus initialKode={initialKode} />}
+            {tab === 'buat' ? <BuatLaporan user={user} /> : <LacakStatus initialKode={initialKode} />}
           </div>
         </main>
       </div>
@@ -79,9 +80,14 @@ export default function PengaduanPage({ onNavigate, initialTab = 'buat', initial
 
 /* ---------- Buat laporan (dua langkah) ---------- */
 
-function BuatLaporan() {
+function BuatLaporan({ user }) {
+  const formAwal = {
+    ...FORM_KOSONG,
+    nama_pelapor: user?.nama && user.nama !== 'Tamu' ? user.nama : '',
+    kontak_pelapor: user?.email && user.email !== '—' ? user.email : ''
+  };
   const [step, setStep] = useState(0);
-  const [form, setForm] = useState(FORM_KOSONG);
+  const [form, setForm] = useState(formAwal);
   const [lampiran, setLampiran] = useState([]);
   const [errors, setErrors] = useState({});
   const [hasil, setHasil] = useState(null);
@@ -149,10 +155,7 @@ function BuatLaporan() {
 
   const resetForm = () => {
     setHasil(null);
-    setForm({
-      judul: '', kategori: '', lokasi: '', deskripsi: '',
-      anonim: false, nama_pelapor: '', kontak_pelapor: '', hubungan: '', setuju: false
-    });
+    setForm(formAwal);
     setLampiran([]);
     setErrors({});
     setErrorKirim('');
@@ -274,8 +277,8 @@ function BuatLaporan() {
         <div className="pg-sukses__kode">{hasil.id}</div>
         <p className="pg-sukses__ingat">
           {hasil.anonim
-            ? 'Anda melapor secara anonim. Kode ini satu-satunya cara memantau laporan, dan tidak bisa dipulihkan bila hilang.'
-            : 'Catat kode ini. Tanpa kode, status laporan tidak dapat dilacak.'}
+            ? 'Laporan anonim tidak menyimpan nama atau kontak. Laporan tetap muncul di Laporan Saya melalui akun Anda; simpan kode ini sebagai cadangan.'
+            : 'Laporan ini juga muncul di Laporan Saya. Simpan kode berikut sebagai cadangan untuk melacak status.'}
         </p>
         <div className="pg-sukses__actions">
           <button type="button" className="btn btn-outline-navy" onClick={salinKode}>
@@ -421,7 +424,8 @@ function BuatLaporan() {
           <>
             <div className="pg-note">
               <strong>Pilihan anonim.</strong> Jika memilih anonim, nama, kontak, dan hubungan Anda
-              tidak disimpan. Status hanya bisa dilacak memakai kode laporan.
+              tidak disimpan. Laporan tetap tertaut ke akun Anda secara internal agar muncul di
+              Laporan Saya; data akun pelapor tidak ditampilkan ke admin.
             </div>
 
             <label className="pg-check">

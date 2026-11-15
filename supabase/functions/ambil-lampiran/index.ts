@@ -8,6 +8,7 @@
 
 import { CORS, json } from '../_shared/http.ts';
 import { buatClient } from '../_shared/supabase.ts';
+import { penggunaDariRequest } from '../_shared/auth.ts';
 import { PayloadError } from '../_shared/errors.ts';
 import { BUCKET } from '../_shared/lampiran.ts';
 
@@ -38,6 +39,11 @@ Deno.serve(async (req: Request) => {
   }
   if (req.method !== 'POST') {
     return json({ error: 'Method not allowed' }, 405);
+  }
+
+  const { pengguna, error: galatAuth } = await penggunaDariRequest(req);
+  if (!pengguna || pengguna.role !== 'admin') {
+    return json({ error: galatAuth || 'Akses admin tidak valid.' }, 401);
   }
 
   let body: unknown;

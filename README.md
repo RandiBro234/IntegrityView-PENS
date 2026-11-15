@@ -61,11 +61,11 @@ Tambahkan environment variables di **Project Settings > Environment Variables**
 ```env
 VITE_SUPABASE_URL=https://<project-ref>.supabase.co
 VITE_SUPABASE_ANON_KEY=sb_publishable_...
-VITE_ENABLE_SIMULATION=true
-VITE_ENABLE_DEMO_LAPORAN=true
+VITE_ENABLE_SIMULATION=false
+VITE_ENABLE_DEMO_LAPORAN=false
 ```
 
-Set `VITE_ENABLE_DEMO_LAPORAN=false` untuk produksi bila seed laporan demo tidak ingin tampil.
+Jangan menambahkan `VITE_ADMIN_KELOLA_TOKEN`; akses admin memakai JWT Supabase.
 Vite membaca env saat build, jadi **redeploy** setelah mengubah nilainya.
 
 ## Variabel lingkungan
@@ -118,7 +118,7 @@ Routing tanpa react-router: `App.jsx` menyimpan state `page` dan menyinkronkan
 | Halaman | Isi |
 |---|---|
 | **Landing** | Beranda publik: ringkasan angka, daftar instrumen, alur, kanal lapor, CTA masuk |
-| **Auth** | Masuk/daftar demo; pilih peran `sivitas` atau `admin` |
+| **Auth** | Masuk dengan Supabase Auth; akun dibuat manual oleh SPI, tanpa pendaftaran mandiri |
 | **Dashboard** | KPI ringkasan, sebaran jawaban per instrumen, heatmap perubahan 5 semester, panel statistik + rekomendasi, ekspor PDF |
 | **Pusat Survei** | Daftar 10 instrumen, filter kategori, tombol **Isi Survei** ke Google Form |
 | **Detail Instrumen** | Distribusi butir, tren periode, rekomendasi, kualitas data, ekspor PDF |
@@ -235,11 +235,13 @@ dan dihitung sebagai "ditahan untuk tinjauan WBS".
   diunggah ke bucket privat `lampiran-laporan` memakai signed upload URL.
 - Lampiran maksimal **3 file**, **10MB/file**, format PDF/Word/JPG/PNG.
 - Rate limit **5 laporan / 10 menit / IP** (tanpa captcha).
-- Pelacakan publik memakai RPC `lacak_laporan` yang tidak mengembalikan PII.
+- WBS wajib login. Pelacakan memakai RPC `lacak_laporan` yang hanya mengembalikan laporan
+  milik pengguna atau admin, tanpa PII dan tanpa `user_id`.
+- Laporan anonim tidak menyimpan nama/kontak, tetapi tetap tertaut ke akun pelapor secara
+  internal agar muncul di **Laporan Saya**; `user_id` tidak pernah dikirim ke admin.
 - Tanpa Supabase, laporan disimpan di `localStorage` (`iv2_pengaduan`) dan lampiran di
   IndexedDB (`iv2_lampiran`).
-- Halaman **Kelola Pengaduan** dan **Laporan** masih membaca mirror lokal/seed; membaca DB
-  lintas browser menunggu Supabase Auth admin + policy SELECT/UPDATE.
+- Halaman **Kelola Pengaduan** dan **Laporan** memakai Edge Function admin dengan JWT.
 
 ## Supabase
 
@@ -248,7 +250,8 @@ dan dihitung sebagai "ditahan untuk tinjauan WBS".
 - `survey_responses` — jawaban survei (`data_jawaban` jsonb), RLS SELECT untuk anon
 - `pengaduan` dan `whistleblowing` — tiket laporan, akses langsung anon dicabut
 - Trigger `isi_kode_laporan` — kode `ADU-`/`WBS-` otomatis
-- `lacak_laporan(text)` — pelacakan publik tanpa PII
+- `laporan_saya()` — daftar laporan milik pengguna login, tanpa PII/`user_id`
+- `lacak_laporan(text)` — pelacakan oleh pemilik laporan atau admin, tanpa PII
 - `rate_limit_laporan` + `cek_rate_limit(...)` — pembatas kirim per IP
 - Bucket privat `lampiran-laporan` dengan batas 10MB dan MIME yang diizinkan
 
@@ -257,9 +260,10 @@ Edge Functions:
 | Function | Fungsi |
 |---|---|
 | `webhook-survei` | Menerima submit Google Form, INSERT ke `survey_responses` |
-| `kirim-laporan` | Validasi + INSERT laporan pengaduan/WBS |
-| `buat-upload-lampiran` | Membuat signed upload URL lampiran |
-| `ambil-lampiran` | Membuat signed download URL lampiran (admin) |
+| `kirim-laporan` | Validasi + INSERT laporan, wajib JWT pengguna |
+| `buat-upload-lampiran` | Membuat signed upload URL lampiran, wajib JWT |
+| `kelola-laporan` | Admin: daftar/ubah/balas laporan, wajib JWT role admin |
+| `ambil-lampiran` | Signed download URL lampiran, wajib JWT role admin |
 
 Deploy dari root project:
 
@@ -267,13 +271,16 @@ Deploy dari root project:
 supabase functions deploy webhook-survei --no-verify-jwt
 supabase functions deploy kirim-laporan --use-api
 supabase functions deploy buat-upload-lampiran --use-api
+supabase functions deploy kelola-laporan --use-api
 supabase functions deploy ambil-lampiran --use-api
 supabase secrets set WEBHOOK_SECRET=ganti-dengan-string-acak
 ```
 
-Migrasi `supabase/migrations/20261026000000_aggregate_views.sql` bersifat **additive** dan
-**belum dijalankan**. Isinya index, view agregat tanpa email/teks terbuka, dan RPC
-`survey_aggregate`. Frontend saat ini masih membaca tabel mentah lewat REST.
+Terapkan `supabase/migrations/20261115000000_auth_laporan.sql` sebelum deploy frontend
+JWT. Migrasi ini menambah `user_id`, index, `is_admin()`, `laporan_saya()`, dan mengunci
+`lacak_laporan` ke pemilik/admin. Migrasi agregat
+`supabase/migrations/20261026000000_aggregate_views.sql` tetap terpisah dan belum wajib
+untuk auth; frontend masih membaca tabel survei mentah lewat REST.
 
 ## Backend FastAPI (opsional)
 
@@ -284,11 +291,13 @@ kalau yang ingin diubah adalah perilaku dashboard.
 
 ## Batasan yang diketahui
 
-- Login demo: `loginAs('sivitas' | 'admin')` hanya menulis `sessionStorage['iv2_session']`;
-  password tidak dicek. Sesi hilang saat tab ditutup.
+- Login memakai Supabase Auth (email/password). Akun dibuat manual dan pendaftaran mandiri
+  harus dimatikan. Role dibaca dari `app_metadata`, bukan `user_metadata`.
+- Sesi disimpan Supabase di localStorage sampai pengguna menekan Keluar.
 - RLS `survey_responses` masih memberi anon akses SELECT seluruh baris, termasuk
   `email_responden` dan jawaban terbuka. Perketat sebelum publik.
-- Data WBS admin belum lintas perangkat (masih `localStorage`/seed).
+- Mode tanpa Supabase masih memakai `localStorage`/seed; mode Supabase memakai Edge
+  Function admin dengan JWT.
 - Ivy masih mockup hardcoded.
 - `frontend/package.json` bernama `frontend2` (sisa penamaan tema "bento"); folder sebenarnya
   `frontend/`.

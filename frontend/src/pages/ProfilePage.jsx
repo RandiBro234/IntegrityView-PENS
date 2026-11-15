@@ -1,24 +1,50 @@
 import { useEffect, useState } from 'react';
 import Sidebar from '../components/layout/Sidebar';
 import Topbar from '../components/layout/Topbar';
-import { getUser, getProfilDetail, formatTanggalWaktu } from '../data/mock';
-import { sinkronkanStatusLaporan } from '../data/sinkronLaporan';
+import { useAuth } from '../auth/AuthProvider';
+import { formatTanggalWaktu } from '../data/mock';
+import { ambilLaporanSaya, laporanApiSiap } from '../data/laporanApi';
 import './ProfilePage.css';
 
 export default function ProfilePage({ onNavigate }) {
-  const user = getUser();
-  const [profil, setProfil] = useState(() => getProfilDetail());
+  const { user } = useAuth();
+  const [laporanUser, setLaporanUser] = useState([]);
+  const [memuat, setMemuat] = useState(() => Boolean(user && laporanApiSiap));
+  const [error, setError] = useState('');
   const [tab, setTab] = useState('aktivitas'); // 'aktivitas' | 'keamanan'
 
   useEffect(() => {
     let aktif = true;
-    sinkronkanStatusLaporan().then(() => {
-      if (aktif) setProfil(getProfilDetail());
-    });
+    if (!user || !laporanApiSiap) return undefined;
+
+    ambilLaporanSaya()
+      .then((rows) => {
+        if (aktif) setLaporanUser(rows);
+      })
+      .catch((err) => {
+        if (aktif) setError(err.message || 'Gagal memuat laporan Anda.');
+      })
+      .finally(() => {
+        if (aktif) setMemuat(false);
+      });
+
     return () => { aktif = false; };
-  }, []);
+  }, [user]);
 
   const handleMenu = (key) => onNavigate && onNavigate(key);
+
+  const profil = {
+    nama: user?.nama || 'Tamu',
+    inisial: user?.inisial || 'TM',
+    roleLabel: user?.roleLabel || 'Pengunjung',
+    email: user?.email || '—',
+    nip: user?.nip || '—',
+    unit: user?.unit || '—',
+    jabatan: user?.jabatan || '—',
+    sejak: user?.sejak || '—',
+    bergabung: user?.bergabung || null,
+    laporanUser
+  };
 
   return (
     <div className="app-shell">
@@ -43,7 +69,7 @@ export default function ProfilePage({ onNavigate }) {
             {/* Statistik personal */}
             <section className="pf-stats">
               <div className="pf-stat">
-                <span className="pf-stat__value">{profil.statistik.laporanDibuat}</span>
+                <span className="pf-stat__value">{laporanUser.length}</span>
                 <span className="pf-stat__label">Laporan dibuat</span>
               </div>
               <div className="pf-stat">
@@ -51,8 +77,8 @@ export default function ProfilePage({ onNavigate }) {
                 <span className="pf-stat__label">Bergabung sejak</span>
               </div>
               <div className="pf-stat">
-                <span className={`pf-stat__value ${user.role === 'admin' ? 'pf-stat__value--ok' : ''}`}>
-                  {user.role === 'admin' ? 'Admin' : 'Aktif'}
+                <span className={`pf-stat__value ${user?.role === 'admin' ? 'pf-stat__value--ok' : ''}`}>
+                  {user?.role === 'admin' ? 'Admin' : 'Aktif'}
                 </span>
                 <span className="pf-stat__label">Status akun</span>
               </div>
@@ -68,7 +94,7 @@ export default function ProfilePage({ onNavigate }) {
                   <li><span>Unit / Jurusan</span><span>{profil.unit}</span></li>
                   <li><span>Jabatan</span><span>{profil.jabatan}</span></li>
                   {profil.bergabung && (
-                    <li><span>Sesi dimulai</span><span>{formatTanggalWaktu(profil.bergabung)}</span></li>
+                    <li><span>Akun dibuat</span><span>{formatTanggalWaktu(profil.bergabung)}</span></li>
                   )}
                 </ul>
               </section>
@@ -93,11 +119,15 @@ export default function ProfilePage({ onNavigate }) {
                 </div>
 
                 {tab === 'aktivitas' ? (
-                  profil.laporanUser.length === 0 ? (
+                  memuat ? (
+                    <p className="pf-empty">Memuat laporan Anda…</p>
+                  ) : error ? (
+                    <p className="pf-empty">{error}</p>
+                  ) : laporanUser.length === 0 ? (
                     <p className="pf-empty">Belum ada laporan yang Anda buat. Buka kanal WBS untuk menyampaikan laporan.</p>
                   ) : (
                     <ul className="pf-aktivitas">
-                      {profil.laporanUser.map((l) => (
+                      {laporanUser.map((l) => (
                         <li key={l.id}>
                           <span className="pf-aktivitas__dot" aria-hidden="true" />
                           <div>
@@ -111,10 +141,10 @@ export default function ProfilePage({ onNavigate }) {
                 ) : (
                   <ul className="pf-info">
                     <li>
-                      <strong>Anonimitas laporan terjaga.</strong> Untuk laporan anonim, nama, kontak, dan hubungan tidak disimpan di sistem.
+                      <strong>Anonimitas laporan terjaga.</strong> Untuk laporan anonim, nama, kontak, dan hubungan tidak disimpan. Laporan tetap tertaut ke akun Anda secara internal agar muncul di Laporan Saya; data akun pelapor tidak ditampilkan ke admin.
                     </li>
                     <li>
-                      <strong>Sesi berakhir otomatis.</strong> Anda keluar otomatis saat menutup peramban karena sesi disimpan sementara.
+                      <strong>Sesi disimpan di perangkat.</strong> Anda tetap masuk sampai menekan Keluar.
                     </li>
                     <li>
                       <strong>Survei diisi lewat Google Form.</strong> Aplikasi hanya menampilkan hasil agregat, tanpa menampilkan identitas responden.
@@ -129,4 +159,3 @@ export default function ProfilePage({ onNavigate }) {
     </div>
   );
 }
-

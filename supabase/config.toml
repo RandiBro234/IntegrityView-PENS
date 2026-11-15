@@ -4,13 +4,13 @@ project_id = "integrityview"
 verify_jwt = false
 
 [functions.kirim-laporan]
-verify_jwt = false
+verify_jwt = true
 
 [functions.buat-upload-lampiran]
-verify_jwt = false
+verify_jwt = true
 
 [functions.kelola-laporan]
-verify_jwt = false
+verify_jwt = true
 
 [functions.ambil-lampiran]
-verify_jwt = false
+verify_jwt = true

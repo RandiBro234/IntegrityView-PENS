@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import Sidebar from '../components/layout/Sidebar';
 import Topbar from '../components/layout/Topbar';
-import { getUser, isAdmin, getPengaduan, formatAngka } from '../data/mock';
+import { useAuth } from '../auth/AuthProvider';
+import { getPengaduan, formatAngka } from '../data/mock';
 import { ambilDaftarLaporan, kelolaApiSiap } from '../data/laporanApi';
 import { PERIODE, getReportData } from '../data/surveyData';
 import { labelKategori } from '../data/reportCategories';
@@ -11,8 +12,8 @@ import { keSkor } from '../lib/formatSkor';
 import './LaporanPage.css';
 
 export default function LaporanPage({ onNavigate }) {
-  const user = getUser();
-  const admin = isAdmin();
+  const { user } = useAuth();
+  const admin = user?.role === 'admin';
   const { filter, setFilter } = useReportFilters();
 
   /* Sumber angka yang sama dengan dashboard: selector tunggal. */
