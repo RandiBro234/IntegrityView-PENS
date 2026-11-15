@@ -145,6 +145,14 @@ test('ringkasan keseluruhan memakai rata-rata tidak tertimbang', () => {
   assert.equal(konteks.ringkasan_keseluruhan.responden_unik, 500);
 });
 
+test('ringkasan memuat alpha tiap instrumen', () => {
+  /* Tanpa ini, pertanyaan "apakah surveinya reliabel?" dijawab tidak tersedia. */
+  const konteks = rakitKonteksSemua(DAFTAR_SEMUA, 500);
+  for (const [i, info] of konteks.instrumen.entries()) {
+    assert.equal(info.alpha, DAFTAR_SEMUA[i].agregat.alpha == null ? null : Number(DAFTAR_SEMUA[i].agregat.alpha.toFixed(3)));
+  }
+});
+
 test('ambang sampel minimum mengikuti registri, bukan hardcoded', () => {
   const konteks = rakitKonteksSatu(agregatDari('spak'), instrumenDari('spak'), AMBANG);
   assert.equal(konteks.kecukupan_sampel.minimum, AMBANG.respondenMinimum);

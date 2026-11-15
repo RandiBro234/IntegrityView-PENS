@@ -18,6 +18,9 @@ export interface KonteksRingkasInstrumen {
   n: number;
   indeks_persepsi: number;
   skor_rata: number;
+  /* Cronbach's alpha. Ikut di ringkasan supaya pertanyaan "apakah surveinya
+     reliabel?" bisa dijawab tanpa menyebut instrumen tertentu. */
+  alpha: number | null;
   butir_terendah: { kode: string; aspek: string; skor: number } | null;
   judul_rekomendasi: string[];
 }
@@ -246,6 +249,7 @@ export function rakitKonteksSemua(
         n: agregat.n,
         indeks_persepsi: bulat(agregat.indeks, 1),
         skor_rata: bulat(keSkor(agregat.indeks), 2),
+        alpha: agregat.alpha == null ? null : bulat(agregat.alpha, 3),
         butir_terendah: terendah
           ? { kode: terendah.kode, aspek: terendah.label, skor: bulat(terendah.rata, 2) }
           : null,
