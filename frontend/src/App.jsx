@@ -17,6 +17,7 @@ import { getSurveyUrl } from './data/surveyLinks';
 import { dukungViewTransition, prefersReducedMotion } from './lib/motion';
 
 const DURASI_KELUAR = 150;
+const DURASI_MASUK = 260;
 
 const HALAMAN = new Set([
   'dashboard',
@@ -54,12 +55,28 @@ export default function App() {
   /* Tab awal halaman WBS: 'buat' atau 'lacak'. */
   const [pengaduanTab, setPengaduanTab] = useState('buat');
   const [keluar, setKeluar] = useState(false);
+  const [lembut, setLembut] = useState(false);
 
   /* Transisi konten antar halaman. Sidebar dan topbar tetap diam karena
-     hanya area konten yang dianimasikan. View Transitions dipakai bila ada. */
-  const pindah = useCallback((aksi) => {
+     hanya area konten yang dianimasikan. View Transitions dipakai bila ada.
+     Perpindahan ke/dari landing memakai fade seluruh halaman agar shell
+     dashboard dan landing tidak saling memotong. */
+  const pindah = useCallback((aksi, { fade = false } = {}) => {
     if (typeof aksi !== 'function') return;
     if (prefersReducedMotion()) { aksi(); return; }
+
+    if (fade) {
+      setLembut(true);
+      setKeluar(true);
+      window.setTimeout(() => {
+        window.scrollTo(0, 0);
+        aksi();
+        setKeluar(false);
+      }, DURASI_KELUAR);
+      window.setTimeout(() => setLembut(false), DURASI_KELUAR + DURASI_MASUK);
+      return;
+    }
+
     if (dukungViewTransition()) {
       document.startViewTransition(() => { flushSync(aksi); });
       return;
@@ -103,10 +120,10 @@ export default function App() {
 
   const goMenu = (key) => {
     if (key === 'keluar') {
-      void signOut().finally(() => pindah(() => setPage('landing')));
+      void signOut().finally(() => pindah(() => setPage('landing'), { fade: true }));
       return;
     }
-    if (key === 'beranda') return pindah(() => setPage('landing'));
+    if (key === 'beranda') return pindah(() => setPage('landing'), { fade: true });
     if (key === 'dashboard') return pindah(() => setPage('dashboard'));
     if (key === 'survei') return pindah(() => setPage('survei'));
     if (key === 'pengaduan') return pindah(() => setPage(role === 'admin' ? 'kelola-pengaduan' : 'pengaduan'));
@@ -120,8 +137,8 @@ export default function App() {
     if (page === 'auth') {
       return (
         <AuthPage
-          onSuccess={() => pindah(() => setPage('dashboard'))}
-          onBack={() => pindah(() => setPage('landing'))}
+          onSuccess={() => pindah(() => setPage('dashboard'), { fade: true })}
+          onBack={() => pindah(() => setPage('landing'), { fade: true })}
         />
       );
     }
@@ -129,7 +146,7 @@ export default function App() {
     if (page === 'dashboard') {
       return (
         <Dashboard
-          onBackToLanding={() => pindah(() => setPage('landing'))}
+          onBackToLanding={() => pindah(() => setPage('landing'), { fade: true })}
           onNavigate={goMenu}
           onOpenInstrument={openInstrument}
         />
@@ -175,14 +192,16 @@ export default function App() {
         onEnterDashboard={(tujuan, tab) => {
           if (tujuan === 'pengaduan') {
             setPengaduanTab(tab || 'buat');
-            return pindah(() => setPage(user ? (user.role === 'admin' ? 'kelola-pengaduan' : 'pengaduan') : 'auth'));
+            return pindah(() => setPage(user ? (user.role === 'admin' ? 'kelola-pengaduan' : 'pengaduan') : 'auth'), { fade: true });
           }
           if (tujuan === 'survei') {
-            return pindah(() => setPage(user ? 'survei' : 'auth'));
+            return pindah(() => setPage(user ? 'survei' : 'auth'), { fade: true });
           }
-          return pindah(() => setPage(user ? 'dashboard' : 'auth'));
+          return pindah(() => setPage(user ? 'dashboard' : 'auth'), { fade: true });
         }}
-        onKeluar={() => { void signOut().finally(() => pindah(() => setPage('landing'))); }}
+        onKeluar={() => {
+          void signOut().finally(() => pindah(() => setPage('landing'), { fade: true }));
+        }}
         session={user}
       />
     );
@@ -201,7 +220,7 @@ export default function App() {
     <>
       <div
         key={page === 'instrumen-detail' ? `${page}-${instrumenSlug}` : page}
-        className={`page-transition ${keluar ? 'is-out' : ''}`.trim()}
+        className={`page-transition ${lembut ? 'page-transition--fade' : ''} ${keluar ? 'is-out' : ''}`.trim()}
       >
         {renderHalaman()}
       </div>
