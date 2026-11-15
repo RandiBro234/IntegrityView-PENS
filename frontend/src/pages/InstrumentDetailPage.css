@@ -220,12 +220,12 @@
 }
 .idp__change-row {
   display: grid;
-  grid-template-columns: minmax(110px, 1.6fr) minmax(60px, 1fr) 64px;
-  gap: 10px;
+  grid-template-columns: minmax(120px, 1.6fr) minmax(70px, 1fr) 78px;
+  gap: 12px;
   align-items: center;
-  min-height: 28px;
+  min-height: 36px;
   border-bottom: 1px solid var(--border-soft);
-  font-size: 11.5px;
+  font-size: 12.5px;
 }
 .idp__change-row:last-child { border-bottom: 0; }
 .idp__change-name {
@@ -233,13 +233,14 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   min-width: 0;
+  font-weight: 600;
   color: var(--text-primary);
 }
 .idp__change-track {
   position: relative;
-  height: 10px;
+  height: 12px;
   background: var(--gray-50);
-  border-radius: 3px;
+  border-radius: 4px;
 }
 .idp__change-track::after {
   content: '';
@@ -249,11 +250,26 @@
   left: 50%;
   border-left: 1px solid var(--border-soft);
 }
-.idp__change-bar { position: absolute; top: 0; height: 100%; border-radius: 2px; }
+.idp__change-bar { position: absolute; top: 0; height: 100%; border-radius: 3px; }
 .idp__change-bar--naik { background: var(--teal-500); }
 .idp__change-bar--turun { background: var(--error-500); }
 .idp__change-bar--stabil { background: var(--gray-500); opacity: 0.5; }
-.idp__change-delta { text-align: right; font-variant-numeric: tabular-nums; }
+.idp__change-delta {
+  display: flex;
+  justify-content: flex-end;
+  font-variant-numeric: tabular-nums;
+}
+.idp__change-delta .delta {
+  font-size: 14px;
+  line-height: 1;
+  padding: 5px 9px;
+  border-radius: var(--radius-pill);
+  background: var(--gray-50);
+}
+.idp__change-delta .delta--naik { background: rgba(47, 184, 166, 0.12); }
+.idp__change-delta .delta--turun { background: rgba(245, 132, 60, 0.12); }
+.idp__change-delta .delta--stabil { background: rgba(107, 114, 128, 0.1); }
+.idp__change-note { font-size: 12px; line-height: 1.5; }
 
 
 /* === Distribusi: baris tinggi tetap, scroll jika butir > muat === */
