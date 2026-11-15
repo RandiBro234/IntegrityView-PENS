@@ -191,8 +191,8 @@ export default function InstrumentDetailPage({ slug, onBack }) {
               <PeriodTrend tren={hasil.tren} selected={filter.periode} />
               {laporan.periodePembanding ? (
                 <>
-                  <p className="idp__panel-note">
-                    Selisih rata-rata skor butir dibanding {laporan.periodePembanding.label} (skala 1–4).
+                  <p className="idp__panel-note idp__change-note">
+                    Selisih rata-rata skor butir dibanding {laporan.periodePembanding.label} (skala 1�?"4).
                   </p>
                   <div className="idp__change-list">
                     {hasil.perubahanButir.map((b) => (
