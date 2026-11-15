@@ -1,15 +1,15 @@
-/* Klien Edge Function laporan. Anon key hanya untuk memanggil function dan RPC
-   pelacakan; tabel pengaduan/whistleblowing tidak bisa diakses langsung dari
-   browser. Lampiran diunggah ke Storage memakai signed upload URL. */
+/* Klien Edge Function laporan. Anon/publishable key hanya untuk gerbang
+   Supabase; akses data memakai JWT pengguna yang sedang login. Tabel
+   pengaduan/whistleblowing tidak bisa diakses langsung dari browser.
+   Lampiran diunggah ke Storage memakai signed upload URL. */
 
-const SUPABASE_URL = (import.meta.env.VITE_SUPABASE_URL || '').replace(/\/$/, '');
-const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
-const ADMIN_TOKEN = import.meta.env.VITE_ADMIN_KELOLA_TOKEN || '';
+import { supabase, supabaseSiap, SUPABASE_KEY, SUPABASE_URL } from '../lib/supabase';
+
 const TIMEOUT_MS = 15000;
 const TIMEOUT_UPLOAD_MS = 60000;
 
-export const laporanApiSiap = Boolean(SUPABASE_URL && SUPABASE_KEY);
-export const kelolaApiSiap = laporanApiSiap && Boolean(ADMIN_TOKEN);
+export const laporanApiSiap = supabaseSiap;
+export const kelolaApiSiap = laporanApiSiap;
 export const MAKS_LAMPIRAN = 3;
 export const MAKS_UKURAN_LAMPIRAN = 10 * 1024 * 1024;
 
@@ -22,10 +22,25 @@ const EKSTENSI_TIPE = {
   png: 'image/png'
 };
 
-function headers() {
-  const h = { apikey: SUPABASE_KEY, Accept: 'application/json' };
-  if (SUPABASE_KEY.startsWith('eyJ')) h.Authorization = `Bearer ${SUPABASE_KEY}`;
-  return h;
+async function tokenAkses() {
+  if (!supabase) {
+    throw new Error('Supabase belum dikonfigurasi (VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY).');
+  }
+  const { data, error } = await supabase.auth.getSession();
+  if (error) throw new Error('Gagal membaca sesi. Silakan masuk ulang.');
+  const token = data.session?.access_token;
+  if (!token) throw new Error('Sesi berakhir. Silakan masuk kembali.');
+  return token;
+}
+
+async function headers(extra = {}) {
+  const token = await tokenAkses();
+  return {
+    apikey: SUPABASE_KEY,
+    Authorization: `Bearer ${token}`,
+    Accept: 'application/json',
+    ...extra
+  };
 }
 
 function ekstensi(nama) {
@@ -85,7 +100,7 @@ async function panggilFunction(nama, payload) {
   try {
     const res = await fetch(`${SUPABASE_URL}/functions/v1/${nama}`, {
       method: 'POST',
-      headers: { ...headers(), 'Content-Type': 'application/json' },
+      headers: await headers({ 'Content-Type': 'application/json' }),
       body: JSON.stringify(payload),
       signal: controller.signal
     });
@@ -110,11 +125,7 @@ async function panggilAdmin(payload) {
   try {
     const res = await fetch(`${SUPABASE_URL}/functions/v1/kelola-laporan`, {
       method: 'POST',
-      headers: {
-        ...headers(),
-        'Content-Type': 'application/json',
-        'x-admin-token': ADMIN_TOKEN
-      },
+      headers: await headers({ 'Content-Type': 'application/json' }),
       body: JSON.stringify(payload),
       signal: controller.signal
     });
@@ -151,7 +162,8 @@ export function normalisasiLaporan(row) {
       ? row.catatan_internal
       : (Array.isArray(row.catatanInternal) ? row.catatanInternal : []),
     balasan: Array.isArray(row.balasan) ? row.balasan : [],
-    lampiran: Array.isArray(row.lampiran) ? row.lampiran : []
+    lampiran: Array.isArray(row.lampiran) ? row.lampiran : [],
+    jumlahLampiran: Number(row.jumlah_lampiran || 0)
   };
 }
 
@@ -235,7 +247,7 @@ export async function lacakLaporan(kode) {
   try {
     const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/lacak_laporan`, {
       method: 'POST',
-      headers: { ...headers(), 'Content-Type': 'application/json' },
+      headers: await headers({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({ p_kode: kode }),
       signal: controller.signal
     });
@@ -244,6 +256,31 @@ export async function lacakLaporan(kode) {
       throw new Error(body.message || body.error || `Gagal melacak laporan (HTTP ${res.status}).`);
     }
     return body || null;
+  } catch (err) {
+    throw new Error(pesanJaringan(err));
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+export async function ambilLaporanSaya() {
+  if (!laporanApiSiap) {
+    throw new Error('Supabase belum dikonfigurasi.');
+  }
+
+  const { controller, timer } = batalkanSetelah(TIMEOUT_MS);
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/laporan_saya`, {
+      method: 'POST',
+      headers: await headers({ 'Content-Type': 'application/json' }),
+      body: '{}',
+      signal: controller.signal
+    });
+    const body = await bodyJson(res);
+    if (!res.ok) {
+      throw new Error(body.message || body.error || `Gagal memuat laporan Anda (HTTP ${res.status}).`);
+    }
+    return Array.isArray(body) ? body.map(normalisasiLaporan) : [];
   } catch (err) {
     throw new Error(pesanJaringan(err));
   } finally {

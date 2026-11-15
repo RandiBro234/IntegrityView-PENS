@@ -1,5 +1,6 @@
-/* Modul data non-survei: format angka, kontak, autentikasi demo, dan tiket
-   pengaduan/WBS. Seluruh angka survei berasal dari src/data/surveyData.js. */
+/* Modul data non-survei: format angka, kontak, dan tiket pengaduan/WBS.
+   Autentikasi memakai Supabase Auth di src/auth/AuthProvider.jsx.
+   Seluruh angka survei berasal dari src/data/surveyData.js. */
 
 export function formatAngka(x, desimal = 1) {
   const n = Number(x);
@@ -19,102 +20,6 @@ export const KONTAK = {
    Jumlah laporan tiket adalah modul terpisah. */
 export function labelPartisipan(s) {
   return `${Number(s.responden || 0).toLocaleString('id-ID')} responden`;
-}
-
-/* ================= Auth & Role ================= */
-
-export const ROLES = {
-  sivitas: {
-    key: 'sivitas',
-    label: 'Dosen & Tenaga Kependidikan',
-    nama: 'Faiz Hadoop',
-    inisial: 'FH',
-    email: 'faiz.hadoop@pens.ac.id',
-    nip: '1998 0215 201812 1 003',
-    unit: 'D4 Teknik Informatika',
-    jabatan: 'Dosen',
-    sejak: '2022',
-    deskripsi: 'Isi survei, buat laporan WBS, dan lacak status laporan Anda.'
-  },
-  admin: {
-    key: 'admin',
-    label: 'Admin Zona Integritas',
-    nama: 'Rina Kusuma',
-    inisial: 'RK',
-    email: 'rina.kusuma@pens.ac.id',
-    nip: '1985 0310 201001 2 001',
-    unit: 'Satuan Pengawasan Internal (SPI)',
-    jabatan: 'Auditor Internal',
-    sejak: '2019',
-    deskripsi: 'Kelola laporan masuk, perbarui status, dan balas pelapor.'
-  }
-};
-
-const SESSION_KEY = 'iv2_session';
-
-export function loginAs(roleKey) {
-  const role = ROLES[roleKey];
-  if (!role) return null;
-  const sesi = { role: role.key, nama: role.nama, inisial: role.inisial, sejak: new Date().toISOString() };
-  try { sessionStorage.setItem(SESSION_KEY, JSON.stringify(sesi)); } catch { /* abaikan */ }
-  return sesi;
-}
-
-export function logout() {
-  try { sessionStorage.removeItem(SESSION_KEY); } catch { /* abaikan */ }
-}
-
-export function getSession() {
-  try {
-    const raw = sessionStorage.getItem(SESSION_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch { return null; }
-}
-
-export function isAdmin() {
-  const s = getSession();
-  return !!(s && s.role === 'admin');
-}
-
-export function getUser() {
-  const s = getSession();
-  if (s) {
-    const role = ROLES[s.role];
-    return {
-      nama: role ? role.nama : s.nama,
-      role: s.role,
-      inisial: role ? role.inisial : s.inisial
-    };
-  }
-  return { nama: 'Tamu', role: 'guest', inisial: 'TM' };
-}
-
-/* Profil: pengisian survei lewat Google Form, jadi aplikasi tidak menyimpan
-   riwayat pengisian survei per pengguna. */
-export function getProfilDetail() {
-  const s = getSession();
-  const role = ROLES[s?.role] || null;
-
-  const laporanUser = getPengaduan().filter(
-    (p) => !p.anonim && p.nama_pelapor === role?.nama
-  );
-
-  return {
-    nama: role?.nama || 'Tamu',
-    inisial: role?.inisial || 'TM',
-    roleLabel: role?.label || 'Pengunjung',
-    email: role?.email || '—',
-    nip: role?.nip || '—',
-    unit: role?.unit || '—',
-    jabatan: role?.jabatan || '—',
-    sejak: role?.sejak || '—',
-    bergabung: s?.sejak || null,
-    statistik: {
-      laporanDibuat: laporanUser.length,
-      akunAktif: role ? 1 : 0
-    },
-    laporanUser
-  };
 }
 
 /* ================= Whistleblowing System (satu kanal pelaporan) =================

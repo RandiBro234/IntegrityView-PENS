@@ -12,13 +12,28 @@ import ProfilePage from './pages/ProfilePage';
 import Sidebar from './components/layout/Sidebar';
 import Topbar from './components/layout/Topbar';
 import IvyWidget from './components/ivy/IvyWidget';
-import { getUser, getSession, logout } from './data/mock';
+import { useAuth } from './auth/AuthProvider';
 import { getSurveyUrl } from './data/surveyLinks';
 import { dukungViewTransition, prefersReducedMotion } from './lib/motion';
 
 const DURASI_KELUAR = 150;
 
+const HALAMAN = new Set([
+  'dashboard',
+  'instrumen-detail',
+  'survei',
+  'pengaduan',
+  'kelola-pengaduan',
+  'laporan',
+  'profil'
+]);
+
+const HALAMAN_ADMIN = new Set(['kelola-pengaduan', 'laporan']);
+
+const TAMU = { nama: 'Tamu', role: 'guest', inisial: 'TM' };
+
 export default function App() {
+  const { session, user, loading, signOut } = useAuth();
   const [page, setPage] = useState(() => {
     const params = new URLSearchParams(window.location.search);
     const halaman = params.get('page');
@@ -33,7 +48,7 @@ export default function App() {
       if (url) window.location.replace(url);
       return 'survei';
     }
-    return ['dashboard', 'instrumen-detail', 'survei'].includes(halaman) ? halaman : 'landing';
+    return HALAMAN.has(halaman) ? halaman : 'landing';
   });
   const [instrumenSlug, setInstrumenSlug] = useState(() => new URLSearchParams(window.location.search).get('instrumen'));
   /* Tab awal halaman WBS: 'buat' atau 'lacak'. */
@@ -55,7 +70,7 @@ export default function App() {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    if (page === 'dashboard' || page === 'instrumen-detail' || page === 'survei') params.set('page', page);
+    if (page !== 'landing' && page !== 'auth') params.set('page', page);
     else params.delete('page');
     if (page === 'instrumen-detail' && instrumenSlug) params.set('instrumen', instrumenSlug);
     else params.delete('instrumen');
@@ -65,18 +80,32 @@ export default function App() {
   useEffect(() => {
     const sync = () => {
       const params = new URLSearchParams(window.location.search);
-      setPage(params.get('page') || 'landing');
+      const halaman = params.get('page') || 'landing';
+      setPage(HALAMAN.has(halaman) ? halaman : 'landing');
       setInstrumenSlug(params.get('instrumen'));
     };
     window.addEventListener('popstate', sync);
     return () => window.removeEventListener('popstate', sync);
   }, []);
 
-  const session = getSession();
-  const role = session ? session.role : 'guest';
+  /* Route guard: semua halaman selain landing dan form login wajib sesi. */
+  useEffect(() => {
+    if (loading) return;
+    if (page !== 'landing' && page !== 'auth' && !session) {
+      setPage('auth');
+      return;
+    }
+    if (HALAMAN_ADMIN.has(page) && user?.role !== 'admin') setPage('dashboard');
+  }, [loading, page, session, user]);
+
+  const role = user ? user.role : 'guest';
+  const shellUser = user || TAMU;
 
   const goMenu = (key) => {
-    if (key === 'keluar') { logout(); return pindah(() => setPage('landing')); }
+    if (key === 'keluar') {
+      void signOut().finally(() => pindah(() => setPage('landing')));
+      return;
+    }
     if (key === 'beranda') return pindah(() => setPage('landing'));
     if (key === 'dashboard') return pindah(() => setPage('dashboard'));
     if (key === 'survei') return pindah(() => setPage('survei'));
@@ -128,12 +157,11 @@ export default function App() {
     }
 
     if (page === 'instrumen-detail') {
-      const user = getUser();
       return (
         <div className="app-shell detail-shell">
-          <Sidebar active="dashboard" onNavigate={goMenu} user={user} />
+          <Sidebar active="dashboard" onNavigate={goMenu} user={shellUser} />
           <div className="app-main">
-            <Topbar user={user} onProfil={() => goMenu('profil')} onNavigate={goMenu} />
+            <Topbar user={shellUser} onProfil={() => goMenu('profil')} onNavigate={goMenu} />
             <main className="app-content">
               <InstrumentDetailPage slug={instrumenSlug} onBack={() => pindah(() => setPage('dashboard'))} />
             </main>
@@ -147,18 +175,27 @@ export default function App() {
         onEnterDashboard={(tujuan, tab) => {
           if (tujuan === 'pengaduan') {
             setPengaduanTab(tab || 'buat');
-            return pindah(() => setPage(session ? (session.role === 'admin' ? 'kelola-pengaduan' : 'pengaduan') : 'auth'));
+            return pindah(() => setPage(user ? (user.role === 'admin' ? 'kelola-pengaduan' : 'pengaduan') : 'auth'));
           }
           if (tujuan === 'survei') {
-            return pindah(() => setPage(session ? 'survei' : 'auth'));
+            return pindah(() => setPage(user ? 'survei' : 'auth'));
           }
-          return pindah(() => setPage(session ? 'dashboard' : 'auth'));
+          return pindah(() => setPage(user ? 'dashboard' : 'auth'));
         }}
-        onKeluar={() => { logout(); window.location.reload(); }}
-        session={session}
+        onKeluar={() => { void signOut().finally(() => pindah(() => setPage('landing'))); }}
+        session={user}
       />
     );
   };
+
+  if (loading) {
+    return (
+      <div className="app-loading" role="status" aria-live="polite">
+        <span className="app-loading__mark">IV</span>
+        <p>Memuat sesi…</p>
+      </div>
+    );
+  }
 
   return (
     <>

@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import Sidebar from '../components/layout/Sidebar';
 import Topbar from '../components/layout/Topbar';
-import { getUser } from '../data/mock';
+import { useAuth } from '../auth/AuthProvider';
 import { SURVEI_DESKRIPSI } from '../data/instrumentConfig';
 import { getReportData } from '../data/surveyData';
 import { useReportFilters } from '../data/useReportFilters';
@@ -10,7 +10,7 @@ import './SurveiPage.css';
 const KATEGORI = ['Semua', 'Integritas & Korupsi', 'Pelayanan Publik', 'Pelaporan', 'Budaya & 5R'];
 
 export default function SurveiPage({ onNavigate, onOpenInstrument }) {
-  const user = getUser();
+  const { user } = useAuth();
   const [kategori, setKategori] = useState('Semua');
 
   const { filter } = useReportFilters();

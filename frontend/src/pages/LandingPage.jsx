@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { BlobDecor } from '../components/cards/StatCard';
-import { KONTAK, formatAngka, labelPartisipan } from '../data/mock';
+import { KONTAK, labelPartisipan } from '../data/mock';
 import { getReportData, SURVEI_INFO } from '../data/surveyData';
 import { useReportFilters } from '../data/useReportFilters';
 import Delta from '../components/dashboard/Delta';
@@ -15,7 +15,7 @@ const ALUR = [
   { n: 1, judul: 'Isi Survei lewat Google Form', desc: 'Dosen dan tenaga kependidikan mengisi survei lewat Google Form dari Pusat Survei. Laporan pelanggaran tetap lewat kanal WBS.' },
   { n: 2, judul: 'Data Masuk ke Sistem', desc: 'Respons terverifikasi Unit Penjaminan Mutu dan tercatat di basis data survei.' },
   { n: 3, judul: 'Dianalisis Tim SPI', desc: 'Satuan Pengawasan Internal menghitung rata-rata skor dan menelaah temuan.' },
-  { n: 4, judul: 'Ditindaklanjuti & Dipublikasi', desc: 'Hasil tampil di dashboard publik sebagai agregat dan rekomendasi diteruskan ke unit terkait.' }
+  { n: 4, judul: 'Ditindaklanjuti & Dipublikasi', desc: 'Hasil tampil di dashboard sebagai agregat dan rekomendasi diteruskan ke unit terkait.' }
 ];
 
 /* Gradasi latar per langkah, arah seragam 135deg, satu keluarga warna tema:
@@ -82,7 +82,6 @@ export default function LandingPage({ onEnterDashboard, onKeluar, session }) {
   const { responden } = ringkasan;
   const rekomendasiSemua = laporan.instrumen.flatMap((s) => s.rekomendasi);
   const prioritasTinggi = rekomendasiSemua.filter((r) => r.prioritas === 'Tinggi').length;
-  const prioritasPantau = rekomendasiSemua.filter((r) => r.prioritas === 'Pantau').length;
 
   useEffect(() => {
     const fn = () => setScrollY(window.scrollY);
@@ -314,11 +313,11 @@ export default function LandingPage({ onEnterDashboard, onKeluar, session }) {
                 Persepsi integritas kampus terbuka untuk diperiksa siapa saja.
               </Reveal>
               <Reveal as="p" className="landing__hero-lead" delay={140}>
-                Platform ini menyatukan {ringkasan.totalInstrumen} instrumen survei, dashboard analitik publik, dan kanal pelaporan WBS dalam satu alamat. Pimpinan dan penilai dapat membaca data kapan saja secara terbuka.
+                Platform ini menyatukan {ringkasan.totalInstrumen} instrumen survei, dashboard analitik, dan kanal pelaporan WBS dalam satu alamat. Ringkasan agregat dapat dibaca publik; detail dashboard dan WBS tersedia setelah masuk.
               </Reveal>
               <Reveal className="landing__hero-cta" delay={210}>
                 <button type="button" className="btn btn-primary" onClick={onEnterDashboard}>
-                  Buka Dashboard Publik
+                  Masuk Dashboard
                 </button>
                 <button type="button" className="btn btn-outline-light" onClick={() => onEnterDashboard('survei')}>Lihat Pusat Survei</button>
               </Reveal>
@@ -433,7 +432,6 @@ export default function LandingPage({ onEnterDashboard, onKeluar, session }) {
         <Reveal className="landing__section-head">
           <div>
             <p className="label-eyebrow">Statistik Ringkas</p>
-            <h2 className="landing__section-title">Skor per kategori instrumen.</h2>
           </div>
         </Reveal>
 
@@ -491,14 +489,7 @@ export default function LandingPage({ onEnterDashboard, onKeluar, session }) {
             <div className="landing__stat-num">
               <CountUp value={responden.total} />
             </div>
-            <div className="landing__stat-foot">
-              <span>
-                {responden.adaKelompok
-                  ? `${formatAngka(responden.dosen, 0)} dosen · ${formatAngka(responden.tendik, 0)} tenaga kependidikan`
-                  : 'Dosen dan tenaga kependidikan'}
-              </span>
-              <Delta value={ringkasan.deltaResponden} unit="responden" />
-            </div>
+
           </Reveal>
 
           <Reveal as="article" className="landing__stat-card" delay={(kategoriSkor.length + 2) * 70}>
@@ -509,11 +500,10 @@ export default function LandingPage({ onEnterDashboard, onKeluar, session }) {
               <span className="landing__stat-unit">/{ringkasan.totalInstrumen}</span>
             </div>
             <div className="landing__stat-foot">
-              <span>instrumen berisi data asli</span>
               <span>
                 {ringkasan.simulasiTerpakai
-                  ? `${ringkasan.simulasiTerpakai} instrumen masih simulasi`
-                  : 'Seluruh instrumen berdata asli'}
+                  ? `${ringkasan.simulasiTerpakai} instrumen masih memakai simulasi`
+                  : 'Seluruh instrumen berisi data asli'}
               </span>
             </div>
           </Reveal>
@@ -526,7 +516,6 @@ export default function LandingPage({ onEnterDashboard, onKeluar, session }) {
             </div>
             <div className="landing__stat-foot">
               <span>rekomendasi prioritas tinggi</span>
-              <span>{prioritasPantau} rekomendasi perlu dipantau</span>
             </div>
           </Reveal>
         </div>
@@ -673,7 +662,8 @@ export default function LandingPage({ onEnterDashboard, onKeluar, session }) {
             <h2>Jadi bagian dari transparansi kampus.</h2>
             <p>
               Terbuka untuk <strong>dosen dan tenaga kependidikan</strong> PENS.
-              Pengisian lewat Google Form. Hasil ditampilkan sebagai agregat di dashboard publik tanpa menampilkan identitas responden.
+              Pengisian lewat Google Form. Hasil ditampilkan sebagai agregat
+              di dashboard tanpa menampilkan identitas responden.
             </p>
             <p className="landing__cta-partisipan">
               <strong className="landing__cta-partisipan-n">
@@ -714,7 +704,7 @@ export default function LandingPage({ onEnterDashboard, onKeluar, session }) {
             <h4>Platform</h4>
             <ul>
               <li><a href="#instrumen">Pusat Survei</a></li>
-              <li><button type="button" className="landing__footer-linkbtn" onClick={onEnterDashboard}>Dashboard Publik</button></li>
+              <li><button type="button" className="landing__footer-linkbtn" onClick={onEnterDashboard}>Dashboard</button></li>
               <li><a href="#alur">Alur Kerja</a></li>
             </ul>
           </div>

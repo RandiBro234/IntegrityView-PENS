@@ -3,12 +3,10 @@
 //
 // Deploy (dari root project):
 //   supabase functions deploy kelola-laporan --use-api
-//
-// Secret yang diperlukan:
-//   ADMIN_KELOLA_TOKEN
 
 import { CORS, json } from '../_shared/http.ts';
 import { buatClient } from '../_shared/supabase.ts';
+import { penggunaDariRequest } from '../_shared/auth.ts';
 import { PayloadError } from '../_shared/errors.ts';
 
 const TABEL = {
@@ -20,17 +18,26 @@ type Jenis = keyof typeof TABEL;
 
 const STATUS = new Set(['Baru', 'Diproses', 'Selesai']);
 
-function tokenValid(req: Request) {
-  const expected = Deno.env.get('ADMIN_KELOLA_TOKEN') || '';
-  const actual = req.headers.get('x-admin-token') || '';
-  if (!expected || actual.length !== expected.length) return false;
-
-  let beda = 0;
-  for (let i = 0; i < expected.length; i += 1) {
-    beda |= expected.charCodeAt(i) ^ actual.charCodeAt(i);
-  }
-  return beda === 0;
-}
+/* user_id sengaja tidak pernah dikembalikan ke frontend admin. */
+const KOLOM_AMAN = [
+  'kode',
+  'judul',
+  'kategori',
+  'lokasi',
+  'deskripsi',
+  'anonim',
+  'nama_pelapor',
+  'kontak_pelapor',
+  'hubungan',
+  'status',
+  'pic',
+  'riwayat',
+  'catatan_internal',
+  'balasan',
+  'lampiran',
+  'created_at',
+  'updated_at'
+].join(', ');
 
 function teks(nilai: unknown, nama: string, maks: number, wajib = false) {
   if (nilai == null) {
@@ -67,8 +74,10 @@ Deno.serve(async (req: Request) => {
   if (req.method !== 'POST') {
     return json({ error: 'Method not allowed' }, 405);
   }
-  if (!tokenValid(req)) {
-    return json({ error: 'Akses admin tidak valid.' }, 401);
+
+  const { pengguna, error: galatAuth } = await penggunaDariRequest(req);
+  if (!pengguna || pengguna.role !== 'admin') {
+    return json({ error: galatAuth || 'Akses admin tidak valid.' }, 401);
   }
 
   let body: Record<string, unknown>;
@@ -89,8 +98,8 @@ Deno.serve(async (req: Request) => {
   try {
     if (aksi === 'daftar') {
       const [pengaduan, whistleblowing] = await Promise.all([
-        supabase.from(TABEL.pengaduan).select('*').order('created_at', { ascending: false }),
-        supabase.from(TABEL.wbs).select('*').order('created_at', { ascending: false })
+        supabase.from(TABEL.pengaduan).select(KOLOM_AMAN).order('created_at', { ascending: false }),
+        supabase.from(TABEL.wbs).select(KOLOM_AMAN).order('created_at', { ascending: false })
       ]);
 
       if (pengaduan.error) throw new Error(pengaduan.error.message);
@@ -118,7 +127,7 @@ Deno.serve(async (req: Request) => {
 
       const { data: lama, error: galatBaca } = await supabase
         .from(TABEL[jenis])
-        .select('*')
+        .select(KOLOM_AMAN)
         .eq('kode', kode)
         .maybeSingle();
 
@@ -146,7 +155,7 @@ Deno.serve(async (req: Request) => {
           updated_at: sekarang
         })
         .eq('kode', kode)
-        .select('*')
+        .select(KOLOM_AMAN)
         .single();
 
       if (error) throw new Error(error.message);
@@ -161,7 +170,7 @@ Deno.serve(async (req: Request) => {
 
       const { data: lama, error: galatBaca } = await supabase
         .from(TABEL[jenis])
-        .select('*')
+        .select(KOLOM_AMAN)
         .eq('kode', kode)
         .maybeSingle();
 
@@ -181,7 +190,7 @@ Deno.serve(async (req: Request) => {
         .from(TABEL[jenis])
         .update({ balasan, updated_at: sekarang })
         .eq('kode', kode)
-        .select('*')
+        .select(KOLOM_AMAN)
         .single();
 
       if (error) throw new Error(error.message);

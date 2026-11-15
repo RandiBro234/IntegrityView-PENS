@@ -30,10 +30,11 @@
 }
 .dashboard__grid > * { min-height: 0; }
 
-/* Dua panel sama tinggi; tinggi mengikuti baris 1fr, bukan isi. */
+/* Dua panel sama tinggi; tinggi mengikuti baris 1fr, bukan isi.
+   Grafik sebaran diberi porsi lebih besar, panel analisis kanan dipadatkan. */
 .dashboard__duo {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
   gap: var(--gap);
   align-items: stretch;
   min-height: 0;
