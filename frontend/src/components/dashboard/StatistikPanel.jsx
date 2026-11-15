@@ -103,9 +103,11 @@ function Stat({ label, angka, desimal = 0, suffix = '', kosong = null, delta, de
   return (
     <div className="spanel__stat">
       {tip && <InfoTip label={label} teks={tip} />}
-      <span className="spanel__stat-value">{isi}</span>
+      <span className="spanel__stat-value-row">
+        <span className="spanel__stat-value">{isi}</span>
+        {delta != null && <Delta value={delta} compact skalaSkor={deltaSkalaSkor} />}
+      </span>
       <span className="spanel__stat-label">{label}</span>
-      {delta != null && <Delta value={delta} compact skalaSkor={deltaSkalaSkor} />}
       {note && <span className="spanel__stat-note">{note}</span>}
     </div>
   );
