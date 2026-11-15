@@ -17,6 +17,7 @@ import type { Agregat } from './statistik.ts';
 import { hitungAgregat } from './statistik.ts';
 import { normalizeAnswers, periodeDariTanggal, slugDariNama } from './normalisasi.ts';
 import { rekomendasiUntuk, getDelta } from './rekomendasi.ts';
+import { urutkanPeriode } from './periode.ts';
 import type { BarisJawaban, InstrumenInfo, Registri } from './tipe.ts';
 
 export interface BarisMentah {
@@ -44,6 +45,9 @@ export interface HasilKumpulan {
      instrumen, ditambah baris tanpa hash yang dihitung satu per satu. Sama
      dengan cara dashboard menghitung "Responden". */
   respondenUnik: number;
+  /* Semua periode yang punya data, terbaru lebih dulu. Dipakai untuk mengenali
+     periode yang disebut di pertanyaan. */
+  periodeTersedia: string[];
 }
 
 /* Periode terbaru yang benar-benar punya data, mengikuti urutan PERIODE di
@@ -135,8 +139,19 @@ export function kumpulkan(
   }
 
   const semuaPeriode = [...new Set([...peta.values()].map((v) => v.periode))];
+  const periodeUrut = urutkanPeriode(semuaPeriode);
   const periode = periodeDiminta && semuaPeriode.includes(periodeDiminta) ? periodeDiminta : periodeTerbaru(semuaPeriode);
-  if (!periode) return { periode: '', perInstrumen: [], dibuang, duplikat, totalBaris: rows.length, respondenUnik: 0 };
+  if (!periode) {
+    return {
+      periode: '',
+      perInstrumen: [],
+      dibuang,
+      duplikat,
+      totalBaris: rows.length,
+      respondenUnik: 0,
+      periodeTersedia: []
+    };
+  }
 
   /* Responden unik periode terpilih: hash distinct lintas instrumen. Baris
      tanpa hash sudah diberi kunci unik saat dedup, jadi ikut terhitung satu
@@ -186,7 +201,7 @@ export function kumpulkan(
   }
 
   perInstrumen.sort((a, b) => a.instrumen.nama.localeCompare(b.instrumen.nama));
-  return { periode, perInstrumen, dibuang, duplikat, totalBaris: rows.length, respondenUnik };
+  return { periode, perInstrumen, dibuang, duplikat, totalBaris: rows.length, respondenUnik, periodeTersedia: periodeUrut };
 }
 
 /* ---------------------------------------------------------------------------

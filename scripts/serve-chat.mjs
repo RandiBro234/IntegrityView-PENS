@@ -85,11 +85,13 @@ const klien = {
   }
 };
 
-async function ambilData() {
-  if (cache.data && Date.now() - cache.waktu < UMUR_CACHE_MS) return cache.data;
-  const data = kumpulkan(await ambilBaris(klien), registri);
-  cache = { waktu: Date.now(), data };
-  return data;
+async function ambilData(periode) {
+  if (cache.data && Date.now() - cache.waktu < UMUR_CACHE_MS) {
+    return kumpulkan(cache.data, registri, periode);
+  }
+  const baris = await ambilBaris(klien);
+  cache = { waktu: Date.now(), data: baris };
+  return kumpulkan(baris, registri, periode);
 }
 
 const batasPerJam = Number(lokal.CHAT_BATAS_PER_JAM || 20);

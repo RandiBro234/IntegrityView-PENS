@@ -23,14 +23,17 @@ const BATAS_PER_JAM = Number(Deno.env.get('CHAT_BATAS_PER_JAM') || 20);
 const JENDELA_JAM_MENIT = 60;
 
 /* Data survei tidak berubah per detik, tetapi menariknya mahal: >7.000 baris
-   dalam 8 request berurutan. Cache ini membuat pertanyaan berikutnya dalam
-   satu menit tidak menyentuh database sama sekali. */
+   dalam 8 request berurutan. Yang di-cache adalah baris mentahnya, bukan hasil
+   agregat, supaya pertanyaan tentang periode lain tidak perlu menarik ulang. */
 const CACHE_MS = Number(Deno.env.get('CHAT_CACHE_MS') || 60_000);
 
-const ambilData = buatCache({
+const ambilBarisCache = buatCache({
   umurMs: CACHE_MS,
-  ambil: async () => kumpulkan(await ambilBaris(buatClient()), registri)
+  ambil: async () => ambilBaris(buatClient())
 });
+
+const ambilData = async (periode?: string | null) =>
+  kumpulkan(await ambilBarisCache(), registri, periode);
 
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {

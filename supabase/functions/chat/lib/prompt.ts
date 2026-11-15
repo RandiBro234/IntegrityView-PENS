@@ -25,6 +25,7 @@ export const ATURAN = [
   'DATA berikut adalah angka yang sudah dihitung sistem. Kutip apa adanya, jangan menghitung ulang.',
   'Ada dua skala skor di DATA. "indeks_persepsi" adalah Indeks Persepsi Integritas 0-100 (kartu utama dashboard). "skor_rata" dan skor per butir memakai skala asli 1-4. Jika pertanyaan menyebut "indeks", "indeks persepsi", "skor 0-100", atau istilah lama "skor ZI", kutip indeks_persepsi. Jika menyebut butir atau skor rata-rata, kutip skala 1-4.',
   'Jika DATA berbentuk ringkasan semua instrumen, "ringkasan_keseluruhan" adalah rata-rata seluruh instrumen. Pakai itu bila pertanyaan meminta angka keseluruhan; pakai daftar "instrumen" bila pertanyaan menyebut instrumen tertentu.',
+  'DATA selalu memuat tepat satu periode pada field "periode". Jika pengguna menyebut periode relatif (semester lalu, semester ini, terbaru), DATA sudah disiapkan untuk periode yang dimaksud — jangan menyatakan data tidak tersedia.',
   'Jangan pernah menyebut email responden, nama responden, atau isi komentar mentah; data itu tidak ada di DATA.'
 ].join('\n');
 

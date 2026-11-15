@@ -14,6 +14,7 @@ import { pilihInstrumen, rakitKonteksSatu, rakitKonteksSemua, ukuranKonteks, typ
 import { susunPesan } from './prompt.ts';
 import { LlmTidakTersedia, LlmKuotaHabis, LlmSibuk } from './llm.ts';
 import { rapikanJawaban } from './format.ts';
+import { deteksiPeriode } from './periode.ts';
 import { validasiChat } from './validasi.ts';
 import type { Registri } from './tipe.ts';
 import type { HasilKumpulan } from './sumber.ts';
@@ -33,7 +34,7 @@ export interface Hasil {
 export interface Ketergantungan {
   registri: Registri;
   /* Ambil data agregat yang sudah dihitung. Melempar error bila database gagal. */
-  ambilData: () => Promise<HasilKumpulan>;
+  ambilData: (periode?: string | null) => Promise<HasilKumpulan>;
   /* Panggil LLM dengan pesan yang sudah disusun. */
   tanyaLlm: (pesan: { system: string; user: string }) => Promise<string>;
   /* true = masih boleh lanjut. */
@@ -83,6 +84,28 @@ export async function jawabChat(body: unknown, deps: Ketergantungan): Promise<Ha
   } catch (err) {
     console.error('chatbot: gagal membaca data', err instanceof Error ? err.message : err);
     return { status: 503, body: { kode: 'chatbot_tidak_tersedia', error: 'Data survei sedang tidak dapat dibaca.' } };
+  }
+
+  /* 3b. Periode. Data mencakup beberapa semester; kalau pertanyaan menyebut
+     periode tertentu, rakit ulang konteks untuk periode itu. Pengambilan baris
+     sudah di-cache, jadi langkah ini murah. */
+  const deteksi = deteksiPeriode(masuk.pertanyaan, data.periodeTersedia);
+  if (deteksi.periode && deteksi.periode !== data.periode) {
+    if (!data.periodeTersedia.includes(deteksi.periode)) {
+      return {
+        status: 200,
+        body: {
+          jawaban: `Data untuk periode ${deteksi.periode} tidak tersedia di dashboard. Periode yang ada: ${data.periodeTersedia.join(', ')}.`,
+          dasar: []
+        }
+      };
+    }
+    try {
+      data = await deps.ambilData(deteksi.periode);
+    } catch (err) {
+      console.error('chatbot: gagal membaca data periode', err instanceof Error ? err.message : err);
+      return { status: 503, body: { kode: 'chatbot_tidak_tersedia', error: 'Data survei sedang tidak dapat dibaca.' } };
+    }
   }
 
   if (!data.perInstrumen.length) {
