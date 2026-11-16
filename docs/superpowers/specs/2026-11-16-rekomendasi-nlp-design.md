@@ -112,8 +112,8 @@ Edge Function hitung-rekomendasi   (verify_jwt = true, service role)
         │
         ├─ 1. ambil komentar satu kombinasi
         ├─ 2. preprocessing + TF-IDF + k-means + silhouette
-        ├─ 3. label klaster dari kata teratas
-        ├─ 4. kirim {instrumen, label, kata_kunci, jumlah} → model bahasa
+        ├─ 3. label klaster dari kata teratas (kata tindakan dibuang)
+        ├─ 4. kirim {instrumen, label, kata_kunci, jumlah} → model bahasa (judul + saran)
         ├─ 5. tulis rekomendasi_terbuka
         └─ 6. hapus penanda kotor
         │
@@ -140,6 +140,7 @@ create table rekomendasi_terbuka (
   nama_instrumen text not null,
   periode text not null,
   label text not null,
+  judul text,
   prioritas text not null check (prioritas in ('Tinggi', 'Sedang', 'Pantau')),
   jumlah integer not null,
   porsi numeric not null,
@@ -171,6 +172,7 @@ create table rekomendasi_terbuka (
 | Ambil maksimal 5 kata teratas | Menjaga prompt pendek |
 
 Yang dikirim: `{ instrumen, periode, label, kata_kunci: [maks 5], jumlah }`. Tidak ada kalimat.
+Model membalas dua baris: `JUDUL:` (aspek + masalah, maks 10 kata) dan `SARAN:` (satu kalimat, maks 25 kata).
 
 ---
 
