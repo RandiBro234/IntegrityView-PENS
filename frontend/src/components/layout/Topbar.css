@@ -140,10 +140,14 @@
 @media (max-width: 720px) {
   .topbar { display: flex; flex-wrap: wrap; padding: 14px 16px 8px; gap: 8px 12px; }
   .topbar__left { flex: 1 1 auto; min-width: 0; }
-  .topbar__center { order: 5; flex: 1 1 100%; }
-  .topbar__right { flex: 0 1 auto; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+  .topbar__center { order: 5; flex: 1 1 100%; min-width: 0; }
+  .topbar__search { width: 100%; max-width: none; box-sizing: border-box; }
+  .topbar__right { flex: 1 1 auto; min-width: 0; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
   .topbar__right .chip { display: none; }
   .topbar__cta { display: none; }
+  .topbar__right > :is(.topbar__notif-wrap, .topbar__avatar) { flex: 0 0 auto; }
+  .topbar__right > .topbar__notif-wrap { order: 2; }
+  .topbar__right > .topbar__avatar { order: 3; }
   .topbar__greeting { font-size: 18px; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 }
 @media (max-width: 480px) {
