@@ -33,6 +33,20 @@ export interface HasilSatuInstrumen {
   agregat: Agregat;
   agregatBanding: Agregat | null;
   rekomendasi: Array<{ prioritas: string; judul: string; dasar: string; kode_butir: string | null }>;
+  /* Kelompok jawaban terbuka hasil klasterisasi. Hanya label, jumlah, dan
+     saran langkah — teks komentar mentah tidak pernah ikut. */
+  rekomendasiTerbuka: RekomendasiTerbuka[];
+}
+
+export interface RekomendasiTerbuka {
+  nama_instrumen: string;
+  periode: string;
+  label: string;
+  prioritas: string;
+  jumlah: number;
+  porsi: number;
+  kata_kunci: string[];
+  saran_langkah: string | null;
 }
 
 export interface HasilKumpulan {
@@ -66,7 +80,8 @@ export function periodeTerbaru(periode: string[]): string | null {
 export function kumpulkan(
   rows: BarisMentah[],
   registri: Registri,
-  periodeDiminta?: string | null
+  periodeDiminta?: string | null,
+  rekomendasiTerbuka: RekomendasiTerbuka[] = []
 ): HasilKumpulan {
   const peta = new Map<string, { instrumen: InstrumenInfo; periode: string; records: BarisJawaban[] }>();
   const kualitas = new Map<string, { dibuang: number; duplikat: number }>();
@@ -196,7 +211,12 @@ export function kumpulkan(
       instrumen: isi.instrumen,
       agregat,
       agregatBanding,
-      rekomendasi: rekomendasiUntuk(agregat, agregatBanding, perubahanButir, registri.ambang)
+      rekomendasi: rekomendasiUntuk(agregat, agregatBanding, perubahanButir, registri.ambang),
+      rekomendasiTerbuka: rekomendasiTerbuka.filter(
+        (r) =>
+          r.periode === isi.periode &&
+          r.nama_instrumen.toLowerCase() === isi.instrumen.nama.toLowerCase()
+      )
     });
   }
 
@@ -244,5 +264,30 @@ export async function ambilBaris(client: KlienSupabase): Promise<BarisMentah[]> 
   }
 
   return semua;
+}
+
+/* Rekomendasi jawaban terbuka sudah dihitung Edge Function lain dan disimpan
+   di tabel. Chatbot hanya membaca hasilnya; ia tidak mengklasterisasi ulang.
+   Jumlah barisnya kecil (satu per kelompok per kombinasi), jadi satu request
+   cukup. */
+export async function ambilRekomendasiTerbuka(client: KlienSupabase): Promise<RekomendasiTerbuka[]> {
+  const { data, error } = await client.rpc('daftar_rekomendasi_terbuka', {
+    p_instrumen: null,
+    p_periode: null
+  });
+
+  if (error) throw new Error(`gagal membaca daftar_rekomendasi_terbuka: ${error.message}`);
+  if (!Array.isArray(data)) return [];
+
+  return (data as RekomendasiTerbuka[]).map((r) => ({
+    nama_instrumen: String(r.nama_instrumen ?? ''),
+    periode: String(r.periode ?? ''),
+    label: String(r.label ?? ''),
+    prioritas: String(r.prioritas ?? 'Pantau'),
+    jumlah: Number(r.jumlah ?? 0),
+    porsi: Number(r.porsi ?? 0),
+    kata_kunci: Array.isArray(r.kata_kunci) ? r.kata_kunci.map(String) : [],
+    saran_langkah: r.saran_langkah ? String(r.saran_langkah) : null
+  }));
 }
 

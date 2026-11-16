@@ -117,12 +117,27 @@ export function rekomendasiTerbukaUntuk(slugAtauNama, periode) {
     }));
 }
 
-export const URUTAN_PRIORITAS = { Tinggi: 0, Sedang: 1, Pantau: 2 };
-
 /* Gabungkan dua sumber tanpa menghapus salah satunya: keduanya menjawab
-   pertanyaan berbeda (butir mana yang lemah vs apa yang dikeluhkan). */
+   pertanyaan berbeda (butir mana yang lemah vs apa yang dikeluhkan).
+   Di dalam prioritas yang sama, urutannya diselang-seling skor-komentar supaya
+   kartu ringkasan yang hanya menampilkan tiga baris tetap memuat keduanya. */
 export function gabungRekomendasi(daftarSkor, daftarKomentar) {
-  return [...daftarSkor, ...daftarKomentar].sort(
-    (a, b) => (URUTAN_PRIORITAS[a.prioritas] ?? 3) - (URUTAN_PRIORITAS[b.prioritas] ?? 3)
+  const hasil = [];
+
+  for (const prioritas of ['Tinggi', 'Sedang', 'Pantau']) {
+    const skor = daftarSkor.filter((r) => r.prioritas === prioritas);
+    const komentar = daftarKomentar.filter((r) => r.prioritas === prioritas);
+    const jumlah = Math.max(skor.length, komentar.length);
+
+    for (let i = 0; i < jumlah; i++) {
+      if (skor[i]) hasil.push(skor[i]);
+      if (komentar[i]) hasil.push(komentar[i]);
+    }
+  }
+
+  /* Prioritas di luar tiga nilai baku tetap ditampilkan di akhir. */
+  const dikenal = new Set(['Tinggi', 'Sedang', 'Pantau']);
+  return hasil.concat(
+    [...daftarSkor, ...daftarKomentar].filter((r) => !dikenal.has(r.prioritas))
   );
 }

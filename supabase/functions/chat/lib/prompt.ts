@@ -27,6 +27,7 @@ export const ATURAN = [
   'Jika DATA berbentuk ringkasan semua instrumen, "ringkasan_keseluruhan" adalah rata-rata seluruh instrumen. Pakai itu bila pertanyaan meminta angka keseluruhan; pakai daftar "instrumen" bila pertanyaan menyebut instrumen tertentu.',
   'DATA selalu memuat tepat satu periode pada field "periode". Jika pengguna menyebut periode relatif (semester lalu, semester ini, terbaru), DATA sudah disiapkan untuk periode yang dimaksud — jangan menyatakan data tidak tersedia.',
   'Reliabilitas diukur dengan Cronbach\'s alpha (field "alpha" atau "reliabilitas.alpha"). Nilai >= 0,7 umumnya dianggap reliabel. Jika pertanyaan tentang reliabilitas tidak menyebut instrumen, sebutkan alpha tiap instrumen dari DATA.',
+  'Field "rekomendasi_terbuka" berisi kelompok jawaban terbuka: "label" topik, "jumlah" komentar, "porsi_persen", dan "saran_langkah". Sebut sebagai "kelompok jawaban terbuka", bukan kutipan responden. "saran_langkah" adalah usulan tindakan sistem, bukan fakta yang dilaporkan responden.',
   'Jangan pernah menyebut email responden, nama responden, atau isi komentar mentah; data itu tidak ada di DATA.'
 ].join('\n');
 

@@ -131,13 +131,20 @@ export async function jawabChat(body: unknown, deps: Ketergantungan): Promise<Ha
         }
       };
     }
-    konteks = rakitKonteksSatu(satu.agregat, satu.instrumen, deps.registri.ambang, satu.rekomendasi);
+    konteks = rakitKonteksSatu(
+      satu.agregat,
+      satu.instrumen,
+      deps.registri.ambang,
+      satu.rekomendasi,
+      satu.rekomendasiTerbuka
+    );
   } else {
     konteks = rakitKonteksSemua(
       data.perInstrumen.map((d) => ({
         agregat: d.agregat,
         instrumen: d.instrumen,
-        judulRekomendasi: d.rekomendasi.map((r) => r.judul)
+        judulRekomendasi: d.rekomendasi.map((r) => r.judul),
+        topikKomentar: d.rekomendasiTerbuka.map((r) => r.label)
       })),
       data.respondenUnik
     );

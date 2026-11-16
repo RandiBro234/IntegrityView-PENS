@@ -14,7 +14,7 @@ import { CORS, json } from '../_shared/http.ts';
 import { cekBatas } from '../_shared/limit.ts';
 import { buatClient } from '../_shared/supabase.ts';
 import registri from './lib/instrumen.json' with { type: 'json' };
-import { ambilBaris, kumpulkan } from './lib/sumber.ts';
+import { ambilBaris, ambilRekomendasiTerbuka, kumpulkan } from './lib/sumber.ts';
 import { jawabChat } from './lib/penjawab.ts';
 import { tanyaLlm } from '../_shared/llm.ts';
 import { buatCache } from './lib/cache.ts';
@@ -32,8 +32,22 @@ const ambilBarisCache = buatCache({
   ambil: async () => ambilBaris(buatClient())
 });
 
+/* Rekomendasi jawaban terbuka dihitung Edge Function lain. Kalau tabelnya belum
+   terisi atau RPC gagal, chatbot tetap menjawab dari rekomendasi skor. */
+const ambilRekomendasiCache = buatCache({
+  umurMs: CACHE_MS,
+  ambil: async () => {
+    try {
+      return await ambilRekomendasiTerbuka(buatClient());
+    } catch (err) {
+      console.warn('chatbot: rekomendasi terbuka tidak terbaca:', err instanceof Error ? err.message : err);
+      return [];
+    }
+  }
+});
+
 const ambilData = async (periode?: string | null) =>
-  kumpulkan(await ambilBarisCache(), registri, periode);
+  kumpulkan(await ambilBarisCache(), registri, periode, await ambilRekomendasiCache());
 
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {

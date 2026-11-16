@@ -23,6 +23,19 @@ export interface KonteksRingkasInstrumen {
   alpha: number | null;
   butir_terendah: { kode: string; aspek: string; skor: number } | null;
   judul_rekomendasi: string[];
+  /* Label kelompok jawaban terbuka, maksimal dua, supaya konteks tetap kecil. */
+  topik_komentar: string[];
+}
+
+/* Satu kelompok jawaban terbuka. Teks komentar mentah tidak pernah ada di sini;
+   hanya label, jumlah, dan saran langkah hasil model bahasa. */
+export interface KelompokTerbuka {
+  label: string;
+  prioritas: string;
+  jumlah: number;
+  porsi: number;
+  kata_kunci: string[];
+  saran_langkah: string | null;
 }
 
 export interface KonteksSatuInstrumen {
@@ -50,6 +63,15 @@ export interface KonteksSatuInstrumen {
     tidak_setuju_persen: number;
   }>;
   rekomendasi: Array<{ prioritas: string; judul: string; dasar: string; kode_butir: string | null }>;
+  /* Kelompok jawaban terbuka untuk instrumen ini pada periode ini. */
+  rekomendasi_terbuka: Array<{
+    label: string;
+    prioritas: string;
+    jumlah: number;
+    porsi_persen: number;
+    kata_kunci: string[];
+    saran_langkah: string | null;
+  }>;
   tema: Array<{ label: string; jumlah_komentar: number }>;
   reliabilitas: { alpha: number | null; catatan: string | null };
   kecukupan_sampel: { n: number; minimum: number; cukup: boolean };
@@ -172,7 +194,8 @@ export function rakitKonteksSatu(
   agregat: Agregat,
   instrumen: InstrumenInfo,
   ambang: Record<string, number>,
-  rekomendasi: KonteksSatuInstrumen['rekomendasi'] = []
+  rekomendasi: KonteksSatuInstrumen['rekomendasi'] = [],
+  rekomendasiTerbuka: KelompokTerbuka[] = []
 ): KonteksSatuInstrumen {
   const minimum = ambang.respondenMinimum ?? 30;
 
@@ -207,6 +230,14 @@ export function rakitKonteksSatu(
       tidak_setuju_persen: bulat(b.persenNegatif, 1)
     })),
     rekomendasi,
+    rekomendasi_terbuka: rekomendasiTerbuka.map((k) => ({
+      label: k.label,
+      prioritas: k.prioritas,
+      jumlah: k.jumlah,
+      porsi_persen: bulat(k.porsi * 100, 1),
+      kata_kunci: k.kata_kunci,
+      saran_langkah: k.saran_langkah
+    })),
     tema: agregat.kualitas.tema.map((t) => ({ label: t.tema, jumlah_komentar: t.jumlah })),
     reliabilitas: {
       alpha: agregat.alpha == null ? null : bulat(agregat.alpha, 3),
@@ -224,7 +255,12 @@ export function rakitKonteksSatu(
 }
 
 export function rakitKonteksSemua(
-  daftar: Array<{ agregat: Agregat; instrumen: InstrumenInfo; judulRekomendasi?: string[] }>,
+  daftar: Array<{
+    agregat: Agregat;
+    instrumen: InstrumenInfo;
+    judulRekomendasi?: string[];
+    topikKomentar?: string[];
+  }>,
   respondenUnik = 0
 ): KonteksSemua {
   const indeksRata = daftar.length
@@ -241,7 +277,7 @@ export function rakitKonteksSemua(
       jumlah_instrumen: daftar.length,
       responden_unik: respondenUnik
     },
-    instrumen: daftar.map(({ agregat, instrumen, judulRekomendasi }) => {
+    instrumen: daftar.map(({ agregat, instrumen, judulRekomendasi, topikKomentar }) => {
       const terendah = agregat.butirTerendah;
       return {
         kode: instrumen.nama,
@@ -253,7 +289,8 @@ export function rakitKonteksSemua(
         butir_terendah: terendah
           ? { kode: terendah.kode, aspek: terendah.label, skor: bulat(terendah.rata, 2) }
           : null,
-        judul_rekomendasi: judulRekomendasi ?? []
+        judul_rekomendasi: judulRekomendasi ?? [],
+        topik_komentar: (topikKomentar ?? []).slice(0, 2)
       };
     })
   };

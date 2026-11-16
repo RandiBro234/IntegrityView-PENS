@@ -167,3 +167,51 @@ test('konteks tetap jauh di bawah ambang biaya', () => {
   );
   assert.ok(terbesar < 10_000, `konteks ${terbesar} byte terlalu besar`);
 });
+
+/* ---------------------------------------------------------------------------
+   Rekomendasi jawaban terbuka
+   --------------------------------------------------------------------------- */
+
+const KELOMPOK_CONTOH = [
+  {
+    label: 'Transparansi, korupsi',
+    prioritas: 'Tinggi',
+    jumlah: 55,
+    porsi: 0.49,
+    kata_kunci: ['transparansi', 'korupsi'],
+    saran_langkah: 'Perkuat sistem informasi kerja untuk mencegah korupsi.'
+  }
+];
+
+test('konteks satu instrumen memuat kelompok jawaban terbuka', () => {
+  const konteks = rakitKonteksSatu(
+    agregatDari('spak'),
+    instrumenDari('spak'),
+    AMBANG,
+    [],
+    KELOMPOK_CONTOH
+  );
+
+  assert.equal(konteks.rekomendasi_terbuka.length, 1);
+  assert.equal(konteks.rekomendasi_terbuka[0].label, 'Transparansi, korupsi');
+  assert.equal(konteks.rekomendasi_terbuka[0].porsi_persen, 49);
+  assert.equal(konteks.rekomendasi_terbuka[0].saran_langkah, KELOMPOK_CONTOH[0].saran_langkah);
+});
+
+test('kelompok jawaban terbuka tidak membawa teks komentar mentah', () => {
+  const teks = JSON.stringify(
+    rakitKonteksSatu(agregatDari('spak'), instrumenDari('spak'), AMBANG, [], KELOMPOK_CONTOH)
+  );
+  assert.ok(!teks.includes('Perlu sosialisasi rutin'), 'komentar mentah bocor lewat rekomendasi terbuka');
+  assert.doesNotMatch(teks, /@/);
+});
+
+test('ringkasan semua membatasi topik komentar maksimal dua', () => {
+  const konteks = rakitKonteksSemua(
+    DAFTAR_SEMUA.map((d) => ({ ...d, topikKomentar: ['Satu', 'Dua', 'Tiga'] })),
+    500
+  );
+  for (const info of konteks.instrumen) {
+    assert.deepEqual(info.topik_komentar, ['Satu', 'Dua']);
+  }
+});
