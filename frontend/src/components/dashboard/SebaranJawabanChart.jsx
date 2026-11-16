@@ -28,15 +28,21 @@ export default function SebaranJawabanChart({ data, selectedKey, onSelect, onOpe
   /* Ukur lebar batang sebelum paint agar label persen langsung muncul tanpa
      harus memicu resize/zoom dulu. */
   useLayoutEffect(() => {
-    const bar = innerRef.current?.querySelector('.sebaran__bar');
-    if (!bar) return;
-    /* offsetWidth mengabaikan transform animasi scaleX(0), jadi label persen
-       sudah terukur sejak render pertama tanpa menunggu resize. */
-    const ukur = () => setBarWidth(bar.offsetWidth);
-    ukur();
+    const inner = innerRef.current;
+    if (!inner) return;
+
+    const ukur = () => {
+      const bar = inner.querySelector('.sebaran__bar');
+      setBarWidth(bar?.offsetWidth || 0);
+    };
+    const frame = requestAnimationFrame(ukur);
     const ro = new ResizeObserver(ukur);
-    ro.observe(bar);
-    return () => ro.disconnect();
+    ro.observe(inner);
+
+    return () => {
+      cancelAnimationFrame(frame);
+      ro.disconnect();
+    };
   }, [data]);
 
   if (!data || !data.length) {
