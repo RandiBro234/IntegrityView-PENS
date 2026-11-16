@@ -106,6 +106,7 @@ export default function ReportTemplate({ info, st, rekomendasi, periode, tanggal
                   <div>
                     <p className="rt__rek-teks">{r.judul}</p>
                     <p className="rt__rek-dasar">Dasar data: {r.dasar}</p>
+                    {r.saran && <p className="rt__rek-dasar">Saran langkah: {r.saran}</p>}
                   </div>
                 </li>
               ))}

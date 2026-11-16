@@ -19,7 +19,6 @@ export function getDelta(aktif, pembanding) {
 export function rekomendasiUntuk(agregatAktif, agregatBanding, perubahanButir) {
   if (!agregatAktif) return [];
   const daftar = [];
-  const k = agregatAktif.jumlahButir;
 
   agregatAktif.butir.forEach((b) => {
     const tinggi = b.rata < AMBANG.rataRataTinggi || b.persenNegatif >= AMBANG.negatifTinggi;
@@ -28,7 +27,7 @@ export function rekomendasiUntuk(agregatAktif, agregatBanding, perubahanButir) {
     daftar.push({
       prioritas: tinggi ? 'Tinggi' : 'Pantau',
       judul: `Perkuat aspek ${b.label}`,
-      dasar: `rata-rata ${b.rata.toFixed(2).replace('.', ',')}, terendah dari ${k} butir`
+      dasar: `rata-rata ${b.rata.toFixed(2).replace('.', ',')} dari skala 1–4`
         + (b.persenNegatif >= AMBANG.negatifPantau ? `; ${b.persenNegatif.toFixed(1).replace('.', ',')}% menjawab 1-2` : '')
     });
   });

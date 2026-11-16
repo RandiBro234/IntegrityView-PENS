@@ -38,6 +38,12 @@ export default function RecommendationList({ items, max = 3, onDetail, compact =
             )}
           </div>
           <p className="reclist__dasar" title={r.dasar}>{r.dasar}</p>
+          {r.saran && (
+            <p className="reclist__saran">
+              <span className="reclist__saran-label">Saran langkah</span>
+              {r.saran}
+            </p>
+          )}
         </li>
       ))}
     </ul>

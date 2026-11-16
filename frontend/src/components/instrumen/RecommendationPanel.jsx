@@ -104,7 +104,10 @@ export default function RecommendationPanel({ items = [], judul = 'Semua Rekomen
                       <p className="rek-panel__teks">{r.judul}</p>
                     </div>
                     <p className="rek-panel__meta"><span>Dasar data</span>{r.dasar}</p>
-                    <p className="rek-panel__meta"><span>Tindak lanjut</span>{TINDAK_LANJUT[r.prioritas] || TINDAK_LANJUT.Pantau}</p>
+                    <p className="rek-panel__meta">
+                      <span>{r.saran ? 'Saran langkah' : 'Tindak lanjut'}</span>
+                      {r.saran || TINDAK_LANJUT[r.prioritas] || TINDAK_LANJUT.Pantau}
+                    </p>
                   </li>
                 ))}
               </ol>

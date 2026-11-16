@@ -8,12 +8,16 @@ import PeriodHeatmap from '../components/dashboard/PeriodHeatmap';
 import ReportFilters from '../components/dashboard/ReportFilters';
 import RingkasanDashboardTemplate from '../components/dashboard/RingkasanDashboardTemplate';
 import { getReportData } from '../data/surveyData';
+import { useRekomendasiTerbuka } from '../data/survey/rekomendasiTerbuka.js';
 import { useReportFilters } from '../data/useReportFilters';
 import { useAuth } from '../auth/AuthProvider';
 import { unduhLaporanPdf, namaFileLaporan } from '../lib/reportPdf';
 import './Dashboard.css';
 
 export default function Dashboard({ onBackToLanding, onNavigate, onOpenInstrument }) {
+  /* Berlangganan hasil klasterisasi komentar supaya daftar rekomendasi ikut
+     diperbarui saat datanya tiba. */
+  useRekomendasiTerbuka();
   const { user } = useAuth();
   const { filter, setFilter, siap } = useReportFilters();
   const [selectedKey, setSelectedKey] = useState(null);

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { DEFAULT_FILTER, normalisasiFilter, muatDataSurvei } from './surveyData';
+import { muatRekomendasiTerbuka } from './survey/rekomendasiTerbuka.js';
 import { FilterContext } from './useReportFilters';
 
 function dariUrl() {
@@ -15,6 +16,9 @@ export function ReportFilterProvider({ children }) {
   /* Muat data asli sekali; selector membaca store yang sama. */
   useEffect(() => {
     let aktif = true;
+    /* Rekomendasi terbuka dimuat terpisah: kegagalannya tidak boleh menahan
+       dashboard, yang masih bisa tampil dengan rekomendasi skor. */
+    void muatRekomendasiTerbuka();
     muatDataSurvei().then(() => { if (aktif) setSiap(true); });
     return () => { aktif = false; };
   }, []);

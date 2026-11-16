@@ -3,6 +3,11 @@ import { DEFAULT_FILTER, PERIODE } from './constants.js';
 import { cacheLaporan } from './cache.js';
 import { normalisasiFilter } from './filters.js';
 import { arahPerubahan, getDelta, rekomendasiUntuk } from './recommendations.js';
+import {
+  gabungRekomendasi,
+  rekomendasiTerbukaUntuk,
+  snapshotRekomendasi
+} from './rekomendasiTerbuka.js';
 import { rata } from './statistics.js';
 import { agregat } from './aggregates.js';
 import { store } from './store.js';
@@ -12,7 +17,7 @@ import { store } from './store.js';
    --------------------------------------------------------------------- */
 export function getReportData(pilihan = DEFAULT_FILTER) {
   const filter = normalisasiFilter(pilihan);
-  const kunci = `${filter.periode}|${filter.pembanding}|${filter.kategori}|${store.loaded}|${store.records.length}`;
+  const kunci = `${filter.periode}|${filter.pembanding}|${filter.kategori}|${store.loaded}|${store.records.length}|${snapshotRekomendasi().versi}`;
   if (cacheLaporan.has(kunci)) return cacheLaporan.get(kunci);
 
   const idxPeriode = PERIODE.findIndex((p) => p.key === filter.periode);
@@ -75,7 +80,10 @@ export function getReportData(pilihan = DEFAULT_FILTER) {
         persenSetuju: b.persenSetuju,
         n: aktif.n
       })) : [],
-      rekomendasi: rekomendasiUntuk(aktif, banding, perubahanButir),
+      rekomendasi: gabungRekomendasi(
+        rekomendasiUntuk(aktif, banding, perubahanButir),
+        rekomendasiTerbukaUntuk(info.nama, periode.key)
+      ),
       tren
     };
   });

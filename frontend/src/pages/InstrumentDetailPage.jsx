@@ -9,10 +9,14 @@ import { unduhLaporanPdf, namaFileLaporan } from '../lib/reportPdf';
 import { formatAngka } from '../data/mock';
 import { keSkor } from '../lib/formatSkor';
 import { getInstrumen, getReportData, SKALA } from '../data/surveyData';
+import { useRekomendasiTerbuka } from '../data/survey/rekomendasiTerbuka.js';
 import { useReportFilters } from '../data/useReportFilters';
 import './InstrumentDetailPage.css';
 
 export default function InstrumentDetailPage({ slug, onBack }) {
+  /* Berlangganan hasil klasterisasi: saat data tiba, daftar rekomendasi ikut
+     diperbarui tanpa memuat ulang halaman. */
+  useRekomendasiTerbuka();
   const [modal, setModal] = useState(null);
   const [tab, setTab] = useState('distribusi');
   const [tip, setTip] = useState(null);
@@ -283,6 +287,9 @@ export default function InstrumentDetailPage({ slug, onBack }) {
               </span>
               <p className="idp__modal-rek-teks">{modal.rekomendasi.judul}</p>
               <p className="idp__modal-rek-dasar">Dasar data: {modal.rekomendasi.dasar}</p>
+              {modal.rekomendasi.saran && (
+                <p className="idp__modal-rek-dasar">Saran langkah: {modal.rekomendasi.saran}</p>
+              )}
             </div>
           </div>
         </div>
