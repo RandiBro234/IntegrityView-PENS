@@ -17,6 +17,7 @@ export default function RingkasanCards({ ringkasan, pembanding }) {
   ].filter(Boolean).join('\n');
 
   const catatanResponden = [
+    'Total pengisian menjumlahkan respons dari seluruh instrumen; satu orang dapat terhitung lebih dari sekali.',
     `Dosen: ${r.responden.dosen.toLocaleString('id-ID')}`,
     `Tenaga Kependidikan: ${r.responden.tendik.toLocaleString('id-ID')}`
   ].join('\n');
@@ -41,13 +42,13 @@ export default function RingkasanCards({ ringkasan, pembanding }) {
 
       <Reveal as="article" className="rcard" delay={70}>
         <div className="rcard__top">
-          <p className="rcard__eyebrow">Jumlah Responden</p>
-          <InfoTip label="Rincian responden" teks={catatanResponden} />
+          <p className="rcard__eyebrow">Total Pengisian</p>
+          <InfoTip label="Rincian pengisian" teks={catatanResponden} />
         </div>
         <div className="rcard__main">
           <strong className="rcard__num"><CountUp value={r.responden.total} /></strong>
           {r.deltaResponden != null && r.deltaResponden !== 0 && (
-            <span className="rcard__delta" title={vs}><Delta value={r.deltaResponden} unit="responden" /></span>
+            <span className="rcard__delta" title={vs}><Delta value={r.deltaResponden} unit="pengisian" /></span>
           )}
         </div>
       </Reveal>

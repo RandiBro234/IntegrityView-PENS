@@ -77,7 +77,7 @@ export default function AuthPage({ onSuccess, onBack }) {
             </div>
             <div className="auth__brand-stat">
               <span className="auth__brand-stat-num">{ringkasan.responden.total.toLocaleString('id-ID')}</span>
-              <span className="auth__brand-stat-label">Responden aktif</span>
+              <span className="auth__brand-stat-label">Total pengisian</span>
             </div>
             <div className="auth__brand-stat">
               <span className="auth__brand-stat-num">{ringkasan.totalInstrumen}</span>

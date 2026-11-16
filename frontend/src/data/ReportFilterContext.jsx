@@ -21,8 +21,17 @@ export function ReportFilterProvider({ children }) {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    Object.entries(filter).forEach(([key, value]) => params.set(key, value));
-    window.history.replaceState(null, '', `${window.location.pathname}?${params}${window.location.hash}`);
+    /* Filter default tidak ditulis ke URL agar alamat tetap bersih. Filter yang
+       diubah tetap disimpan supaya tautan bisa dibagikan dan dibuka kembali. */
+    Object.entries(filter).forEach(([key, value]) => {
+      if (value === DEFAULT_FILTER[key]) params.delete(key);
+      else params.set(key, value);
+    });
+    const query = params.toString();
+    const alamat = query
+      ? `${window.location.pathname}?${query}${window.location.hash}`
+      : `${window.location.pathname}${window.location.hash}`;
+    window.history.replaceState(null, '', alamat);
   }, [filter]);
 
   useEffect(() => {

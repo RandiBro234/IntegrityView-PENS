@@ -91,7 +91,11 @@ export default function App() {
     else params.delete('page');
     if (page === 'instrumen-detail' && instrumenSlug) params.set('instrumen', instrumenSlug);
     else params.delete('instrumen');
-    window.history.replaceState(null, '', `${window.location.pathname}?${params}${window.location.hash}`);
+    const query = params.toString();
+    const alamat = query
+      ? `${window.location.pathname}?${query}${window.location.hash}`
+      : `${window.location.pathname}${window.location.hash}`;
+    window.history.replaceState(null, '', alamat);
   }, [page, instrumenSlug]);
 
   useEffect(() => {
