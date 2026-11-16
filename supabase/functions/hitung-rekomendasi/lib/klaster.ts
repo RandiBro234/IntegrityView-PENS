@@ -223,10 +223,13 @@ function ukuranMinimum(n: number): number {
 
 export function pilihK(
   vektor: number[][],
-  opsi: { maksK?: number; benih?: number } = {}
+  opsi: { maksK?: number; benih?: number; sampel?: number } = {}
 ): HasilPilihK {
   const maksK = opsi.maksK ?? 5;
   const benih = opsi.benih ?? 42;
+  /* Silhouette biaya O(n^2). Dihitung pada sampel pertama yang deterministik:
+     urutan dokumen berasal dari query yang terurut, jadi sampelnya tetap. */
+  const maksSampel = Math.max(3, opsi.sampel ?? 300);
 
   if (vektor.length < 3) {
     const satu = kmeans(vektor, 1, { benih });
@@ -245,7 +248,8 @@ export function pilihK(
     hasil.label.forEach((l) => (cacah[l] += 1));
     if (cacah.some((c) => c < minimum)) continue;
 
-    const skor = silhouette(vektor, hasil.label);
+    const potong = Math.min(vektor.length, maksSampel);
+    const skor = silhouette(vektor.slice(0, potong), hasil.label.slice(0, potong));
     if (skor == null) continue;
     if (!terbaik || (terbaik.silhouette ?? -2) < skor) {
       terbaik = { k, label: hasil.label, pusat: hasil.pusat, silhouette: skor };

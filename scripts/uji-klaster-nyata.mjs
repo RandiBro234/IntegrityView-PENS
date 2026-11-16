@@ -1,11 +1,10 @@
-/* Menjalankan pipeline klasterisasi pada data asli, tanpa menyimpan apa pun.
+/* Menjalankan pipeline rekomendasi pada data asli, tanpa menyimpan apa pun.
 
-   Berguna untuk melihat hasil sebelum Edge Function dibangun: berapa kelompok
-   yang terbentuk, kata kunci tiap kelompok, dan berapa komentar yang tercakup.
+   Berguna untuk melihat hasil sebelum Edge Function dijalankan: berapa kelompok
+   yang terbentuk, labelnya, kata kunci, dan berapa komentar yang tercakup.
+   Isi komentar tidak pernah dicetak; hanya label dan kata kunci.
 
-   Hanya jumlah dan kata kunci yang dicetak. Isi komentar tidak ditampilkan.
-
-   Jalankan: node --experimental-strip-types scripts/uji-klaster-nyata.mjs [instrumen]
+   Jalankan: node --experimental-strip-types scripts/uji-klaster-nyata.mjs [instrumen] [periode]
 */
 
 import { readFile } from 'node:fs/promises';
@@ -39,76 +38,45 @@ for (let offset = 0; ;) {
   offset += halaman.length;
 }
 
-const teks = await import(pathToFileURL(resolve(AKAR, 'supabase/functions/hitung-rekomendasi/lib/teks.ts')).href);
-const tfidf = await import(pathToFileURL(resolve(AKAR, 'supabase/functions/hitung-rekomendasi/lib/tfidf.ts')).href);
-const klaster = await import(pathToFileURL(resolve(AKAR, 'supabase/functions/hitung-rekomendasi/lib/klaster.ts')).href);
-const norm = await import(pathToFileURL(resolve(AKAR, 'frontend/src/data/survey/normalize.js')).href);
+const impor = (jalur) => import(pathToFileURL(resolve(AKAR, jalur)).href);
+const { komentarPeriode } = await impor('supabase/functions/hitung-rekomendasi/lib/sumber.ts');
+const { bentukKelompok, prioritasDari } = await impor('supabase/functions/hitung-rekomendasi/lib/kelompok.ts');
+const { periodeDariTanggal, urutkanPeriode } = await impor('supabase/functions/hitung-rekomendasi/lib/periode.ts');
 
-const META = new Set(['kelompok', 'email', 'email address', 'timestamp', 'nama', 'unit kerja', 'jabatan']);
-
-function komentarDari(row) {
-  for (const [k, v] of Object.entries(row.data_jawaban || {})) {
-    if (META.has(k.toLowerCase())) continue;
-    const s = String(v ?? '').trim();
-    if (!s || s === '-' || /^-?\d+(\.\d+)?$/.test(s)) continue;
-    if (s.length > 3) return s;
-  }
-  return null;
-}
-
-function periodeDari(iso) {
-  const d = new Date(new Date(iso).getTime() + 7 * 3600e3);
-  const b = d.getUTCMonth() + 1, t = d.getUTCFullYear();
-  return b >= 9 ? `${t}-ganjil` : b <= 2 ? `${t - 1}-ganjil` : `${t}-genap`;
-}
-
-const PERIODE = '2026-ganjil';
-const SEMUA = !process.argv[2];
+const pilihInstrumen = process.argv[2] || null;
+const pilihPeriode = process.argv[3] || null;
 
 const perInstrumen = new Map();
 for (const row of rows) {
-  if (periodeDari(row.created_at) !== PERIODE) continue;
-  const t = komentarDari(row);
-  if (!t) continue;
+  const p = periodeDariTanggal(row.created_at);
+  if (!p) continue;
+  if (pilihPeriode && p !== pilihPeriode) continue;
+  if (pilihInstrumen && row.nama_instrumen.toLowerCase() !== pilihInstrumen.toLowerCase()) continue;
   if (!perInstrumen.has(row.nama_instrumen)) perInstrumen.set(row.nama_instrumen, []);
-  perInstrumen.get(row.nama_instrumen).push(t);
+  perInstrumen.get(row.nama_instrumen).push(row);
 }
 
-const pilih = process.argv[2];
-const daftar = pilih ? [[pilih, perInstrumen.get(pilih) ?? []]] : [...perInstrumen.entries()];
+const periodeTampil = pilihPeriode || urutkanPeriode([...new Set(rows.map((r) => periodeDariTanggal(r.created_at)).filter(Boolean))])[0];
 
-console.log(`\n  Klasterisasi komentar · periode ${PERIODE}\n`);
+console.log(`\n  Rekomendasi jawaban terbuka · periode ${periodeTampil}\n`);
 
-for (const [nama, komentar] of daftar.sort((a, b) => b[1].length - a[1].length)) {
-  const tidakSensitif = komentar.filter((t) => !norm.jawabanSensitif(t));
-  const unik = [...new Set(tidakSensitif)];
+for (const [nama, daftar] of [...perInstrumen.entries()].sort()) {
+  const komentar = komentarPeriode(daftar, periodeTampil);
+  const hasil = bentukKelompok(komentar);
 
-  console.log(`  ${nama.toUpperCase()}`);
-  console.log(`    komentar ${komentar.length} · tidak sensitif ${tidakSensitif.length} · unik ${unik.length}`);
+  console.log(`  ${nama.toUpperCase()}  (${hasil.jumlahKomentar} komentar, ${hasil.jumlahUnik} unik, ${hasil.tanpaKata} tanpa kata)`);
 
-  if (unik.length < 3) {
-    console.log('    → terlalu sedikit untuk diklasterisasi\n');
+  if (!hasil.kelompok.length) {
+    console.log('    → belum cukup komentar untuk dikelompokkan\n');
     continue;
   }
 
-  const dokumen = unik.map((t) => teks.praproses(t));
-  const kosong = dokumen.filter((d) => d.length === 0).length;
-  const { vektor, kosakata } = tfidf.hitungTfIdf(dokumen);
-  const hasil = klaster.pilihK(vektor, { maksK: 5, benih: 42 });
-
-  /* Jumlah komentar asli per klaster (bukan jumlah teks unik). */
-  const indeksUnik = new Map(unik.map((t, i) => [t, hasil.label[i]]));
-  const cacahKomentar = new Array(hasil.k).fill(0);
-  for (const t of tidakSensitif) {
-    const l = indeksUnik.get(t);
-    if (l !== undefined) cacahKomentar[l] += 1;
-  }
-
-  console.log(`    → k=${hasil.k} · silhouette ${hasil.silhouette == null ? '-' : hasil.silhouette.toFixed(3)} · dokumen tanpa kata berguna ${kosong}`);
-  for (let c = 0; c < hasil.k; c++) {
-    const kata = tfidf.kataTeratas(hasil.pusat[c], kosakata, 5).map((x) => x.kata);
-    const porsi = ((cacahKomentar[c] / tidakSensitif.length) * 100).toFixed(0);
-    console.log(`      klaster ${c + 1}: ${String(cacahKomentar[c]).padStart(4)} komentar (${porsi}%)  [${kata.join(', ')}]`);
+  console.log(`    k=${hasil.k} · silhouette ${hasil.silhouette == null ? '-' : hasil.silhouette.toFixed(3)}`);
+  for (const k of hasil.kelompok) {
+    const porsi = (k.porsi * 100).toFixed(0);
+    console.log(
+      `      [${prioritasDari(k.porsi).padEnd(6)}] ${String(k.jumlah).padStart(4)} (${porsi.padStart(3)}%)  ${k.label}  ·  ${k.kata_kunci.join(', ')}`
+    );
   }
   console.log('');
 }

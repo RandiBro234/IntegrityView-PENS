@@ -16,7 +16,7 @@ import { buatClient } from '../_shared/supabase.ts';
 import registri from './lib/instrumen.json' with { type: 'json' };
 import { ambilBaris, kumpulkan } from './lib/sumber.ts';
 import { jawabChat } from './lib/penjawab.ts';
-import { tanyaLlm } from './lib/llm.ts';
+import { tanyaLlm } from '../_shared/llm.ts';
 import { buatCache } from './lib/cache.ts';
 
 const BATAS_PER_JAM = Number(Deno.env.get('CHAT_BATAS_PER_JAM') || 20);

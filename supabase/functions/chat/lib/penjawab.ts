@@ -12,7 +12,7 @@
 import { PayloadError } from '../../_shared/errors.ts';
 import { pilihInstrumen, rakitKonteksSatu, rakitKonteksSemua, ukuranKonteks, type Konteks } from './konteks.ts';
 import { susunPesan } from './prompt.ts';
-import { LlmTidakTersedia, LlmKuotaHabis, LlmSibuk } from './llm.ts';
+import { LlmTidakTersedia, LlmKuotaHabis, LlmSibuk } from '../../_shared/llm.ts';
 import { rapikanJawaban } from './format.ts';
 import { deteksiPeriode } from './periode.ts';
 import { validasiChat } from './validasi.ts';

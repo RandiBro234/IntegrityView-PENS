@@ -75,8 +75,38 @@ Deno.serve(async (req: Request) => {
     return json({ error: error.message }, 500);
   }
 
+  /* Hitung ulang rekomendasi jawaban terbuka di latar belakang. Tidak ditunggu
+     di jalur respons supaya pengiriman Google Form tidak ikut lambat bila model
+     bahasa sedang sibuk. Kegagalan di sini tidak membatalkan penyimpanan. */
+  picuRekomendasi();
+
   return json({
     status: 'success',
     message: `Data ${instrumen} tersimpan.`
   });
 });
+
+function picuRekomendasi(): void {
+  const url = Deno.env.get('SUPABASE_URL');
+  const kunci = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+  if (!url || !kunci) return;
+
+  const tugas = fetch(`${url.replace(/\/$/, '')}/functions/v1/hitung-rekomendasi`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${kunci}`,
+      'Content-Type': 'application/json'
+    },
+    body: '{}',
+    signal: AbortSignal.timeout(120_000)
+  })
+    .then(async (res) => {
+      if (!res.ok) console.error(`hitung-rekomendasi membalas HTTP ${res.status}`);
+    })
+    .catch((err) => console.error('Gagal memicu hitung-rekomendasi:', err?.name ?? err));
+
+  /* waitUntil tersedia di runtime Edge Function; saat dites di Node tidak ada,
+     jadi tugas hanya dilepas tanpa ditunggu. */
+  const runtime = (globalThis as { EdgeRuntime?: { waitUntil(p: Promise<unknown>): void } }).EdgeRuntime;
+  if (runtime?.waitUntil) runtime.waitUntil(tugas);
+}

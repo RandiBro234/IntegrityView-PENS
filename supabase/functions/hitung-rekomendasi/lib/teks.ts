@@ -209,14 +209,21 @@ export function akarKata(kata: string): string {
 
 /* Token akhir untuk TF-IDF: dinormalisasi, tanpa stopword, sudah di-stem. */
 export function praproses(teks: string): string[] {
+  return tokenBermakna(teks).map((x) => x.akar);
+}
+
+/* Sama seperti praproses, tetapi menyimpan bentuk asli sebelum di-stem.
+   Dibutuhkan untuk menampilkan label kelompok dengan kata yang terbaca
+   manusia ("transparansi", bukan "transpar"). */
+export function tokenBermakna(teks: string): Array<{ asal: string; akar: string }> {
   return tokenisasi(teks)
     .filter((k) => k.length >= 3)
     .filter((k) => !STOPWORD.has(k))
     .filter((k) => !KATA_UMUM.has(k))
-    .map(akarKata)
-    .filter((k) => k.length >= 4)
-    .filter((k) => !STOPWORD.has(k))
-    .filter((k) => !KATA_UMUM.has(k));
+    .map((k) => ({ asal: k, akar: akarKata(k) }))
+    .filter((x) => x.akar.length >= 4)
+    .filter((x) => !STOPWORD.has(x.akar))
+    .filter((x) => !KATA_UMUM.has(x.akar));
 }
 
 /* Bigram (dua kata berdampingan) supaya frasa seperti "kanal pelaporan"
@@ -227,11 +234,37 @@ export function bigram(tokens: string[]): string[] {
   return hasil;
 }
 
-/* Kata yang dikirim ke model bahasa: disaring, tanpa nama diri, maksimal 5. */
-export function kataKunciUntukModel(tokens: string[], maksimal = 5): string[] {
-  return tokens
-    .filter((k) => k.length >= 4 && k.length <= 24)
-    .filter((k) => !/\d/.test(k))
-    .filter((k) => !k.includes('_'))
-    .slice(0, maksimal);
+/* Kata yang dikirim ke model bahasa: disaring, tanpa nama diri, maksimal 5.
+   `namaKapital` berisi kata yang seluruhnya kapital di teks asli; kata seperti
+   itu sering singkatan unit atau nama orang, jadi dibuang. */
+export function kataKunciUntukModel(
+  kata: string[],
+  maksimal = 5,
+  namaKapital: ReadonlySet<string> = new Set<string>()
+): string[] {
+  const hasil: string[] = [];
+
+  for (const k of kata) {
+    if (k.length < 4 || k.length > 24) continue;
+    if (/\d/.test(k)) continue;
+    if (k.includes('_')) continue;
+    if (namaKapital.has(k.toLowerCase())) continue;
+    if (hasil.includes(k)) continue;
+    hasil.push(k);
+    if (hasil.length >= maksimal) break;
+  }
+
+  return hasil;
+}
+
+/* Kata yang ditulis kapital seluruhnya di teks asli. Dipakai menyaring nama
+   diri dan singkatan sebelum kata kunci dikirim ke model bahasa. */
+export function kataKapital(teksList: string[]): Set<string> {
+  const hasil = new Set<string>();
+  for (const teks of teksList) {
+    for (const kata of String(teks).match(/\b[A-Z][A-Z0-9]{2,}\b/g) ?? []) {
+      hasil.add(kata.toLowerCase());
+    }
+  }
+  return hasil;
 }

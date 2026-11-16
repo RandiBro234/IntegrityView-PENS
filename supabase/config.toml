@@ -19,3 +19,8 @@ verify_jwt = true
 # Validasi dilakukan di dalam function (panjang pertanyaan, rate limit per IP).
 [functions.chat]
 verify_jwt = false
+
+# Rekomendasi jawaban terbuka dipicu server (webhook/cron), bukan pengunjung.
+# Function memeriksa klaim role = service_role selain verifikasi JWT.
+[functions.hitung-rekomendasi]
+verify_jwt = true

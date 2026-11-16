@@ -1,4 +1,4 @@
-/* Tes prompt dan pembungkus LLM.
+﻿/* Tes prompt dan pembungkus LLM.
 
    Yang dijaga: isi aturan, bentuk permintaan ke penyedia, dan bahwa semua
    kegagalan diterjemahkan menjadi error yang bisa ditangani endpoint.
@@ -13,7 +13,7 @@ import { dirname, resolve, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { ATURAN, susunPesan } from '../lib/prompt.ts';
-import { tanyaLlm, LlmTidakTersedia, LlmKuotaHabis } from '../lib/llm.ts';
+import { tanyaLlm, LlmTidakTersedia, LlmKuotaHabis } from '../../_shared/llm.ts';
 
 const AKAR = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 

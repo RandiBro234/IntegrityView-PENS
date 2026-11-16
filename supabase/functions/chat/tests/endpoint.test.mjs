@@ -1,4 +1,4 @@
-/* Tes endpoint /chat: validasi, batas pemakaian, kegagalan, dan bentuk hasil.
+﻿/* Tes endpoint /chat: validasi, batas pemakaian, kegagalan, dan bentuk hasil.
 
    Endpoint diuji lewat jawabChat() (inti logika), bukan Deno.serve, supaya
    bisa dijalankan dengan Node tanpa Edge Runtime.
@@ -14,7 +14,7 @@ import { fileURLToPath } from 'node:url';
 
 import { jawabChat, cariDasar } from '../lib/penjawab.ts';
 import { kumpulkan, periodeTerbaru, ambilBaris, UKURAN_HALAMAN } from '../lib/sumber.ts';
-import { LlmTidakTersedia } from '../lib/llm.ts';
+import { LlmTidakTersedia } from '../../_shared/llm.ts';
 import { validasiChat, MAKS_PERTANYAAN } from '../lib/validasi.ts';
 
 const AKAR = resolve(dirname(fileURLToPath(import.meta.url)), '..');
