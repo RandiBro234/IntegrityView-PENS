@@ -113,7 +113,14 @@ export function rekomendasiTerbukaUntuk(slugAtauNama, periode) {
       saran: b.saran_langkah || null,
       sumber: 'komentar',
       jumlah: b.jumlah,
-      porsi: Number(b.porsi)
+      porsi: Number(b.porsi),
+      /* Dipakai untuk menandai kelompok yang dibentuk dari sedikit kalimat
+         berbeda (ciri data sintetis), supaya pembaca tidak menganggapnya
+         sebagai ragam pendapat yang luas. */
+      jumlahUnik: Number(b.jumlah_unik ?? 0),
+      jumlahKomentar: Number(b.jumlah_komentar ?? 0),
+      tanpaKata: Number(b.jumlah_tanpa_kata ?? 0),
+      silhouette: b.silhouette == null ? null : Number(b.silhouette)
     }));
 }
 

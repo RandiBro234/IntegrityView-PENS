@@ -267,6 +267,18 @@ export default function InstrumentDetailPage({ slug, onBack }) {
                 </ul>
               </div>
             )}
+            {(() => {
+              const terbuka = rekomendasi.filter((r) => r.sumber === 'komentar');
+              if (!terbuka.length) return null;
+              const unik = Math.max(...terbuka.map((r) => r.jumlahUnik ?? 0));
+              const rendah = terbuka.some((r) => (r.jumlahUnik ?? 0) > 0 && (r.jumlahUnik ?? 0) <= 10);
+              return (
+                <p className="idp__panel-note">
+                  Kelompok jawaban terbuka: {terbuka.length} kelompok dari {unik} kalimat berbeda.
+                  {rendah ? ' Variasi rendah, jadi kelompok ini belum menggambarkan ragam pendapat.' : ''}
+                </p>
+              );
+            })()}
             <p className="idp__panel-note">
               Teks mentah tidak ditampilkan. Jawaban sensitif diarahkan ke alur WBS.
             </p>
@@ -287,9 +299,25 @@ export default function InstrumentDetailPage({ slug, onBack }) {
               </span>
               <p className="idp__modal-rek-teks">{modal.rekomendasi.judul}</p>
               <p className="idp__modal-rek-dasar">Dasar data: {modal.rekomendasi.dasar}</p>
+              {modal.rekomendasi.sumber === 'komentar' && (
+                <p className="idp__modal-rek-dasar">
+                  Kelompok: {modal.rekomendasi.jumlah} komentar dari {modal.rekomendasi.jumlahUnik} kalimat berbeda
+                  {modal.rekomendasi.silhouette != null
+                    ? ` · silhouette ${modal.rekomendasi.silhouette.toFixed(3)}`
+                    : ''}
+                </p>
+              )}
               {modal.rekomendasi.saran && (
                 <p className="idp__modal-rek-dasar">Saran langkah: {modal.rekomendasi.saran}</p>
               )}
+              {modal.rekomendasi.sumber === 'komentar'
+                && modal.rekomendasi.jumlahUnik > 0
+                && modal.rekomendasi.jumlahUnik <= 10 && (
+                  <p className="idp__modal-rek-dasar">
+                    Variasi komentar rendah: hanya {modal.rekomendasi.jumlahUnik} kalimat berbeda, jadi
+                    kelompok ini belum menggambarkan ragam pendapat.
+                  </p>
+                )}
             </div>
           </div>
         </div>

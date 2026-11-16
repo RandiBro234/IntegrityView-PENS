@@ -129,6 +129,19 @@ export default function ReportTemplate({ info, st, rekomendasi, periode, tanggal
                 Tema jawaban terbuka: <strong>{st.kualitas.tema.map((t) => `${t.tema} (${t.jumlah})`).join(', ')}</strong>.
               </li>
             )}
+            {(() => {
+              const terbuka = rekomendasi.filter((r) => r.sumber === 'komentar');
+              if (!terbuka.length) return null;
+              const unik = Math.max(...terbuka.map((r) => r.jumlahUnik ?? 0));
+              const rendah = terbuka.some((r) => (r.jumlahUnik ?? 0) > 0 && (r.jumlahUnik ?? 0) <= 10);
+              return (
+                <li>
+                  Kelompok jawaban terbuka: <strong>{terbuka.length}</strong> kelompok dari{' '}
+                  <strong>{unik}</strong> kalimat berbeda
+                  {rendah ? '; variasi rendah, belum menggambarkan ragam pendapat' : ''}.
+                </li>
+              );
+            })()}
             <li>Jumlah responden (n): <strong>{st.n}</strong>.</li>
             {hasil.pembanding && (
               <li>Responden pembanding: <strong>{hasil.pembanding.n}</strong>.</li>
