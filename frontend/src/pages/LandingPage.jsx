@@ -332,11 +332,11 @@ export default function LandingPage({ onEnterDashboard, onKeluar, session }) {
 
                 <Reveal className="landing__bento landing__bento--a" variant="scale-in" delay={280}>
                   <BlobDecor color="#0B1B33" />
-                  <p className="label-eyebrow">Indeks Persepsi Integritas (1–4) {laporan.periode.label}</p>
+                  <p className="label-eyebrow">Indeks Persepsi Integritas (0–100) {laporan.periode.label}</p>
                   <div className="landing__bento-value">
-                    <CountUp value={keSkor(ringkasan.rataSkor)} desimal={2} suffix=" / 4" langsung />
+                    <CountUp value={ringkasan.rataSkor} desimal={1} suffix=" / 100" langsung />
                   </div>
-                  <Delta value={ringkasan.delta} skalaSkor />
+                  <Delta value={ringkasan.delta} />
                 </Reveal>
 
                 <Reveal className="landing__bento landing__bento--b" variant="scale-in" delay={350}>
