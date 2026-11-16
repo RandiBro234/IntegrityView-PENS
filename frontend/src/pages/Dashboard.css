@@ -199,13 +199,13 @@
   .dashboard-shell .app-main { height: auto; min-height: 100dvh; }
   /* Topbar kini dua baris (pencarian turun), jadi tinggi tetap 60px akan memotong. */
   .dashboard-shell .topbar { height: auto; min-height: 56px; padding: 10px var(--pad-page); }
-  .dashboard-shell .app-content { display: block; padding: 16px 16px calc(96px + env(safe-area-inset-bottom)); }
+  .dashboard-shell .app-content { display: block; padding: 16px 16px calc(136px + env(safe-area-inset-bottom)); }
   .dashboard__grid { display: flex; flex-direction: column; height: auto; }
   .dashboard__duo { grid-template-columns: minmax(0, 1fr); }
-  .dashboard__box { min-height: 420px; }
+  .dashboard__box { min-height: auto; }
 }
 @media (max-width: 700px) {
-  .dashboard__box { padding: 16px; min-height: 360px; }
+  .dashboard__box { padding: 14px; min-height: auto; }
   .dashboard__box-head { flex-wrap: wrap; }
   .dashboard__loading-cards { grid-template-columns: 1fr; }
   .dashmodal__overlay { padding: 8px; }
