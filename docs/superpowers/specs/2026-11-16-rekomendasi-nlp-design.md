@@ -210,11 +210,11 @@ Penanda sumber ditampilkan sebagai label kecil di antarmuka.
 Yang dihasilkan dan dapat dilaporkan:
 
 1. **Cakupan komentar**: persentase komentar yang masuk kategori.
-   Baseline kata kunci sekarang vs klasterisasi. Dugaan awal: baseline jauh lebih rendah karena hanya
-   14 kata kunci.
+   Baseline kata kunci sekarang vs klasterisasi. Terukur: baseline mencakup 661/1097 komentar
+   (60,3%), menyisakan 436 komentar tanpa kategori.
 2. **Silhouette score** per kombinasi instrumen–periode.
-3. **Jumlah klaster vs jumlah kalimat unik**, khususnya di delapan instrumen sintetis — menunjukkan metode
-   menemukan struktur yang memang ada di data.
+3. **Jumlah klaster vs jumlah kalimat unik**, khususnya di delapan instrumen sintetis — menunjukkan
+   bahwa kalimat yang berulang menghasilkan k=1, bukan struktur palsu.
 4. **Tabel perbandingan** baseline vs metode usulan.
 
 ---
@@ -255,7 +255,25 @@ Yang dihasilkan dan dapat dilaporkan:
 
 ## 12. Catatan untuk laporan
 
-Delapan instrumen berasal dari data sintetis dengan 8 kalimat tetap. Hasil klasterisasi di instrumen itu
-akan selalu menemukan paling banyak 8 kelompok dengan silhouette tinggi. Itu **bukti metode bekerja**,
-bukan temuan tentang kondisi kampus. Perlu dinyatakan eksplisit di bagian batasan penelitian, dan
-dipisahkan dari hasil SPAK dan Gratifikasi yang memakai komentar asli.
+Delapan instrumen berasal dari data sintetis dengan 6–8 kalimat tetap. Kalimat yang berulang persis
+menghasilkan vektor TF-IDF identik, sehingga `pilihK` umumnya berhenti di **k=1**, bukan memecah menjadi
+banyak kelompok. Hasil itu bukan bukti metode gagal maupun temuan tentang kondisi kampus; ia hanya
+mencerminkan data yang tidak punya struktur untuk ditemukan. Perlu dinyatakan eksplisit di bagian
+batasan penelitian, dan dipisahkan dari hasil SPAK dan Gratifikasi yang komentarnya beragam.
+
+Pengukuran awal (16 Nov 2026, periode 2026-ganjil):
+
+| Instrumen | Komentar | Unik | k | Silhouette |
+|---|---:|---:|---:|---:|
+| SPAK | 149 | 148 | 2 | 0,030 |
+| Gratifikasi | 131 | 131 | 3 | 0,037 |
+| 5R | 22 | 8 | 2 | 0,040 |
+| Delapan instrumen sintetis lain | 15–24 | 6–8 | 1 | – |
+
+Silhouette 0,03–0,04 berarti pemisahan klaster lemah: topik jawaban terbuka bercampur dalam satu
+instrumen. Angka ini disimpan dan dilaporkan apa adanya, bukan dinaikkan dengan memaksa k lebih besar.
+Karena itu dashboard wajib menampilkan jumlah komentar dan kata kunci tiap kelompok, supaya pembaca
+bisa menilai sendiri seberapa rapi kelompok itu.
+
+Baseline kata kunci lama mencakup 661 dari 1097 komentar (60,3%); 436 komentar tidak masuk kategori
+apa pun, dan dua dari empat belas pasangan kata kunci tidak pernah cocok.
