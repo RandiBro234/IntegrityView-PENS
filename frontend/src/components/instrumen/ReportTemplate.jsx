@@ -105,7 +105,14 @@ export default function ReportTemplate({ info, st, rekomendasi, periode, tanggal
                   <span className={`rt__prio ${PRIORITAS_KELAS[r.prioritas] || ''}`}>{r.prioritas}</span>
                   <div>
                     <p className="rt__rek-teks">{r.judul}</p>
-                    <p className="rt__rek-dasar">Dasar data: {r.dasar}</p>
+                    {r.sumber === 'komentar' ? (
+                      <p className="rt__rek-dasar">
+                        {r.jumlah} komentar ({Math.round(r.porsi * 100)}%) membahas topik ini, dari{' '}
+                        {r.jumlahUnik} kalimat berbeda.
+                      </p>
+                    ) : (
+                      <p className="rt__rek-dasar">Dasar data: {r.dasar}</p>
+                    )}
                     {r.saran && <p className="rt__rek-dasar">Saran langkah: {r.saran}</p>}
                   </div>
                 </li>

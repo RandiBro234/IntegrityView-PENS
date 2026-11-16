@@ -100,7 +100,8 @@ const PENANDA = [
   { nama_instrumen: 'SPAK', periode: '2026-ganjil', ditandai_pada: '2026-11-16T00:00:00Z' }
 ];
 
-const tanyaBerhasil = async () => 'Lakukan sosialisasi prosedur secara berkala.';
+const tanyaBerhasil = async () =>
+  'JUDUL: Prosedur belum dipahami pegawai\nSARAN: Lakukan sosialisasi prosedur secara berkala.';
 
 test('menyimpan kelompok lalu menghapus penanda saat semua saran berhasil', async () => {
   const { db, catatan } = buatDb({
@@ -121,6 +122,7 @@ test('menyimpan kelompok lalu menghapus penanda saat semua saran berhasil', asyn
   for (const b of baris) {
     assert.ok(b.saran_langkah, 'saran kosong padahal model berhasil');
     assert.ok(b.hash_masukan, 'hash kosong padahal saran ada');
+    assert.equal(b.judul, 'Prosedur belum dipahami pegawai');
     assert.ok(b.porsi > 0 && b.porsi <= 1);
   }
 });
@@ -199,7 +201,8 @@ test('memakai ulang saran lama bila hash masukan tidak berubah', async () => {
   for (const b of barisPertama) {
     lama.push({
       label: b.label,
-      hash_masukan: await hashMasukan(b.label, b.jumlah, b.kata_kunci),
+      judul: b.judul,
+      hash_masukan: await hashMasukan(b.judul, b.label, b.jumlah, b.kata_kunci),
       saran_langkah: 'Saran lama yang masih berlaku.'
     });
   }

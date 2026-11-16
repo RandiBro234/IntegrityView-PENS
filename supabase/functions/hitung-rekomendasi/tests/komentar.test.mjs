@@ -10,7 +10,7 @@ import { komentarDari, jawabanSensitif } from '../lib/komentar.ts';
 import { periodeDariTanggal, urutkanPeriode } from '../lib/periode.ts';
 import { komentarPeriode } from '../lib/sumber.ts';
 import { bentukKelompok, prioritasDari } from '../lib/kelompok.ts';
-import { susunPrompt, rapikanSaran, hashMasukan } from '../lib/saran.ts';
+import { susunPrompt, rapikanSaran, rapikanJudul, uraiSaran, hashMasukan } from '../lib/saran.ts';
 
 /* ---------------------------------------------------------------------------
    Pengambilan komentar
@@ -143,6 +143,22 @@ test('label kelompok memakai bentuk kata yang terbaca', () => {
   }
 });
 
+test('label kelompok membuang kata tindakan', () => {
+  const hasil = bentukKelompok([
+    'Prosedur yang ada sudah baik dan perlu dipertahankan',
+    'Prosedur sudah berjalan dan harus dipertahankan',
+    'Prosedur perlu dipertahankan karena sudah jelas',
+    'Dokumentasi prosedur perlu diperbarui',
+    'Dokumentasi prosedur belum lengkap',
+    'Dokumentasi prosedur harus diperbarui'
+  ]);
+
+  const semua = hasil.kelompok.map((k) => k.label.toLowerCase()).join(' | ');
+  assert.ok(!semua.includes('dipertahankan'), `label masih memuat kata tindakan: ${semua}`);
+  assert.ok(!semua.includes('diperbarui'), `label masih memuat kata tindakan: ${semua}`);
+  assert.match(semua, /prosedur|dokumentasi/);
+});
+
 test('bentukKelompok menghitung komentar berulang, bukan teks unik', () => {
   const hasil = bentukKelompok([
     ...Array(10).fill('Sosialisasi SOP perlu lebih rutin'),
@@ -221,11 +237,37 @@ test('rapikanSaran memotong jadi satu kalimat pendek', () => {
 });
 
 test('hashMasukan stabil dan berubah saat isi berubah', async () => {
-  const a = await hashMasukan('Transparansi', 10, ['transparansi']);
-  const b = await hashMasukan('Transparansi', 10, ['transparansi']);
-  const c = await hashMasukan('Transparansi', 11, ['transparansi']);
+  const a = await hashMasukan(null, 'Transparansi', 10, ['transparansi']);
+  const b = await hashMasukan(null, 'Transparansi', 10, ['transparansi']);
+  const c = await hashMasukan(null, 'Transparansi', 11, ['transparansi']);
+  const d = await hashMasukan('Judul lain', 'Transparansi', 10, ['transparansi']);
 
   assert.equal(a, b);
   assert.notEqual(a, c);
+  assert.notEqual(a, d, 'judul tidak ikut dihitung');
   assert.equal(a.length, 64);
+});
+
+test('uraiSaran membaca dua baris JUDUL dan SARAN', () => {
+  const hasil = uraiSaran('JUDUL: Prosedur belum dipahami pegawai\nSARAN: Sosialisasi prosedur secara berkala.');
+
+  assert.equal(hasil.judul, 'Prosedur belum dipahami pegawai');
+  assert.equal(hasil.saran, 'Sosialisasi prosedur secara berkala.');
+});
+
+test('uraiSaran tetap menyelamatkan saran bila format tidak diikuti', () => {
+  const hasil = uraiSaran('Lakukan sosialisasi prosedur secara berkala.');
+
+  assert.equal(hasil.judul, null);
+  assert.equal(hasil.saran, 'Lakukan sosialisasi prosedur secara berkala.');
+});
+
+test('rapikanJudul membatasi sepuluh kata dan membuang titik akhir', () => {
+  const panjang = Array.from({ length: 15 }, (_, i) => `kata${i}`).join(' ');
+  const hasil = rapikanJudul(`${panjang}.`);
+
+  assert.equal(hasil.split(' ').length, 10);
+  assert.ok(!hasil.endsWith('.'));
+  assert.equal(rapikanJudul('  "prosedur belum jelas."  '), 'Prosedur belum jelas');
+  assert.equal(rapikanJudul('Korupsi dalam Kerja Menjadi Masalah'), 'Korupsi dalam kerja menjadi masalah');
 });

@@ -94,6 +94,17 @@ function persen(porsi) {
   return Math.round(Number(porsi) * 100);
 }
 
+/* Samakan kapitalisasi judul dari model bahasa: kalimat biasa, bukan Title Case.
+   Dilakukan di tampilan supaya baris lama tidak perlu dihitung ulang. */
+function judulRapi(teks) {
+  const kata = String(teks || '').trim().split(/\s+/).filter(Boolean);
+  if (!kata.length) return '';
+  const hasil = kata
+    .map((k, i) => (i === 0 || /^[A-Z]{2,}$/.test(k) ? k : k.toLowerCase()))
+    .join(' ');
+  return hasil.charAt(0).toUpperCase() + hasil.slice(1);
+}
+
 /* Rekomendasi komentar untuk satu instrumen pada satu periode, dalam bentuk
    yang sama dengan rekomendasi skor supaya bisa digabung di satu daftar. */
 export function rekomendasiTerbukaUntuk(slugAtauNama, periode) {
@@ -108,19 +119,22 @@ export function rekomendasiTerbukaUntuk(slugAtauNama, periode) {
     })
     .map((b) => ({
       prioritas: b.prioritas,
-      judul: `Jawaban terbuka: ${b.label}`,
-      dasar: `${b.jumlah} komentar (${persen(b.porsi)}%) · kata kunci: ${(b.kata_kunci || []).join(', ')}`,
+      /* Judul dari model bahasa menyebut aspek dan masalahnya. Bila kosong
+         (baris lama atau model gagal), pakai pola yang sama dengan rekomendasi
+         skor supaya kartu tetap terbaca. */
+      judul: judulRapi(b.judul) || `Perkuat aspek ${String(b.label || '').toLowerCase()}`,
+      dasar: `${b.jumlah} komentar (${persen(b.porsi)}%) membahas topik ini`,
       saran: b.saran_langkah || null,
       sumber: 'komentar',
       jumlah: b.jumlah,
       porsi: Number(b.porsi),
+      kataKunci: b.kata_kunci || [],
       /* Dipakai untuk menandai kelompok yang dibentuk dari sedikit kalimat
          berbeda (ciri data sintetis), supaya pembaca tidak menganggapnya
          sebagai ragam pendapat yang luas. */
       jumlahUnik: Number(b.jumlah_unik ?? 0),
       jumlahKomentar: Number(b.jumlah_komentar ?? 0),
-      tanpaKata: Number(b.jumlah_tanpa_kata ?? 0),
-      silhouette: b.silhouette == null ? null : Number(b.silhouette)
+      tanpaKata: Number(b.jumlah_tanpa_kata ?? 0)
     }));
 }
 

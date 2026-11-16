@@ -101,15 +101,16 @@ export default function RecommendationPanel({ items = [], judul = 'Semua Rekomen
                   <li key={i} className="rek-panel__item">
                     <div className="rek-panel__item-head">
                       <span className={`reclist__prio ${PRIORITAS_CLASS[r.prioritas] || ''}`}>{r.prioritas}</span>
+                      {r.sumber === 'komentar' && <span className="reclist__tag">Jawaban terbuka</span>}
                       <p className="rek-panel__teks">{r.judul}</p>
                     </div>
-                    <p className="rek-panel__meta"><span>Dasar data</span>{r.dasar}</p>
-                    {r.sumber === 'komentar' && (
+                    {r.sumber === 'komentar' ? (
                       <p className="rek-panel__meta">
-                        <span>Kelompok</span>
-                        {r.jumlah} komentar dari {r.jumlahUnik} kalimat berbeda
-                        {r.silhouette != null ? ` · silhouette ${r.silhouette.toFixed(3)}` : ''}
+                        {r.jumlah} komentar ({Math.round(r.porsi * 100)}%) membahas topik ini, dari{' '}
+                        {r.jumlahUnik} kalimat berbeda.
                       </p>
+                    ) : (
+                      <p className="rek-panel__meta"><span>Dasar data</span>{r.dasar}</p>
                     )}
                     <p className="rek-panel__meta">
                       <span>{r.saran ? 'Saran langkah' : 'Tindak lanjut'}</span>
@@ -117,8 +118,8 @@ export default function RecommendationPanel({ items = [], judul = 'Semua Rekomen
                     </p>
                     {r.sumber === 'komentar' && r.jumlahUnik > 0 && r.jumlahUnik <= 10 && (
                       <p className="rek-panel__catatan">
-                        Variasi komentar rendah: hanya {r.jumlahUnik} kalimat berbeda. Kelompok ini
-                        belum menggambarkan ragam pendapat, jadi jangan dibaca sebagai suara mayoritas.
+                        Catatan: hanya ada {r.jumlahUnik} kalimat berbeda, jadi kelompok ini belum
+                        mewakili ragam pendapat.
                       </p>
                     )}
                   </li>

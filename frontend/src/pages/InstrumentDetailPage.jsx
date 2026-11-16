@@ -298,14 +298,13 @@ export default function InstrumentDetailPage({ slug, onBack }) {
                 {modal.rekomendasi.prioritas}
               </span>
               <p className="idp__modal-rek-teks">{modal.rekomendasi.judul}</p>
-              <p className="idp__modal-rek-dasar">Dasar data: {modal.rekomendasi.dasar}</p>
-              {modal.rekomendasi.sumber === 'komentar' && (
+              {modal.rekomendasi.sumber === 'komentar' ? (
                 <p className="idp__modal-rek-dasar">
-                  Kelompok: {modal.rekomendasi.jumlah} komentar dari {modal.rekomendasi.jumlahUnik} kalimat berbeda
-                  {modal.rekomendasi.silhouette != null
-                    ? ` · silhouette ${modal.rekomendasi.silhouette.toFixed(3)}`
-                    : ''}
+                  {modal.rekomendasi.jumlah} komentar ({Math.round(modal.rekomendasi.porsi * 100)}%)
+                  membahas topik ini, dari {modal.rekomendasi.jumlahUnik} kalimat berbeda.
                 </p>
+              ) : (
+                <p className="idp__modal-rek-dasar">Dasar data: {modal.rekomendasi.dasar}</p>
               )}
               {modal.rekomendasi.saran && (
                 <p className="idp__modal-rek-dasar">Saran langkah: {modal.rekomendasi.saran}</p>
@@ -314,8 +313,8 @@ export default function InstrumentDetailPage({ slug, onBack }) {
                 && modal.rekomendasi.jumlahUnik > 0
                 && modal.rekomendasi.jumlahUnik <= 10 && (
                   <p className="idp__modal-rek-dasar">
-                    Variasi komentar rendah: hanya {modal.rekomendasi.jumlahUnik} kalimat berbeda, jadi
-                    kelompok ini belum menggambarkan ragam pendapat.
+                    Catatan: hanya ada {modal.rekomendasi.jumlahUnik} kalimat berbeda, jadi kelompok
+                    ini belum mewakili ragam pendapat.
                   </p>
                 )}
             </div>

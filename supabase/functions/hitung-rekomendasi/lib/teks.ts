@@ -234,6 +234,19 @@ export function bigram(tokens: string[]): string[] {
   return hasil;
 }
 
+/* Kata yang menyatakan tindakan atau keadaan, bukan topik. Kata seperti
+   "dipertahankan" atau "ditingkatkan" sering muncul di komentar, tetapi tidak
+   menjawab "apa yang dibahas". Kata ini tetap dipakai saat klasterisasi;
+   yang dibuang hanya dari label dan kata kunci yang ditampilkan. */
+export const KATA_TINDAKAN: ReadonlySet<string> = new Set([
+  'pertahan', 'pertahana', 'tahan', 'bantu', 'dukung', 'perbarui',
+  'tingkat', 'ingkat', 'olak', 'adak', 'jaga', 'jalan', 'akses',
+  'sedia', 'sampai', 'terap', 'guna', 'pakai', 'buat', 'lakukan',
+  'beri', 'ambil', 'lihat', 'tunjuk', 'siap', 'mulai', 'lanjut',
+  'kembang', 'ubah', 'tambah', 'kurang', 'tinggal', 'kenal', 'rasa',
+  'harap', 'minta', 'usul', 'urus', 'ukur', 'hitung', 'catat', 'rutin'
+]);
+
 /* Kata yang dikirim ke model bahasa: disaring, tanpa nama diri, maksimal 5.
    `namaKapital` berisi kata yang seluruhnya kapital di teks asli; kata seperti
    itu sering singkatan unit atau nama orang, jadi dibuang. */

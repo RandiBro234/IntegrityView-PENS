@@ -37,10 +37,17 @@ export default function RecommendationList({ items, max = 3, onDetail, compact =
               </button>
             )}
           </div>
-          <p className="reclist__dasar" title={r.dasar}>{r.dasar}</p>
+          {r.sumber === 'komentar' ? (
+            <p className="reclist__dasar">
+              <span className="reclist__tag">Jawaban terbuka</span>
+              {r.jumlah} komentar ({Math.round(r.porsi * 100)}%) · {r.jumlahUnik} kalimat berbeda
+            </p>
+          ) : (
+            <p className="reclist__dasar" title={r.dasar}>{r.dasar}</p>
+          )}
           {r.saran && (
             <p className="reclist__saran">
-              <span className="reclist__saran-label">Saran langkah</span>
+              <span className="reclist__saran-label">Saran</span>
               {r.saran}
             </p>
           )}

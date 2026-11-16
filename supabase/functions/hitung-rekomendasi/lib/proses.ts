@@ -11,7 +11,7 @@
 import { LlmTidakTersedia } from '../../_shared/llm.ts';
 import { ambilKomentar, type KlienRpc } from './sumber.ts';
 import { bentukKelompok, prioritasDari } from './kelompok.ts';
-import { hashMasukan, rapikanSaran, susunPrompt } from './saran.ts';
+import { hashMasukan, susunPrompt, uraiSaran } from './saran.ts';
 
 export interface KlienDb extends KlienRpc {
   from(tabel: string): any;
@@ -61,6 +61,7 @@ export async function ambilPenanda(db: KlienDb, batas: number): Promise<Penanda[
 
 interface BarisRekomendasi {
   label: string;
+  judul: string | null;
   hash_masukan: string;
   saran_langkah: string | null;
 }
@@ -72,7 +73,7 @@ async function saranTersimpan(
 ): Promise<Map<string, BarisRekomendasi>> {
   const { data, error } = await db
     .from('rekomendasi_terbuka')
-    .select('label, hash_masukan, saran_langkah')
+    .select('label, judul, hash_masukan, saran_langkah')
     .eq('nama_instrumen', instrumen)
     .eq('periode', periode);
 
@@ -92,13 +93,13 @@ async function susunSaran(
   anggaran: AnggaranSaran,
   galat: string[],
   tanya: Tanya
-): Promise<string | null> {
-  if (anggaran.sisa <= 0) return null;
+): Promise<{ judul: string | null; saran: string | null }> {
+  if (anggaran.sisa <= 0) return { judul: null, saran: null };
   anggaran.sisa -= 1;
 
   try {
     const teks = await tanya(susunPrompt({ instrumen, periode, kelompok }));
-    return rapikanSaran(teks) || null;
+    return uraiSaran(teks);
   } catch (err) {
     /* Model bahasa gagal bukan alasan menggagalkan seluruh perhitungan:
        kelompok tetap disimpan tanpa saran, dan akan dicoba lagi lain waktu
@@ -106,7 +107,7 @@ async function susunSaran(
     const alasan = err instanceof LlmTidakTersedia ? err.message : 'galat tidak dikenal';
     console.warn(`hitung-rekomendasi: saran LLM gagal untuk ${instrumen} ${periode}: ${alasan}`);
     galat.push(`${kelompok.label}: ${alasan}`);
-    return null;
+    return { judul: null, saran: null };
   }
 }
 
@@ -128,19 +129,43 @@ export async function prosesSatu(
   let saranBaru = 0;
 
   for (const kelompok of hasil.kelompok) {
-    const hash = await hashMasukan(kelompok.label, kelompok.jumlah, kelompok.kata_kunci);
     const tersimpan = lama.get(kelompok.label);
 
+    let judul: string | null = null;
     let saran: string | null = null;
-    if (tersimpan && tersimpan.hash_masukan === hash) {
-      saran = tersimpan.saran_langkah;
-    } else {
-      saran = await susunSaran(instrumen, periode, kelompok, anggaran, galatSaran, tanya);
-      if (saran) saranBaru += 1;
+    let hash: string | null = null;
+
+    if (tersimpan) {
+      /* Hash lama dihitung dengan judul lama. Bila isi kelompok tidak berubah,
+         judul dan saran lama masih berlaku. */
+      const hashLama = await hashMasukan(
+        tersimpan.judul,
+        kelompok.label,
+        kelompok.jumlah,
+        kelompok.kata_kunci
+      );
+      if (hashLama === tersimpan.hash_masukan) {
+        judul = tersimpan.judul;
+        saran = tersimpan.saran_langkah;
+        hash = hashLama;
+      }
+    }
+
+    if (!saran) {
+      const baru = await susunSaran(instrumen, periode, kelompok, anggaran, galatSaran, tanya);
+      judul = baru.judul;
+      saran = baru.saran;
+      if (saran) {
+        hash = await hashMasukan(judul, kelompok.label, kelompok.jumlah, kelompok.kata_kunci);
+        saranBaru += 1;
+      }
     }
 
     baris.push({
       label: kelompok.label,
+      /* Judul cadangan dipakai bila model bahasa tidak tersedia, supaya kartu
+         tetap terbaca dan tidak kosong. */
+      judul: judul || `Perkuat aspek ${kelompok.label.toLowerCase()}`,
       prioritas: prioritasDari(kelompok.porsi),
       jumlah: kelompok.jumlah,
       porsi: Math.round(kelompok.porsi * 10000) / 10000,

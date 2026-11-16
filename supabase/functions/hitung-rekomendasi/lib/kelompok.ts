@@ -13,7 +13,7 @@
 
 import { hitungTfIdf, kataTeratas } from './tfidf.ts';
 import { pilihK } from './klaster.ts';
-import { kataKapital, kataKunciUntukModel, praproses, tokenBermakna } from './teks.ts';
+import { KATA_TINDAKAN, kataKapital, kataKunciUntukModel, praproses, tokenBermakna } from './teks.ts';
 
 export interface Kelompok {
   label: string;
@@ -151,9 +151,13 @@ export function bentukKelompok(komentar: string[], opsi: OpsiKelompok = {}): Has
   for (let c = 0; c < hasil.pusat.length; c++) {
     if (!cacah[c]) continue;
 
-    const atas = kataTeratas(hasil.pusat[c], kosakata, maksKata)
-      .map((x) => permukaan.get(x.kata) ?? x.kata);
+    const teratas = kataTeratas(hasil.pusat[c], kosakata, maksKata);
+    /* Buang kata tindakan dari label. Kalau semua kata teratas adalah tindakan,
+       sisakan satu supaya label tidak kosong. */
+    const topik = teratas.filter((x) => !KATA_TINDAKAN.has(x.kata));
+    const dipakai = (topik.length ? topik : teratas.slice(0, 1)).slice(0, 3);
 
+    const atas = dipakai.map((x) => permukaan.get(x.kata) ?? x.kata);
     const kataKunci = kataKunciUntukModel(atas, maksKata, namaKapital);
     const kunci = kataKunci.join('|') || `klaster-${c}`;
 
