@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Sidebar from '../components/layout/Sidebar';
 import Topbar from '../components/layout/Topbar';
 import { useAuth } from '../auth/AuthProvider';
@@ -9,17 +9,26 @@ import { labelKategori } from '../data/reportCategories';
 import { useReportFilters } from '../data/useReportFilters';
 import Delta from '../components/dashboard/Delta';
 import { keSkor } from '../lib/formatSkor';
+import RingkasanDashboardTemplate from '../components/dashboard/RingkasanDashboardTemplate';
+import { unduhLaporanPdf, namaFileLaporan } from '../lib/reportPdf';
 import './LaporanPage.css';
 
 export default function LaporanPage({ onNavigate }) {
   const { user } = useAuth();
   const admin = user?.role === 'admin';
   const { filter, setFilter } = useReportFilters();
+  const [ekspor, setEkspor] = useState(false);
+  const [mengunduh, setMengunduh] = useState(false);
+  const reportRef = useRef(null);
+  const [tanggalCetak] = useState(() => {
+    const d = new Date();
+    const bulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+    return `${d.getDate()} ${bulan[d.getMonth()]} ${d.getFullYear()}`;
+  });
 
   /* Sumber angka yang sama dengan dashboard: selector tunggal. */
   /* Selector sudah punya cache internal; dihitung langsung agar ikut diperbarui setelah data asli tiba. */
   const laporan = getReportData(filter);
-  const periode = laporan.periode.label;
 
   const rekap = admin
     ? laporan.instrumen.filter((s) => s.aktif).map((s) => ({
@@ -85,21 +94,15 @@ export default function LaporanPage({ onNavigate }) {
   const handleMenu = (key) => onNavigate && onNavigate(key);
   const rataSkor = laporan.ringkasan.rataSkor ?? 0;
 
-  const ekspor = () => {
-    const baris = [['Instrumen', 'Nama Lengkap', 'Skor (1-4)', 'Selisih skor', 'Responden', 'Periode']];
-    rekap.forEach((r) => {
-      const skor = keSkor(r.skor);
-      const selisih = r.delta == null ? '-' : (r.delta / 25).toFixed(2).replace('.', ',');
-      baris.push([r.nama, r.namaPanjang, skor.toFixed(2).replace('.', ','), selisih, r.responden, periode]);
-    });
-    const csv = baris.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\r\n');
-    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `rekap-zi-${periode.replace(/\s/g, '-').toLowerCase()}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
+  const handleUnduh = async () => {
+    if (!reportRef.current || mengunduh) return;
+    setMengunduh(true);
+    try {
+      await unduhLaporanPdf(reportRef.current, namaFileLaporan('Rekap-ZI', laporan.periode.label));
+      setEkspor(false);
+    } finally {
+      setMengunduh(false);
+    }
   };
 
   return (
@@ -122,7 +125,7 @@ export default function LaporanPage({ onNavigate }) {
               >
                 {PERIODE.map((p) => <option key={p.key} value={p.key}>{p.label}</option>)}
               </select>
-              <button type="button" className="btn btn-primary" onClick={ekspor}>Ekspor CSV</button>
+              <button type="button" className="btn btn-primary" onClick={() => setEkspor(true)}>Ekspor PDF</button>
             </div>
           </header>
 
@@ -178,6 +181,28 @@ export default function LaporanPage({ onNavigate }) {
           </section>
         </main>
       </div>
+
+      {ekspor && (
+        <div className="lprmodal__overlay" onClick={() => !mengunduh && setEkspor(false)} role="presentation">
+          <div className="lprmodal" role="dialog" aria-modal="true" aria-labelledby="lprmodal-title" onClick={(e) => e.stopPropagation()}>
+            <header className="lprmodal__head">
+              <h3 id="lprmodal-title">Pratinjau Rekap Zona Integritas</h3>
+              <button type="button" className="lprmodal__close" onClick={() => setEkspor(false)} disabled={mengunduh} aria-label="Tutup">×</button>
+            </header>
+            <div className="lprmodal__preview">
+              <div className="lprmodal__scale" ref={reportRef}>
+                <RingkasanDashboardTemplate laporan={laporan} tanggalCetak={tanggalCetak} />
+              </div>
+            </div>
+            <footer className="lprmodal__foot">
+              <button type="button" className="btn btn-outline-navy" onClick={() => setEkspor(false)} disabled={mengunduh}>Batal</button>
+              <button type="button" className="btn btn-primary" onClick={handleUnduh} disabled={mengunduh}>
+                {mengunduh ? 'Menyiapkan…' : 'Unduh PDF'}
+              </button>
+            </footer>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
