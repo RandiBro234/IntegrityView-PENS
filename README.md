@@ -169,6 +169,10 @@ tidak            -> "empty"
 
 Satu pasangan (instrumen, periode) tidak pernah mencampur data asli dan simulasi.
 
+Angka **Total Pengisian** adalah jumlah `n` seluruh instrumen pada periode/filter aktif.
+Satu orang dapat terhitung lebih dari sekali jika mengisi beberapa instrumen; angka ini
+bukan jumlah responden unik.
+
 Bentuk baris `survey_responses`:
 
 | Kolom | Tipe | Keterangan |

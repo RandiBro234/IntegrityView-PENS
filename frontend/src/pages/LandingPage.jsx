@@ -72,7 +72,7 @@ export default function LandingPage({ onEnterDashboard, onKeluar, session }) {
   /* Selector sudah punya cache internal; dihitung langsung agar ikut diperbarui setelah data asli tiba. */
   const laporan = getReportData({ ...filter, kategori: 'Semua' });
   const ringkasan = laporan.ringkasan;
-  const ringkasanResponden = ringkasan.responden.total;
+  const ringkasanPengisian = ringkasan.responden.total;
   const surveiLanding = laporan.instrumen.filter((s) => s.aktif).map((s) => ({ ...s.info, responden: s.aktif.n }));
   const kategoriSkor = laporan.kategoriSkor;
   const { naik, turun } = laporan.perubahanTerbesar;
@@ -341,7 +341,7 @@ export default function LandingPage({ onEnterDashboard, onKeluar, session }) {
 
                 <Reveal className="landing__bento landing__bento--b" variant="scale-in" delay={350}>
                   <BlobDecor color="#FFFFFF" />
-                  <p className="label-eyebrow" style={{ color: 'rgba(241,244,249,0.7)' }}>Responden</p>
+                  <p className="label-eyebrow" style={{ color: 'rgba(241,244,249,0.7)' }}>Total pengisian</p>
                   <div className="landing__bento-value" style={{ color: '#fff' }}>
                     <CountUp value={ringkasan.responden.total} langsung />
                   </div>
@@ -485,7 +485,7 @@ export default function LandingPage({ onEnterDashboard, onKeluar, session }) {
 
           <Reveal as="article" className="landing__stat-card" delay={(kategoriSkor.length + 1) * 70}>
             <BlobDecor color="#0B1B33" />
-            <p className="label-eyebrow">Responden</p>
+            <p className="label-eyebrow">Total pengisian</p>
             <div className="landing__stat-num">
               <CountUp value={responden.total} />
             </div>
@@ -667,8 +667,8 @@ export default function LandingPage({ onEnterDashboard, onKeluar, session }) {
             </p>
             <p className="landing__cta-partisipan">
               <strong className="landing__cta-partisipan-n">
-                <CountUp value={ringkasanResponden} />
-              </strong> responden telah berpartisipasi
+                <CountUp value={ringkasanPengisian} />
+              </strong> pengisian survei telah masuk
             </p>
           </div>
           <button type="button" className="btn btn-ghost-light landing__cta-btn" onClick={() => onEnterDashboard('survei')}>

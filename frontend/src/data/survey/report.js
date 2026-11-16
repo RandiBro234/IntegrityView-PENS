@@ -4,27 +4,8 @@ import { cacheLaporan } from './cache.js';
 import { normalisasiFilter } from './filters.js';
 import { arahPerubahan, getDelta, rekomendasiUntuk } from './recommendations.js';
 import { rata } from './statistics.js';
-import { agregat, recordsUntuk } from './aggregates.js';
+import { agregat } from './aggregates.js';
 import { store } from './store.js';
-
-/* Jumlah responden satu periode: hash responden distinct lintas instrumen,
-   baris tanpa hash dihitung satu per baris, ditambah baris simulasi. */
-function jumlahResponden(periodeKey, slugs) {
-  const set = new Set(slugs);
-  const respondenSet = new Set();
-  let tanpaHash = 0;
-  store.records.forEach((r) => {
-    if (r.periode !== periodeKey || !set.has(r.slug)) return;
-    if (r.respondenKey) respondenSet.add(r.respondenKey);
-    else tanpaHash += 1;
-  });
-  let simulasi = 0;
-  slugs.forEach((slug) => {
-    const { records, sumber } = recordsUntuk(slug, periodeKey);
-    if (sumber === 'simulated') simulasi += records.length;
-  });
-  return respondenSet.size + tanpaHash + simulasi;
-}
 
 /* ---------------------------------------------------------------------
    Selector utama
@@ -112,11 +93,11 @@ export function getReportData(pilihan = DEFAULT_FILTER) {
     atas: Math.min(100, indeksRata + 1.96 * seGabungan)
   };
 
-  /* Responden: hash distinct lintas instrumen + baris tanpa hash + simulasi. */
-  const semuaSlug = daftar.map((i) => i.slug);
-  const responden = jumlahResponden(periode.key, semuaSlug);
-  const respondenBanding = periodePembanding
-    ? jumlahResponden(periodePembanding.key, semuaSlug)
+  /* Total pengisian: jumlah n seluruh instrumen pada periode terpilih.
+     Satu orang dapat terhitung lebih dari sekali jika mengisi beberapa instrumen. */
+  const totalPengisian = valid.reduce((a, s) => a + s.aktif.n, 0);
+  const totalPengisianBanding = periodePembanding
+    ? validBanding.reduce((a, s) => a + s.pembanding.n, 0)
     : null;
 
   const sebaran = valid.map((s) => ({
@@ -164,12 +145,12 @@ export function getReportData(pilihan = DEFAULT_FILTER) {
         internal: valid.filter((s) => s.info.kelompok === 'Internal').map((s) => s.info.nama)
       },
       responden: {
-        total: responden,
+        total: totalPengisian,
         dosen: valid.reduce((a, s) => a + (s.aktif.kelompok?.dosen || 0), 0),
         tendik: valid.reduce((a, s) => a + (s.aktif.kelompok?.tendik || 0), 0),
         adaKelompok: valid.some((s) => s.aktif.kelompok)
       },
-      deltaResponden: respondenBanding == null ? null : responden - respondenBanding,
+      deltaResponden: totalPengisianBanding == null ? null : totalPengisian - totalPengisianBanding,
       rataSkor: indeksRata,
       delta: indeksBanding == null || indeksRata == null ? null : getDelta(indeksRata, indeksBanding),
       ci: ciRingkasan,

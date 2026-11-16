@@ -53,7 +53,7 @@ export default function RingkasanDashboardTemplate({ laporan, tanggalCetak }) {
               <span className="rt__card-value">{r.totalInstrumen}</span>
             </div>
             <div className="rt__card">
-              <span className="rt__card-label">Jumlah Responden</span>
+              <span className="rt__card-label">Total Pengisian</span>
               <span className="rt__card-value">{r.responden.total.toLocaleString('id-ID')}</span>
             </div>
             <div className="rt__card">
@@ -62,6 +62,9 @@ export default function RingkasanDashboardTemplate({ laporan, tanggalCetak }) {
               <Delta value={r.delta} />
             </div>
           </div>
+          <p className="rt__text" style={{ marginTop: 12 }}>
+            Total pengisian menjumlahkan respons dari seluruh instrumen; satu orang dapat terhitung lebih dari sekali.
+          </p>
           {r.ci && (
             <p className="rt__text" style={{ marginTop: 12 }}>
               Interval kepercayaan 95%: {formatAngka(r.ci.bawah, 1)} – {formatAngka(r.ci.atas, 1)} pada skala 0–100.

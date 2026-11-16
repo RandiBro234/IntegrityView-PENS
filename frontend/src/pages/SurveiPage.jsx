@@ -31,7 +31,7 @@ export default function SurveiPage({ onNavigate, onOpenInstrument }) {
   }), [laporan]);
 
   const jumlahInstrumen = daftar.length;
-  const totalResponden = laporan.ringkasan.responden.total;
+  const totalPengisian = laporan.ringkasan.responden.total;
 
   const filtered = useMemo(() => {
     if (kategori === 'Semua') return daftar;
@@ -77,8 +77,8 @@ export default function SurveiPage({ onNavigate, onOpenInstrument }) {
               <span className="survei-stat__label">Total instrumen</span>
             </div>
             <div className="survei-stat">
-              <span className="survei-stat__num">{totalResponden.toLocaleString('id-ID')}</span>
-              <span className="survei-stat__label">Total responden</span>
+              <span className="survei-stat__num">{totalPengisian.toLocaleString('id-ID')}</span>
+              <span className="survei-stat__label">Total pengisian</span>
             </div>
             <div className="survei-stat">
               <span className="survei-stat__num">{laporan.ringkasan.totalInstrumen}</span>
