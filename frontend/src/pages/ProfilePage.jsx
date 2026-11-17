@@ -2,24 +2,33 @@ import { useEffect, useState } from 'react';
 import Sidebar from '../components/layout/Sidebar';
 import Topbar from '../components/layout/Topbar';
 import { useAuth } from '../auth/AuthProvider';
-import { formatTanggalWaktu } from '../data/mock';
+import { formatTanggalWaktu, getPengaduanLokal } from '../data/mock';
 import { ambilLaporanSaya, laporanApiSiap } from '../data/laporanApi';
 import './ProfilePage.css';
 
 export default function ProfilePage({ onNavigate }) {
   const { user } = useAuth();
-  const [laporanUser, setLaporanUser] = useState([]);
+  const [laporanUser, setLaporanUser] = useState(() => getPengaduanLokal());
   const [memuat, setMemuat] = useState(() => Boolean(user && laporanApiSiap));
   const [error, setError] = useState('');
+  const [tersalin, setTersalin] = useState('');
   const [tab, setTab] = useState('aktivitas'); // 'aktivitas' | 'keamanan'
 
   useEffect(() => {
     let aktif = true;
-    if (!user || !laporanApiSiap) return undefined;
+    const lokal = getPengaduanLokal();
+    setLaporanUser(lokal);
+    if (!user || !laporanApiSiap) {
+      setMemuat(false);
+      return undefined;
+    }
 
     ambilLaporanSaya()
       .then((rows) => {
-        if (aktif) setLaporanUser(rows);
+        if (!aktif) return;
+        const gabung = new Map(lokal.map((laporan) => [laporan.id, laporan]));
+        rows.forEach((laporan) => gabung.set(laporan.id, laporan));
+        setLaporanUser([...gabung.values()].sort((a, b) => new Date(b.waktuLapor) - new Date(a.waktuLapor)));
       })
       .catch((err) => {
         if (aktif) setError(err.message || 'Gagal memuat laporan Anda.');
@@ -30,6 +39,17 @@ export default function ProfilePage({ onNavigate }) {
 
     return () => { aktif = false; };
   }, [user]);
+
+  const salinKode = async (kode) => {
+    if (!navigator.clipboard) return;
+    try {
+      await navigator.clipboard.writeText(kode);
+      setTersalin(kode);
+      window.setTimeout(() => setTersalin(''), 2200);
+    } catch {
+      setTersalin('');
+    }
+  };
 
   const handleMenu = (key) => onNavigate && onNavigate(key);
 
@@ -130,10 +150,14 @@ export default function ProfilePage({ onNavigate }) {
                       {laporanUser.map((l) => (
                         <li key={l.id}>
                           <span className="pf-aktivitas__dot" aria-hidden="true" />
-                          <div>
-                            <p className="pf-aktivitas__teks">{l.judul}</p>
-                            <p className="pf-aktivitas__waktu">{formatTanggalWaktu(l.waktuLapor)} · {l.status}</p>
-                          </div>
+                           <div className="pf-aktivitas__body">
+                             <p className="pf-aktivitas__kode">{l.id}</p>
+                             <p className="pf-aktivitas__teks">{l.judul}</p>
+                             <p className="pf-aktivitas__waktu">{formatTanggalWaktu(l.waktuLapor)} · {l.status}</p>
+                             <button type="button" className="btn btn-outline-navy pf-aktivitas__copy" onClick={() => salinKode(l.id)}>
+                               {tersalin === l.id ? 'Kode Tersalin' : 'Salin Kode'}
+                             </button>
+                           </div>
                         </li>
                       ))}
                     </ul>
