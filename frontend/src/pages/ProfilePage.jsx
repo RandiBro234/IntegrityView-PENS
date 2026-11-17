@@ -146,21 +146,26 @@ export default function ProfilePage({ onNavigate }) {
                   ) : laporanUser.length === 0 ? (
                     <p className="pf-empty">Belum ada laporan yang Anda buat. Buka kanal WBS untuk menyampaikan laporan.</p>
                   ) : (
-                    <ul className="pf-aktivitas">
+                    <div className="pf-aktivitas" role="list">
+                      <div className="pf-aktivitas__head" aria-hidden="true">
+                        <span>Kode</span>
+                        <span>Jenis laporan</span>
+                        <span>Waktu</span>
+                        <span>Status</span>
+                        <span>Aksi</span>
+                      </div>
                       {laporanUser.map((l) => (
-                        <li key={l.id}>
-                          <span className="pf-aktivitas__dot" aria-hidden="true" />
-                           <div className="pf-aktivitas__body">
-                             <p className="pf-aktivitas__kode">{l.id}</p>
-                             <p className="pf-aktivitas__teks">{l.judul}</p>
-                             <p className="pf-aktivitas__waktu">{formatTanggalWaktu(l.waktuLapor)} · {l.status}</p>
-                             <button type="button" className="btn btn-outline-navy pf-aktivitas__copy" onClick={() => salinKode(l.id)}>
-                               {tersalin === l.id ? 'Kode Tersalin' : 'Salin Kode'}
-                             </button>
-                           </div>
-                        </li>
+                        <div className="pf-aktivitas__row" key={l.id} role="listitem">
+                          <strong className="pf-aktivitas__kode">{l.id}</strong>
+                          <span className="pf-aktivitas__teks">{l.judul}</span>
+                          <span className="pf-aktivitas__waktu">{formatTanggalWaktu(l.waktuLapor)}</span>
+                          <span className="pf-aktivitas__status">{l.status}</span>
+                          <button type="button" className="btn btn-outline-navy pf-aktivitas__copy" onClick={() => salinKode(l.id)}>
+                            {tersalin === l.id ? 'Tersalin' : 'Salin kode'}
+                          </button>
+                        </div>
                       ))}
-                    </ul>
+                    </div>
                   )
                 ) : (
                   <ul className="pf-info">
