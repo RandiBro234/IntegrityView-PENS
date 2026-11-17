@@ -30,14 +30,24 @@ async function tokenAkses() {
   if (sesi.error) throw new Error('Gagal membaca sesi. Silakan masuk ulang.');
   let session = sesi.data.session;
   if (!session?.access_token) throw new Error('Sesi berakhir. Silakan masuk kembali.');
-  if (session.expires_at && session.expires_at * 1000 - Date.now() < 60000) {
-    const diperbarui = await supabase.auth.refreshSession();
-    if (diperbarui.error || !diperbarui.data.session) {
-      throw new Error('Sesi berakhir. Silakan masuk kembali.');
-    }
-    session = diperbarui.data.session;
+  if (session.expires_at && session.expires_at * 1000 - Date.now() < 120000) {
+    session = await segarkanSesi();
   }
   return session.access_token;
+}
+
+async function segarkanSesi() {
+  const { data, error } = await supabase.auth.refreshSession();
+  if (error || !data.session?.access_token) {
+    throw new Error('Sesi berakhir. Silakan masuk kembali.');
+  }
+  return data.session;
+}
+
+async function cobaSegarkanSetelah401(status, percobaan) {
+  if (status !== 401 || percobaan > 0) return false;
+  await segarkanSesi();
+  return true;
 }
 
 async function headers(extra = {}) {
@@ -105,17 +115,18 @@ async function panggilFunction(nama, payload) {
 
   const { controller, timer } = batalkanSetelah(TIMEOUT_MS);
   try {
-    const res = await fetch(`${SUPABASE_URL}/functions/v1/${nama}`, {
-      method: 'POST',
-      headers: await headers({ 'Content-Type': 'application/json' }),
-      body: JSON.stringify(payload),
-      signal: controller.signal
-    });
-    const body = await bodyJson(res);
-    if (!res.ok) {
+    for (let percobaan = 0; percobaan < 2; percobaan += 1) {
+      const res = await fetch(`${SUPABASE_URL}/functions/v1/${nama}`, {
+        method: 'POST',
+        headers: await headers({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify(payload),
+        signal: controller.signal
+      });
+      const body = await bodyJson(res);
+      if (res.ok) return body.data;
+      if (await cobaSegarkanSetelah401(res.status, percobaan)) continue;
       throw new Error(body.error || `Permintaan gagal (HTTP ${res.status}).`);
     }
-    return body.data;
   } catch (err) {
     throw new Error(pesanJaringan(err));
   } finally {
@@ -130,17 +141,18 @@ async function panggilAdmin(payload) {
 
   const { controller, timer } = batalkanSetelah(TIMEOUT_MS);
   try {
-    const res = await fetch(`${SUPABASE_URL}/functions/v1/kelola-laporan`, {
-      method: 'POST',
-      headers: await headers({ 'Content-Type': 'application/json' }),
-      body: JSON.stringify(payload),
-      signal: controller.signal
-    });
-    const body = await bodyJson(res);
-    if (!res.ok) {
+    for (let percobaan = 0; percobaan < 2; percobaan += 1) {
+      const res = await fetch(`${SUPABASE_URL}/functions/v1/kelola-laporan`, {
+        method: 'POST',
+        headers: await headers({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify(payload),
+        signal: controller.signal
+      });
+      const body = await bodyJson(res);
+      if (res.ok) return body.data;
+      if (await cobaSegarkanSetelah401(res.status, percobaan)) continue;
       throw new Error(body.error || `Permintaan admin gagal (HTTP ${res.status}).`);
     }
-    return body.data;
   } catch (err) {
     throw new Error(pesanJaringan(err));
   } finally {
@@ -252,17 +264,18 @@ export async function lacakLaporan(kode) {
 
   const { controller, timer } = batalkanSetelah(TIMEOUT_MS);
   try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/lacak_laporan`, {
-      method: 'POST',
-      headers: await headers({ 'Content-Type': 'application/json' }),
-      body: JSON.stringify({ p_kode: kode }),
-      signal: controller.signal
-    });
-    const body = await bodyJson(res);
-    if (!res.ok) {
+    for (let percobaan = 0; percobaan < 2; percobaan += 1) {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/lacak_laporan`, {
+        method: 'POST',
+        headers: await headers({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ p_kode: kode }),
+        signal: controller.signal
+      });
+      const body = await bodyJson(res);
+      if (res.ok) return body || null;
+      if (await cobaSegarkanSetelah401(res.status, percobaan)) continue;
       throw new Error(body.message || body.error || `Gagal melacak laporan (HTTP ${res.status}).`);
     }
-    return body || null;
   } catch (err) {
     throw new Error(pesanJaringan(err));
   } finally {
@@ -277,17 +290,18 @@ export async function ambilLaporanSaya() {
 
   const { controller, timer } = batalkanSetelah(TIMEOUT_MS);
   try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/laporan_saya`, {
-      method: 'POST',
-      headers: await headers({ 'Content-Type': 'application/json' }),
-      body: '{}',
-      signal: controller.signal
-    });
-    const body = await bodyJson(res);
-    if (!res.ok) {
+    for (let percobaan = 0; percobaan < 2; percobaan += 1) {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/laporan_saya`, {
+        method: 'POST',
+        headers: await headers({ 'Content-Type': 'application/json' }),
+        body: '{}',
+        signal: controller.signal
+      });
+      const body = await bodyJson(res);
+      if (res.ok) return Array.isArray(body) ? body.map(normalisasiLaporan) : [];
+      if (await cobaSegarkanSetelah401(res.status, percobaan)) continue;
       throw new Error(body.message || body.error || `Gagal memuat laporan Anda (HTTP ${res.status}).`);
     }
-    return Array.isArray(body) ? body.map(normalisasiLaporan) : [];
   } catch (err) {
     throw new Error(pesanJaringan(err));
   } finally {

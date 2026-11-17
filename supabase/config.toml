@@ -4,16 +4,16 @@ project_id = "integrityview"
 verify_jwt = false
 
 [functions.kirim-laporan]
-verify_jwt = true
+verify_jwt = false
 
 [functions.buat-upload-lampiran]
-verify_jwt = true
+verify_jwt = false
 
 [functions.kelola-laporan]
-verify_jwt = true
+verify_jwt = false
 
 [functions.ambil-lampiran]
-verify_jwt = true
+verify_jwt = false
 
 # Chatbot tetap publik: dipakai pengunjung di landing page sebelum login.
 # Validasi dilakukan di dalam function (panjang pertanyaan, rate limit per IP).
