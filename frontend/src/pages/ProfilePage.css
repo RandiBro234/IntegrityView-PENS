@@ -154,10 +154,21 @@
 .pf-aktivitas__teks { color: var(--text-primary); font-size: 12px; font-weight: 600; }
 .pf-aktivitas__waktu { color: var(--text-secondary); font-size: 11px; }
 .pf-aktivitas__status {
-  color: var(--text-secondary);
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: capitalize;
+  justify-self: start;
+  gap: 6px;
+  min-width: 82px;
+  padding: 5px 9px;
+  font-size: 11px;
+  letter-spacing: 0;
+  text-transform: none;
+  white-space: nowrap;
+}
+.pf-aktivitas__status-dot {
+  width: 6px;
+  height: 6px;
+  flex: 0 0 6px;
+  border-radius: 50%;
+  background: currentColor;
 }
 .pf-aktivitas__copy { padding: 5px 7px; font-size: 10px; white-space: nowrap; }
 

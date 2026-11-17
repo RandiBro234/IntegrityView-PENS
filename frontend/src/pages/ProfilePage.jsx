@@ -159,7 +159,10 @@ export default function ProfilePage({ onNavigate }) {
                           <strong className="pf-aktivitas__kode">{l.id}</strong>
                           <span className="pf-aktivitas__teks">{l.judul}</span>
                           <span className="pf-aktivitas__waktu">{formatTanggalWaktu(l.waktuLapor)}</span>
-                          <span className="pf-aktivitas__status">{l.status}</span>
+                          <span className={`badge badge-status pf-aktivitas__status badge-status-${l.status.toLowerCase()}`}>
+                            <span className="pf-aktivitas__status-dot" aria-hidden="true" />
+                            {l.status}
+                          </span>
                           <button type="button" className="btn btn-outline-navy pf-aktivitas__copy" onClick={() => salinKode(l.id)}>
                             {tersalin === l.id ? 'Tersalin' : 'Salin kode'}
                           </button>
