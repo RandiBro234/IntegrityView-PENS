@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { supabase, supabaseSiap } from '../lib/supabase';
 
 const AuthContext = createContext(null);
+const KUNCI_DEMO = 'integrityview_demo_role';
 
 const LABEL_ROLE = {
   admin: 'Admin Zona Integritas',
@@ -44,6 +45,9 @@ function bikinUser(session) {
 
 export function AuthProvider({ children }) {
   const [session, setSession] = useState(null);
+  const [demoRole, setDemoRole] = useState(() => {
+    try { return localStorage.getItem(KUNCI_DEMO) || ''; } catch { return ''; }
+  });
   const [loading, setLoading] = useState(Boolean(supabase));
 
   useEffect(() => {
@@ -67,9 +71,20 @@ export function AuthProvider({ children }) {
     };
   }, []);
 
-  const user = useMemo(() => bikinUser(session), [session]);
+  const demoUser = demoRole === 'admin'
+    ? { id: 'demo-spi', role: 'admin', roleLabel: LABEL_ROLE.admin, nama: 'Tim SPI', inisial: 'SPI', email: 'demo.spi@pens.ac.id', nip: '—', unit: 'Satuan Pengawasan Internal PENS', jabatan: 'Tim SPI', sejak: 'Demo',     bergabung: null, demo: true }
+    : { id: 'demo-dosen', role: 'sivitas', roleLabel: LABEL_ROLE.sivitas, nama: 'Dosen Demo', inisial: 'DD', email: 'demo.dosen@pens.ac.id', nip: '—', unit: 'Demo PENS', jabatan: 'Dosen / Tenaga Kependidikan', sejak: 'Demo', bergabung: null, demo: true };
+
+  const user = demoRole ? demoUser : bikinUser(session);
+
+  const masukDemo = (role) => {
+    setDemoRole(role);
+    try { localStorage.setItem(KUNCI_DEMO, role); } catch { /* storage opsional */ }
+  };
 
   const signIn = async (email, password) => {
+    setDemoRole('');
+    try { localStorage.removeItem(KUNCI_DEMO); } catch { /* storage opsional */ }
     if (!supabase) {
       return { error: new Error('Supabase belum dikonfigurasi (VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY).') };
     }
@@ -78,12 +93,13 @@ export function AuthProvider({ children }) {
 
   const signOut = async () => {
     try {
-      if (supabase) await supabase.auth.signOut();
+      if (supabase && !demoRole) await supabase.auth.signOut();
     } catch {
       setSession(null);
-      return;
     }
     setSession(null);
+    setDemoRole('');
+    try { localStorage.removeItem(KUNCI_DEMO); } catch { /* storage opsional */ }
   };
 
   const value = useMemo(() => ({
@@ -92,8 +108,10 @@ export function AuthProvider({ children }) {
     loading,
     signIn,
     signOut,
-    supabaseSiap
-  }), [session, user, loading]);
+    masukDemo,
+    supabaseSiap,
+    demoMode: Boolean(demoRole)
+  }), [session, user, loading, demoRole]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

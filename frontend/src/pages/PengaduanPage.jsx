@@ -196,7 +196,7 @@ function BuatLaporan({ user }) {
 
     /* Tanpa env Supabase, simpan lokal (termasuk file lampiran di IndexedDB)
        agar demo tetap utuh dan admin bisa membuka bukti di browser yang sama. */
-    if (!laporanApiSiap) {
+    if (!laporanApiSiap || user?.demo) {
       const rec = savePengaduan(data);
       if (lampiran.length) {
         try {

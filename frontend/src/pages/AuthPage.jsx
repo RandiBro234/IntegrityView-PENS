@@ -21,12 +21,20 @@ function pesanLogin(error) {
 export default function AuthPage({ onSuccess, onBack }) {
   const { filter } = useReportFilters();
   const ringkasan = getReportData({ ...filter, kategori: 'Semua' }).ringkasan;
-  const { signIn, supabaseSiap } = useAuth();
+  const { signIn, masukDemo, supabaseSiap } = useAuth();
   const [showSuccess, setShowSuccess] = useState(false);
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPass, setLoginPass] = useState('');
   const [loginErrors, setLoginErrors] = useState({});
   const [mengirim, setMengirim] = useState(false);
+
+  const masukSebagaiDemo = (role) => {
+    masukDemo(role);
+    setShowSuccess(true);
+    window.setTimeout(() => {
+      if (onSuccess) onSuccess();
+    }, 300);
+  };
 
   const submitLogin = async (e) => {
     e.preventDefault();
@@ -128,6 +136,15 @@ export default function AuthPage({ onSuccess, onBack }) {
             <button type="submit" className="btn btn-primary auth__submit" disabled={mengirim || !supabaseSiap}>
               {mengirim ? 'Memeriksa…' : 'Masuk'}
             </button>
+
+            <div className="auth__demo" role="group" aria-label="Akun quick demo">
+              <p className="auth__demo-title">Quick demo acara</p>
+              <div className="auth__demo-actions">
+                <button type="button" className="btn btn-outline-navy" onClick={() => masukSebagaiDemo('sivitas')}>Demo Dosen</button>
+                <button type="button" className="btn btn-outline-navy" onClick={() => masukSebagaiDemo('admin')}>Demo Tim SPI</button>
+              </div>
+              <p className="auth__demo-note">Data demo lokal, tanpa mengubah akun produksi.</p>
+            </div>
 
             <div className="auth__admin-note" role="note">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

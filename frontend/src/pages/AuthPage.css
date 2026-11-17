@@ -275,6 +275,16 @@
   font-size: 14.5px;
 }
 
+.auth__demo {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid #DCE4F0;
+}
+.auth__demo-title { font-size: 12px; font-weight: 800; color: #0B1B33; }
+.auth__demo-actions { display: flex; gap: 8px; margin-top: 9px; }
+.auth__demo-actions .btn { flex: 1; justify-content: center; padding: 10px 8px; font-size: 12px; }
+.auth__demo-note { margin-top: 7px; font-size: 11px; color: #6B7280; }
+
 .auth__admin-note {
   display: flex;
   gap: 10px;

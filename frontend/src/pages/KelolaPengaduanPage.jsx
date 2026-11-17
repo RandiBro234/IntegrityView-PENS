@@ -30,14 +30,14 @@ export default function KelolaPengaduanPage({ onNavigate }) {
   const [errorMuat, setErrorMuat] = useState('');
 
   const muatServer = useCallback(() => {
-    if (!kelolaApiSiap) return;
+    if (!kelolaApiSiap || user?.demo) return;
     setMemuat(true);
     setErrorMuat('');
     ambilDaftarLaporan()
       .then((rows) => setDaftar(rows))
       .catch((err) => setErrorMuat(err.message || 'Gagal memuat laporan admin.'))
       .finally(() => setMemuat(false));
-  }, []);
+  }, [user?.demo]);
 
   useEffect(() => {
     if (admin) muatServer();
@@ -178,7 +178,9 @@ export default function KelolaPengaduanPage({ onNavigate }) {
           data={detail}
           onClose={() => setTerpilih(null)}
           onSaved={() => { segarkan(); }}
-          adminNama={user.nama}
+           adminNama={user.nama}
+           demo={user.demo}
+
         />
       )}
     </div>
@@ -316,7 +318,7 @@ function KpiCard({ label, value, tone = '', active, onClick }) {
   );
 }
 
-function DetailPanel({ data, onClose, onSaved, adminNama }) {
+function DetailPanel({ data, onClose, onSaved, adminNama, demo = false }) {
   const [status, setStatus] = useState(data.status);
   const [pic, setPic] = useState(data.pic || '');
   const [catatanPublik, setCatatanPublik] = useState('');
@@ -339,7 +341,7 @@ function DetailPanel({ data, onClose, onSaved, adminNama }) {
         catatanPublik: catatanPublik.trim(),
         catatanInternalBaru: catatanInternal.trim() || null
       };
-      if (kelolaApiSiap) {
+      if (kelolaApiSiap && !demo) {
         await perbaruiLaporan({
           jenis: data.jenis,
           kode: data.id,
@@ -366,7 +368,7 @@ function DetailPanel({ data, onClose, onSaved, adminNama }) {
     setError('');
     setMenyimpan(true);
     try {
-      if (kelolaApiSiap) {
+      if (kelolaApiSiap && !demo) {
         await balasLaporan({
           jenis: data.jenis,
           kode: data.id,

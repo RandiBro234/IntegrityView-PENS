@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import Sidebar from '../components/layout/Sidebar';
 import Topbar from '../components/layout/Topbar';
 import { useAuth } from '../auth/AuthProvider';
-import { formatTanggalWaktu, getPengaduanLokal, simpanPengaduanLokal } from '../data/mock';
+import { formatTanggalWaktu, getPengaduan, getPengaduanLokal, simpanPengaduanLokal } from '../data/mock';
 import { ambilLaporanSaya, laporanApiSiap } from '../data/laporanApi';
 import './ProfilePage.css';
 
@@ -16,9 +16,9 @@ export default function ProfilePage({ onNavigate }) {
 
   useEffect(() => {
     let aktif = true;
-    const lokal = getPengaduanLokal();
+    const lokal = user?.demo ? getPengaduan() : getPengaduanLokal();
     setLaporanUser(lokal);
-    if (!user || !laporanApiSiap) {
+    if (!user || !laporanApiSiap || user.demo) {
       setMemuat(false);
       return undefined;
     }

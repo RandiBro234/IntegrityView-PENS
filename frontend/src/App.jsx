@@ -34,7 +34,7 @@ const HALAMAN_ADMIN = new Set(['kelola-pengaduan', 'laporan']);
 const TAMU = { nama: 'Tamu', role: 'guest', inisial: 'TM' };
 
 export default function App() {
-  const { session, user, loading, signOut } = useAuth();
+  const { session, user, loading, signOut, demoMode } = useAuth();
   const [page, setPage] = useState(() => {
     const params = new URLSearchParams(window.location.search);
     const halaman = params.get('page');
@@ -112,12 +112,12 @@ export default function App() {
   /* Route guard: semua halaman selain landing dan form login wajib sesi. */
   useEffect(() => {
     if (loading) return;
-    if (page !== 'landing' && page !== 'auth' && !session) {
+    if (page !== 'landing' && page !== 'auth' && !session && !demoMode) {
       setPage('auth');
       return;
     }
     if (HALAMAN_ADMIN.has(page) && user?.role !== 'admin') setPage('dashboard');
-  }, [loading, page, session, user]);
+  }, [demoMode, loading, page, session, user]);
 
   const role = user ? user.role : 'guest';
   const shellUser = user || TAMU;

@@ -44,13 +44,13 @@ export default function LaporanPage({ onNavigate }) {
   const [pengaduan, setPengaduan] = useState(() => getPengaduan());
 
   useEffect(() => {
-    if (!admin || !kelolaApiSiap) return undefined;
+    if (!admin || !kelolaApiSiap || user?.demo) return undefined;
     let aktif = true;
     ambilDaftarLaporan()
       .then((rows) => { if (aktif) setPengaduan(rows); })
       .catch((err) => console.warn('Gagal memuat laporan admin:', err.message));
     return () => { aktif = false; };
-  }, [admin]);
+  }, [admin, user?.demo]);
 
   const ringkasAduan = useMemo(() => {
     const ringkas = { total: pengaduan.length, Baru: 0, Diproses: 0, Selesai: 0 };
