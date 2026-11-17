@@ -26,12 +26,17 @@ export default function KelolaPengaduanPage({ onNavigate }) {
   const [cari, setCari] = useState('');
   const [terpilih, setTerpilih] = useState(null);
   const [daftar, setDaftar] = useState(() => getPengaduan());
+  const [memuat, setMemuat] = useState(() => Boolean(admin && kelolaApiSiap));
+  const [errorMuat, setErrorMuat] = useState('');
 
   const muatServer = useCallback(() => {
     if (!kelolaApiSiap) return;
+    setMemuat(true);
+    setErrorMuat('');
     ambilDaftarLaporan()
       .then((rows) => setDaftar(rows))
-      .catch((err) => console.warn('Gagal memuat laporan admin:', err.message));
+      .catch((err) => setErrorMuat(err.message || 'Gagal memuat laporan admin.'))
+      .finally(() => setMemuat(false));
   }, []);
 
   useEffect(() => {
@@ -128,9 +133,17 @@ export default function KelolaPengaduanPage({ onNavigate }) {
             />
           </div>
 
-          {daftarTampil.length === 0 ? (
-            <div className="kpo-empty">Tidak ada laporan yang cocok dengan filter ini.</div>
-          ) : (
+           {memuat ? (
+             <div className="kpo-empty" role="status">Memuat laporan dari server...</div>
+           ) : errorMuat ? (
+             <div className="kpo-empty kpo-empty--error" role="alert">
+               <p>{errorMuat}</p>
+               <button type="button" className="btn btn-outline-navy" onClick={muatServer}>Coba lagi</button>
+             </div>
+           ) : daftarTampil.length === 0 ? (
+             <div className="kpo-empty">Tidak ada laporan yang cocok dengan filter ini.</div>
+           ) : (
+
             <div className="kpo-table-wrap">
               <table className="kpo-table">
                 <thead>

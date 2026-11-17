@@ -26,11 +26,18 @@ async function tokenAkses() {
   if (!supabase) {
     throw new Error('Supabase belum dikonfigurasi (VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY).');
   }
-  const { data, error } = await supabase.auth.getSession();
-  if (error) throw new Error('Gagal membaca sesi. Silakan masuk ulang.');
-  const token = data.session?.access_token;
-  if (!token) throw new Error('Sesi berakhir. Silakan masuk kembali.');
-  return token;
+  const sesi = await supabase.auth.getSession();
+  if (sesi.error) throw new Error('Gagal membaca sesi. Silakan masuk ulang.');
+  let session = sesi.data.session;
+  if (!session?.access_token) throw new Error('Sesi berakhir. Silakan masuk kembali.');
+  if (session.expires_at && session.expires_at * 1000 - Date.now() < 60000) {
+    const diperbarui = await supabase.auth.refreshSession();
+    if (diperbarui.error || !diperbarui.data.session) {
+      throw new Error('Sesi berakhir. Silakan masuk kembali.');
+    }
+    session = diperbarui.data.session;
+  }
+  return session.access_token;
 }
 
 async function headers(extra = {}) {

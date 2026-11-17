@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import Sidebar from '../components/layout/Sidebar';
 import Topbar from '../components/layout/Topbar';
 import { useAuth } from '../auth/AuthProvider';
-import { formatTanggalWaktu, getPengaduanLokal } from '../data/mock';
+import { formatTanggalWaktu, getPengaduanLokal, simpanPengaduanLokal } from '../data/mock';
 import { ambilLaporanSaya, laporanApiSiap } from '../data/laporanApi';
 import './ProfilePage.css';
 
@@ -23,21 +23,32 @@ export default function ProfilePage({ onNavigate }) {
       return undefined;
     }
 
-    ambilLaporanSaya()
-      .then((rows) => {
-        if (!aktif) return;
-        const gabung = new Map(lokal.map((laporan) => [laporan.id, laporan]));
-        rows.forEach((laporan) => gabung.set(laporan.id, laporan));
-        setLaporanUser([...gabung.values()].sort((a, b) => new Date(b.waktuLapor) - new Date(a.waktuLapor)));
-      })
-      .catch((err) => {
-        if (aktif) setError(err.message || 'Gagal memuat laporan Anda.');
-      })
-      .finally(() => {
-        if (aktif) setMemuat(false);
-      });
+    const muatLaporan = (awal = false) => {
+      if (awal) setMemuat(true);
+      ambilLaporanSaya()
+        .then((rows) => {
+          if (!aktif) return;
+          const gabung = new Map(getPengaduanLokal().map((laporan) => [laporan.id, laporan]));
+          rows.forEach((laporan) => gabung.set(laporan.id, laporan));
+          const terbaru = [...gabung.values()].sort((a, b) => new Date(b.waktuLapor) - new Date(a.waktuLapor));
+          terbaru.forEach((laporan) => simpanPengaduanLokal(laporan));
+          setLaporanUser(terbaru);
+          setError('');
+        })
+        .catch((err) => {
+          if (aktif) setError(err.message || 'Gagal memuat laporan Anda.');
+        })
+        .finally(() => {
+          if (aktif && awal) setMemuat(false);
+        });
+    };
 
-    return () => { aktif = false; };
+    muatLaporan(true);
+    const interval = window.setInterval(() => muatLaporan(), 30000);
+    return () => {
+      aktif = false;
+      window.clearInterval(interval);
+    };
   }, [user]);
 
   const salinKode = async (kode) => {
