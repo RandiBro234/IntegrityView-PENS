@@ -1,23 +1,84 @@
 # IntegrityView
 
-Platform analitik **Zona Integritas PENS**: pusat survei, dashboard analitik, dan kanal
-pelaporan **Whistleblowing System (WBS)**. Frontend berupa SPA React 19 + Vite; data survei
-dibaca dari Supabase (PostgreSQL + Edge Functions). Tanpa konfigurasi Supabase, aplikasi
-tetap berjalan memakai data simulasi dan `localStorage`/`sessionStorage`.
+Platform Zona Integritas PENS untuk mengumpulkan, mengolah, dan menyajikan data survei integritas sekaligus mengelola kanal pelaporan **Whistleblowing System (WBS)**.
 
-> Prototipe/demo. Angka di dashboard bisa berasal dari data riil Supabase atau simulasi
-> ber-seed. Login masih demo dan tidak memverifikasi password.
+IntegrityView mencakup aplikasi web, layanan backend Supabase, database PostgreSQL, Edge Functions, serta backend FastAPI opsional. Aplikasi dapat berjalan dengan data Supabase atau mode simulasi lokal untuk pengembangan.
 
-## Stack
+> Status: prototipe/demo. Login masih memakai akun yang dibuat manual dan mode tanpa Supabase memakai data simulasi serta penyimpanan browser.
 
-- **React 19** + **Vite 8**, vanilla CSS dengan CSS variables (`src/styles/tokens.css`)
-- **Supabase**: tabel `survey_responses`, `pengaduan`, `whistleblowing`, RPC pelacakan,
-  dan Edge Functions (Deno)
-- **html2canvas + jsPDF** untuk ekspor PDF
-- **oxlint** untuk lint
-- **FastAPI** opsional di `backend/` (legacy, tidak dipanggil frontend)
+## Fitur utama
+
+- Landing page publik dan ringkasan kondisi survei.
+- Dashboard analitik dengan filter periode, pembanding, dan kategori.
+- Pusat survei dan detail instrumen.
+- Perhitungan indeks, distribusi jawaban, median, simpangan baku, confidence interval, Cronbach alpha, delta, dan rekomendasi.
+- Ekspor laporan ke PDF dan CSV.
+- WBS untuk membuat, melacak, dan mengelola laporan pelanggaran integritas.
+- Pengunggahan lampiran privat melalui signed upload URL.
+- Panel admin untuk mengubah status, menambahkan catatan internal, dan membalas pelapor.
+- Chatbot Ivy berbasis Edge Function, dengan mode lokal untuk pengembangan.
+- Fallback data simulasi dan `localStorage`/`sessionStorage` saat Supabase belum dikonfigurasi.
+
+## Tech stack
+
+### Aplikasi web
+
+- React 19
+- Vite 8
+- JavaScript (ES modules)
+- Vanilla CSS dengan CSS variables
+- `@supabase/supabase-js`
+- `html2canvas` dan `jsPDF` untuk ekspor PDF
+- `oxlint` untuk lint
+
+### Data dan layanan
+
+- Supabase Auth untuk autentikasi
+- PostgreSQL untuk data survei dan laporan
+- Row Level Security (RLS), trigger, RPC, dan private storage bucket
+- Supabase Edge Functions berbasis Deno dan TypeScript
+- Google Forms + Google Apps Script untuk alur masuk data survei
+
+### Backend opsional
+
+- FastAPI
+- Uvicorn
+- `asyncpg` dan `psycopg2-binary`
+- Pandas
+- Pydantic
+
+### Deployment dan pengujian
+
+- Vercel untuk deployment aplikasi web
+- Node.js built-in test runner untuk pengujian chatbot dan fungsi terkait
+- Supabase CLI untuk migrasi dan deployment Edge Functions
+
+## Struktur proyek
+
+```text
+IntegrityView/
+├── frontend/                 aplikasi React + Vite
+│   ├── src/
+│   │   ├── pages/            halaman aplikasi
+│   │   ├── components/       komponen UI, dashboard, laporan, dan layout
+│   │   ├── data/             konfigurasi instrumen, survei, laporan, dan chatbot
+│   │   ├── lib/              utilitas Supabase, PDF, format data, dan motion
+│   │   └── styles/           token desain dan style global
+│   └── public/               aset publik
+├── supabase/
+│   ├── schema.sql            skema database, RLS, RPC, dan storage
+│   ├── migrations/           migrasi database
+│   └── functions/            webhook, laporan, lampiran, rekomendasi, dan chatbot
+├── backend/                  backend FastAPI opsional/legacy
+├── scripts/                  utilitas development, fixture, seed, dan pengujian
+├── docs/                     dokumentasi teknis
+├── vercel.json               konfigurasi deployment dari root repo
+└── README.md
+```
 
 ## Mulai cepat
+
+Prasyarat: Node.js sesuai `frontend/.nvmrc` dan npm.
 
 ```bash
 cd frontend
@@ -25,50 +86,20 @@ npm install
 npm run dev
 ```
 
-Buka URL yang muncul (biasanya `http://localhost:5173`; bila port dipakai Vite pindah ke 5174).
+Buka URL yang muncul, biasanya `http://localhost:5173`.
 
-Perintah lain:
+Perintah yang tersedia dari folder `frontend/`:
 
 ```bash
-npm run build      # hasil ke frontend/dist/
-npm run preview    # menyajikan hasil build
-npm run lint       # oxlint
+npm run dev          # development server
+npm run build        # build produksi ke frontend/dist/
+npm run preview      # sajikan hasil build
+npm run lint         # jalankan oxlint
+npm run test:chatbot # jalankan test chatbot dengan Node.js
+npm run dev:all      # jalankan layanan development terkait
 ```
 
-Tidak ada test runner dan tidak ada formatter.
-
-## Deploy ke Vercel
-
-Repo sudah menyiapkan dua konfigurasi. Pilih salah satu saat import project:
-
-**A. Root Directory = `frontend`** (disarankan)
-
-- Framework Preset: **Vite**
-- Build Command: `npm run build`
-- Output Directory: `dist`
-- Install Command: `npm install`
-- Rewrite SPA memakai `frontend/vercel.json`
-
-**B. Root Directory = root repo**
-
-- Biarkan pengaturan build mengikuti `vercel.json` di root:
-  install `npm --prefix frontend install`, build `npm --prefix frontend run build`,
-  output `frontend/dist`.
-
-Tambahkan environment variables di **Project Settings > Environment Variables**
-(Production dan Preview):
-
-```env
-VITE_SUPABASE_URL=https://<project-ref>.supabase.co
-VITE_SUPABASE_ANON_KEY=sb_publishable_...
-VITE_ENABLE_SIMULATION=false
-VITE_ENABLE_DEMO_LAPORAN=false
-```
-
-Jangan menambahkan `VITE_ADMIN_KELOLA_TOKEN`; akses admin memakai JWT Supabase.
-Vite membaca env saat build, jadi **redeploy** setelah mengubah nilainya.
-
-## Variabel lingkungan
+## Konfigurasi environment
 
 Salin `frontend/.env.example` menjadi `frontend/.env`:
 
@@ -79,197 +110,53 @@ VITE_ENABLE_SIMULATION=true
 VITE_ENABLE_DEMO_LAPORAN=true
 ```
 
-- `.env` tidak di-commit. Jangan pernah menaruh `sb_secret_...` atau `DATABASE_URL` di frontend.
-- `VITE_ENABLE_SIMULATION=false` menampilkan keadaan kosong untuk (instrumen, periode) tanpa
-  baris asli.
-- `VITE_ENABLE_DEMO_LAPORAN=false` mematikan seed laporan WBS demo.
-- Vite hanya membaca `.env` saat start; restart `npm run dev` setelah mengubahnya.
+Keterangan:
 
-## Struktur repo
-
-```
-IntegrityView/
-├── frontend/                 aplikasi React + Vite
-│   ├── src/
-│   │   ├── App.jsx           "router" manual berbasis state + query string
-│   │   ├── pages/            satu file per halaman (*.jsx + *.css)
-│   │   ├── components/       layout, dashboard, instrumen, laporan, ivy, motion, cards, tables
-│   │   ├── data/             instrumentConfig, surveyData (facade), survey/, mock, laporanApi, notifikasi
-│   │   ├── lib/              reportPdf, formatDelta, formatSkor, lampiranLokal, motion
-│   │   └── styles/           tokens.css + globals.css
-│   └── public/               favicon, icons, pens.jpeg
-├── supabase/
-│   ├── schema.sql            skema tabel, RLS, trigger kode, RPC, bucket lampiran
-│   ├── apps_script_webhook.js
-│   ├── functions/            webhook-survei, kirim-laporan, buat-upload-lampiran, ambil-lampiran
-│   └── migrations/           view agregat (belum dijalankan)
-├── backend/                  FastAPI opsional/legacy (tidak dipakai frontend)
-├── AGENTS.md                 aturan kerja untuk AI agent
-├── PRD-IntegrityView-v3.md   spesifikasi produk
-├── DESIGN_SYSTEM.md          sistem desain resmi
-└── DESIGN2.md                spesifikasi tema "bento"
-```
-
-## Halaman & fitur
-
-Routing tanpa react-router: `App.jsx` menyimpan state `page` dan menyinkronkan
-`?page=`, `?instrumen=`, serta filter `periode`/`pembanding`/`kategori` ke URL.
-
-| Halaman | Isi |
-|---|---|
-| **Landing** | Beranda publik: ringkasan angka, daftar instrumen, alur, kanal lapor, CTA masuk |
-| **Auth** | Masuk dengan Supabase Auth; akun dibuat manual oleh SPI, tanpa pendaftaran mandiri |
-| **Dashboard** | KPI ringkasan, sebaran jawaban per instrumen, heatmap perubahan 5 semester, panel statistik + rekomendasi, ekspor PDF |
-| **Pusat Survei** | Daftar 10 instrumen, filter kategori, tombol **Isi Survei** ke Google Form |
-| **Detail Instrumen** | Distribusi butir, tren periode, rekomendasi, kualitas data, ekspor PDF |
-| **WBS / Pengaduan** | Buat laporan dugaan pelanggaran integritas + lacak status dengan kode laporan |
-| **Kelola Pengaduan** | Admin: filter, ubah status, catatan internal, balas pelapor, buka lampiran |
-| **Laporan** | Admin: rekap skor instrumen, rekap kategori WBS, ekspor CSV |
-| **Profil** | Identitas pengguna, statistik laporan, tab keamanan |
-
-Fitur lintas halaman:
-
-- **Filter global** (periode, pembanding, kategori) tersinkron ke URL dan dipakai semua halaman.
-- **Notifikasi topbar** dihitung dari data yang ada (laporan baru, periode berjalan, perubahan
-  status laporan di perangkat ini); status "dibaca" disimpan di `localStorage`.
-- **Ivy** — widget tanya-jawab prototipe dengan jawaban hardcoded (belum memakai LLM/API).
-- **Transisi halaman** memakai View Transitions API bila tersedia, dengan fallback fade dan
-  dukungan `prefers-reduced-motion`.
-- **Ekspor PDF** memakai satu komponen template (`.rt__page` = satu halaman A4), sehingga
-  pratinjau dan hasil unduhan identik.
+- `VITE_ENABLE_SIMULATION=true` mengaktifkan data simulasi saat data asli belum tersedia.
+- `VITE_ENABLE_DEMO_LAPORAN=true` mengaktifkan seed laporan WBS demo.
+- Vite membaca environment variable saat proses dimulai. Restart `npm run dev` setelah mengubah `.env`.
+- Jangan commit `.env`, `sb_secret_...`, atau `DATABASE_URL` ke frontend.
+- Akses admin memakai JWT Supabase. Jangan menambahkan token admin ke environment variable frontend.
 
 ## Alur data survei
 
-```
+```text
 Google Form
-  -> Apps Script "On form submit" (supabase/apps_script_webhook.js)
+  -> Google Apps Script
   -> Edge Function webhook-survei
-  -> INSERT public.survey_responses
-
-Browser
-  -> ReportFilterProvider memuat data sekali (muatDataSurvei)
-  -> GET /rest/v1/survey_responses (anon/publishable key)
-  -> normalisasi + dedup + tentukan periode (WIB)
-  -> getReportData(filter) menghitung semua angka
-  -> landing, dashboard, detail, pusat survei, laporan, PDF
+  -> public.survey_responses
+  -> frontend memuat dan menormalisasi data
+  -> getReportData(filter) menghitung agregat
+  -> landing, dashboard, detail instrumen, laporan, dan PDF
 ```
 
-Semua halaman memakai **satu selector** `getReportData(filter)` dari `src/data/surveyData.js`.
-Implementasinya dipecah di `src/data/survey/` (constants, normalize, statistics, aggregates,
-recommendations, report, simulation, store, cache, filters); `surveyData.js` hanya facade
-agar API lama tetap jalan.
+Data survei per pasangan instrumen dan periode memiliki satu sumber aktif:
 
-Aturan sumber data per (instrumen, periode):
-
-```
-ada baris asli?  -> "real"
-tidak            -> simulasi aktif? -> "simulated"
-tidak            -> "empty"
+```text
+ada data asli? -> real
+tidak ada data asli dan simulasi aktif? -> simulated
+tidak ada data asli dan simulasi nonaktif? -> empty
 ```
 
-Satu pasangan (instrumen, periode) tidak pernah mencampur data asli dan simulasi.
+Frontend memakai `getReportData(filter)` sebagai selector utama. Implementasi perhitungan berada di `frontend/src/data/survey/`.
 
-Angka **Total Pengisian** adalah jumlah `n` seluruh instrumen pada periode/filter aktif.
-Satu orang dapat terhitung lebih dari sekali jika mengisi beberapa instrumen; angka ini
-bukan jumlah responden unik.
+## Modul WBS dan Supabase
 
-Bentuk baris `survey_responses`:
+Skema database berada di `supabase/schema.sql`. Migrasi tambahan berada di `supabase/migrations/`.
 
-| Kolom | Tipe | Keterangan |
-|---|---|---|
-| `id` | bigint identity | primary key |
-| `nama_instrumen` | text | mis. `SPAK`, `Gratifikasi` |
-| `email_responden` | text, nullable | dedup + hitung responden unik |
-| `data_jawaban` | jsonb | metadata + jawaban butir + satu jawaban terbuka |
-| `created_at` | timestamptz | penentu periode (dikonversi ke WIB) |
-
-Nilai Likert di `data_jawaban` disimpan sebagai **string** `"1"`–`"4"`, dan kunci butir berupa
-teks pertanyaan lengkap. Pertanyaan terbuka ikut di objek yang sama, bukan kolom terpisah.
-
-## Instrumen
-
-10 instrumen, total **66 butir**, skala Likert 1–4. Definisi resmi ada di
-`src/data/instrumentConfig.js` (slug, nama, kategori, kelompok, tautan Google Form, teks butir,
-alias nama dari database, dan ambang rekomendasi).
-
-| Slug | Nama | Butir | Kategori | Kelompok |
-|---|---|---:|---|---|
-| `spip` | SPIP | 9 | Integritas & Korupsi | Internal |
-| `spak` | SPAK | 6 | Integritas & Korupsi | Layanan |
-| `spkp` | SPKP | 8 | Pelayanan Publik | Layanan |
-| `gratifikasi` | Gratifikasi | 5 | Integritas & Korupsi | Internal |
-| `benturan` | Benturan | 6 | Integritas & Korupsi | Internal |
-| `wbs` | WBS | 6 | Pelaporan | Internal |
-| `pengaduan` | Pengaduan | 6 | Pelayanan Publik | Layanan |
-| `budaya-zi` | Budaya ZI | 7 | Budaya & 5R | Internal |
-| `pens-joss` | PENS JOSS | 6 | Pelayanan Publik | Internal |
-| `5r` | 5R | 7 | Budaya & 5R | Internal |
-
-Catatan: instrumen `pengaduan` adalah **survei persepsi** tentang kanal pengaduan, bukan kanal
-pelaporan WBS. Kanal WBS adalah modul tiket terpisah.
-
-## Statistik
-
-Dihitung di browser oleh `hitungAgregat` (`src/data/survey/statistics.js`):
-
-- Skor baris: `(rata-rata butir / 4) × 100`
-- Indeks instrumen: `total skor / (jumlah butir × 4 × n) × 100`
-- Median, SD sampel (n−1), CI 95% (`indeks ± 1,96 × SD/√n`)
-- Proporsi setuju (jawaban 3–4), distribusi 1–4 dengan pembulatan largest remainder
-- Cronbach alpha; `—` bila n < 2 atau varian total 0
-- Delta: indeks periode terpilih − indeks pembanding
-- Arah perubahan: `≥ +0,5` naik, `≤ −0,5` turun, selain itu stabil
-- Rekomendasi: prioritas **Tinggi** / **Pantau** berdasarkan rata-rata butir, proporsi jawaban
-  1–2, perubahan bermakna, dan kecukupan n (ambang di `AMBANG`)
-
-Periode yang tersedia: 2024 Ganjil, 2025 Genap, 2025 Ganjil, 2026 Genap, 2026 Ganjil
-(berjalan, default). Periode ditentukan dari `created_at` dalam **WIB (UTC+7)**.
-
-Jawaban terbuka tidak pernah ditampilkan mentah. Jawaban > 300 karakter atau mengandung kata
-seperti `Rp`, `juta`, `miliar`, `dugaan`, `melaporkan`, `fiktif`, `mark up` ditandai sensitif
-dan dihitung sebagai "ditahan untuk tinjauan WBS".
-
-## Modul WBS
-
-- Satu kanal laporan: dugaan pelanggaran integritas. Keluhan fasilitas/kepuasan layanan
-  dialihkan ke **SatisView** (alamat masih kosong di `reportCategories.js`).
-- Kategori laporan: 11 kategori dalam 3 grup (korupsi, penyalahgunaan wewenang, etika).
-- Kode laporan baru `WBS-TAHUN-NNNN`; kode lama `ADU-TAHUN-NNNN` tetap bisa dilacak.
-- Bila Supabase dikonfigurasi, laporan dikirim lewat Edge Function `kirim-laporan`; lampiran
-  diunggah ke bucket privat `lampiran-laporan` memakai signed upload URL.
-- Lampiran maksimal **3 file**, **10MB/file**, format PDF/Word/JPG/PNG.
-- Rate limit **5 laporan / 10 menit / IP** (tanpa captcha).
-- WBS wajib login. Pelacakan memakai RPC `lacak_laporan` yang hanya mengembalikan laporan
-  milik pengguna atau admin, tanpa PII dan tanpa `user_id`.
-- Laporan anonim tidak menyimpan nama/kontak, tetapi tetap tertaut ke akun pelapor secara
-  internal agar muncul di **Laporan Saya**; `user_id` tidak pernah dikirim ke admin.
-- Tanpa Supabase, laporan disimpan di `localStorage` (`iv2_pengaduan`) dan lampiran di
-  IndexedDB (`iv2_lampiran`).
-- Halaman **Kelola Pengaduan** dan **Laporan** memakai Edge Function admin dengan JWT.
-
-## Supabase
-
-`schema.sql` membuat:
-
-- `survey_responses` — jawaban survei (`data_jawaban` jsonb), RLS SELECT untuk anon
-- `pengaduan` dan `whistleblowing` — tiket laporan, akses langsung anon dicabut
-- Trigger `isi_kode_laporan` — kode `ADU-`/`WBS-` otomatis
-- `laporan_saya()` — daftar laporan milik pengguna login, tanpa PII/`user_id`
-- `lacak_laporan(text)` — pelacakan oleh pemilik laporan atau admin, tanpa PII
-- `rate_limit_laporan` + `cek_rate_limit(...)` — pembatas kirim per IP
-- Bucket privat `lampiran-laporan` dengan batas 10MB dan MIME yang diizinkan
-
-Edge Functions:
+Edge Functions utama:
 
 | Function | Fungsi |
 |---|---|
-| `webhook-survei` | Menerima submit Google Form, INSERT ke `survey_responses` |
-| `kirim-laporan` | Validasi + INSERT laporan, wajib JWT pengguna |
-| `buat-upload-lampiran` | Membuat signed upload URL lampiran, wajib JWT |
-| `kelola-laporan` | Admin: daftar/ubah/balas laporan, wajib JWT role admin |
-| `ambil-lampiran` | Signed download URL lampiran, wajib JWT role admin |
+| `webhook-survei` | Menerima submit Google Form dan menyimpan jawaban survei |
+| `kirim-laporan` | Validasi dan menyimpan laporan WBS dengan JWT pengguna |
+| `buat-upload-lampiran` | Membuat signed upload URL untuk lampiran |
+| `kelola-laporan` | Operasi admin untuk daftar, ubah, dan balas laporan |
+| `ambil-lampiran` | Membuat signed download URL untuk admin |
+| `hitung-rekomendasi` | Mengolah rekomendasi dari data survei |
+| `chat` | Menyediakan layanan chatbot Ivy |
 
-Deploy dari root project:
+Contoh deployment function dari root proyek:
 
 ```bash
 supabase functions deploy webhook-survei --no-verify-jwt
@@ -277,42 +164,44 @@ supabase functions deploy kirim-laporan --use-api
 supabase functions deploy buat-upload-lampiran --use-api
 supabase functions deploy kelola-laporan --use-api
 supabase functions deploy ambil-lampiran --use-api
-supabase secrets set WEBHOOK_SECRET=ganti-dengan-string-acak
 ```
 
-Terapkan `supabase/migrations/20261115000000_auth_laporan.sql` sebelum deploy frontend
-JWT. Migrasi ini menambah `user_id`, index, `is_admin()`, `laporan_saya()`, dan mengunci
-`lacak_laporan` ke pemilik/admin. Migrasi agregat
-`supabase/migrations/20261026000000_aggregate_views.sql` tetap terpisah dan belum wajib
-untuk auth; frontend masih membaca tabel survei mentah lewat REST.
+Terapkan migrasi yang relevan sebelum deployment frontend yang memakai perubahan skema atau autentikasi.
 
-## Backend FastAPI (opsional)
+## Deployment ke Vercel
 
-Folder `backend/` berisi alternatif webhook + baca data memakai psycopg2/asyncpg. Frontend
-**tidak** memanggil backend ini. Statusnya legacy dan belum lengkap: `backend/main.py`
-mengimpor `app.main`, sedangkan `app/main.py` belum ada di tree. Jangan mengubah backend
-kalau yang ingin diubah adalah perilaku dashboard.
+Konfigurasi root `vercel.json` menjalankan:
+
+- Install: `npm --prefix frontend install`
+- Build: `npm --prefix frontend run build`
+- Output: `frontend/dist`
+- Rewrite SPA ke `index.html`
+
+Tambahkan `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, dan flag fitur pada **Project Settings > Environment Variables**, lalu lakukan redeploy.
+
+## Backend FastAPI opsional
+
+`backend/` berisi alternatif webhook dan pembacaan data. Frontend utama tidak memanggil backend ini secara langsung. Jalankan hanya bila membutuhkan alur backend FastAPI:
+
+```bash
+cd backend
+pip install -r requirements.txt
+```
+
+Backend ini berstatus opsional/legacy. Perubahan perilaku dashboard utama dilakukan di `frontend/` dan `supabase/`.
 
 ## Batasan yang diketahui
 
-- Login memakai Supabase Auth (email/password). Akun dibuat manual dan pendaftaran mandiri
-  harus dimatikan. Role dibaca dari `app_metadata`, bukan `user_metadata`.
-- Sesi disimpan Supabase di localStorage sampai pengguna menekan Keluar.
-- RLS `survey_responses` masih memberi anon akses SELECT seluruh baris, termasuk
-  `email_responden` dan jawaban terbuka. Perketat sebelum publik.
-- Mode tanpa Supabase masih memakai `localStorage`/seed; mode Supabase memakai Edge
-  Function admin dengan JWT.
-- Ivy masih mockup hardcoded.
-- `frontend/package.json` bernama `frontend2` (sisa penamaan tema "bento"); folder sebenarnya
-  `frontend/`.
-- Beberapa komponen sisa iterasi lama masih ada tetapi tidak dipakai (`BentoGrid`,
-  `ReportsTable`, `AddNewCard`, `ChartCard`, `HighlightCard`, `SoftStatCard`,
-  `ItemDistributionBar`, `GroupComparisonBar`, `DataQualityBadges`).
+- Akun dibuat manual melalui Supabase Auth. Pendaftaran mandiri tidak digunakan.
+- Ivy masih memiliki bagian jawaban lokal/hardcoded dan layanan chat memerlukan konfigurasi tambahan.
+- Mode tanpa Supabase menyimpan sebagian data di `localStorage` dan lampiran lokal di IndexedDB.
+- Backend FastAPI belum menjadi jalur runtime utama.
+- Pastikan kebijakan RLS, akses data survei, dan konfigurasi storage ditinjau sebelum deployment publik.
 
 ## Dokumen terkait
 
-- `PRD-IntegrityView-v3.md` — kebutuhan produk dan daftar halaman
-- `DESIGN_SYSTEM.md` — palet, tipografi, komponen resmi
-- `DESIGN2.md` — spesifikasi tema "bento"
-- `AGENTS.md` — konvensi kerja dan pitfalls
-- `alur.md` — peta proyek dan alur data yang lebih rinci (dokumen lokal, tidak di-track)
+- `docs/` untuk dokumentasi teknis dan spesifikasi.
+- `frontend/.env.example` untuk contoh konfigurasi aplikasi.
+- `supabase/schema.sql` untuk skema awal database.
+- `supabase/migrations/` untuk perubahan skema.
+- `DESIGN_SYSTEM.md` dan `DESIGN2.md` bila tersedia untuk referensi desain.
